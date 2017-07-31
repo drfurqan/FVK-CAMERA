@@ -79,7 +79,7 @@ public:
 	bool isOpened();
 
 	// Description:
-	// Add an image frame to the video file.
+	// Function to add a new image frame to the video file.
 	void addFrame(const cv::Mat& _frame);
 
 	// Description:
@@ -98,17 +98,17 @@ public:
 	// Function to set the saved video file path.
 	// The path folder should have writable permission, such as Pictures/Videos/Documents folder.
 	// Example:
-	// p->setSavedFile("D:\\video.mp4");
+	// p->setOutputLocation("D:\\video.mp4");
 	void setOutputLocation(const std::string& val) { m_file = val; }
 	// Description:
 	// Function to get the saved video file path.
 	std::string getOutputLocation() const { return m_file; }
 
 	// Description:
-	// Function to set the video resolution, width and height.
+	// Function to set the recorded video resolution i.e, width and height.
 	void setSize(const cv::Size& _s) { m_size = _s; }
 	// Description:
-	// Function to get the video resolution, width and height.
+	// Function to get the recorded video resolution i.e, width and height.
 	cv::Size getSize() const { return m_size; }
 	// Description:
 	// Function to set the desired frames per second.
@@ -121,7 +121,7 @@ public:
 	// Default value is true.
 	void setColored(bool _b) { m_iscolor = _b; }
 	// Description:
-	// It returns true, if the video is recored with RGB colors.
+	// It returns true, if the video is recorded with RGB colors.
 	bool isColored() const { return m_iscolor; }
 	// Description:
 	// If it's true, then a window will pop up at runtime that contains all the 

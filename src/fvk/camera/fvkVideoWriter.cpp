@@ -70,16 +70,13 @@ void fvkVideoWriter::stop()
 
 void fvkVideoWriter::addFrame(const cv::Mat& _frame)
 {
+	// _frame must have the same size as has been specified when opening the video writer.
+	if (_frame.empty() || _frame.size() != m_size) return;
+	if (!m_writer.isOpened()) return;
+
 	m_recordmutex.lock();
 	if (m_pauserecord)
-	{
-		// _frame must have the same size as has been specified when opening the video writer.
-		if (_frame.size() == m_size)
-		{
-			if (m_writer.isOpened() && !_frame.empty())
-				m_writer.write(_frame);
-		}
-	}
+		m_writer.write(_frame);
 	m_recordmutex.unlock();
 }
 
