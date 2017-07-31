@@ -100,10 +100,10 @@ bool fvkCamera::disconnect()
 			stopCameraThread();
 			p_ct->close();
 
-			std::cout << "[" << p_ct->getDeviceIndex() << "] camera has been successfully disconnected.\n";
+			std::cout << "[" << p_ct->getDeviceId() << "] camera has been successfully disconnected.\n";
 			return true;
 		}
-		std::cout << "[" << p_ct->getDeviceIndex() << "] WARNING: camera has already been disconnected.\n";
+		std::cout << "[" << p_ct->getDeviceId() << "] WARNING: camera has already been disconnected.\n";
 	}
 	return false;
 }
@@ -113,7 +113,7 @@ bool fvkCamera::connect()
 	{
 		if (p_ct->isOpened())
 		{
-			std::cout << "[" << p_ct->getDeviceIndex() << "] WARNING: camera has already been connected.\n";
+			std::cout << "[" << p_ct->getDeviceId() << "] WARNING: camera has already been connected.\n";
 			return false;
 		}
 
@@ -188,6 +188,18 @@ std::string fvkCamera::getVideoFile() const
 	if (p_ct) return p_ct->getVideoFile();
 	return "";
 }
+
+void fvkCamera::setDeviceId(int _id)
+{
+	if (p_ct) p_ct->setDeviceId(_id);
+}
+int fvkCamera::getDeviceId() const
+{
+	if (p_ct) return p_ct->getDeviceId();
+	return 0;
+}
+
+
 void fvkCamera::setFrameDelay(int _delay_msec)
 {
 	if (p_ct) p_ct->setFrameDelay(_delay_msec);

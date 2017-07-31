@@ -105,6 +105,13 @@ public:
 	cv::Mat getFrame() const;
 
 	// Description:
+	// Function that returns the average frames per second of the processing thread.
+	int getAvgFps() const;
+	// Description:
+	// Function that returns the total number of processed/passed frames in the processing.
+	int getNFrames() const;
+
+	// Description:
 	// Function to set the emit function to display the captured frames.
 	// The display GUI function should be capable of handling multi-threading updatings.
 	void setFrameViewerSlot(const std::function<void(const cv::Mat&)>& _f);
@@ -114,13 +121,6 @@ public:
 	// The input GUI function should be capable of handling multi-threading updatings.
 	void setFrameStatisticsSlot(const std::function<void(const fvkAverageFpsStats&)>& _f);
 	
-	// Description:
-	// Function that returns the average frames per second of the processing thread.
-	int getAvgFps() const;
-	// Description:
-	// Function that returns the total number of processed/passed frames in the processing.
-	int getNFrames() const;
-
 	// Description:
 	// Function to get a pointer to video recorder.
 	fvkVideoWriter* getRecorder() const;
@@ -155,6 +155,16 @@ public:
 	// Description:
 	// Function to get the video file path. (only for videos)
 	std::string getVideoFile() const;
+
+	// Description:
+	// Function to set the camera device id.
+	//  _device is the id of the opened video capturing device (i.e. a camera index).
+	//  If there is a single camera connected, just pass 0.
+	//  In case of multiple cameras, try to pass 1 or 2 or 3, so on...
+	void setDeviceId(int _id);
+	// Description:
+	// Function to get the camera device id.
+	int getDeviceId() const;
 
 	// Description:
 	// Function to set the frame delay which makes specified delay in the camera thread.

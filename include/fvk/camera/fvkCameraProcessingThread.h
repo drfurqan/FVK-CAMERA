@@ -12,7 +12,8 @@ author:		Furqan Ullah (Post-doc, Ph.D.)
 website:    http://real3d.pk
 CopyRight:	All Rights Reserved
 
-purpose:	Class to create a thread for camera frame process.
+purpose:	Class to create a thread for processing of the grabbed camera frame.
+This thread is synchronized with the camera thread using a semaphore. 
 
 /**********************************************************************************
 *	Fast Visualization Kit (FVK)
@@ -23,7 +24,6 @@ purpose:	Class to create a thread for camera frame process.
 * If not, please contact Dr. Furqan Ullah immediately:
 **********************************************************************************/
 
-#include "fvkCameraProcessingThreadAbstract.h"
 #include "fvkCameraImageProcessing.h"
 #include "fvkSemaphoreBuffer.h"
 #include "fvkVideoWriter.h"
@@ -36,7 +36,7 @@ namespace R3D
 
 class fvkCameraAbstract;
 
-class FVK_EXPORT fvkCameraProcessingThread : public fvkCameraProcessingThreadAbstract
+class FVK_EXPORT fvkCameraProcessingThread
 {
 public:
 	// Description:
@@ -52,26 +52,15 @@ public:
 
 	// Description:
 	// Overridden function that starts the thread.
-	void run() override;
+	virtual void run();
 
 	// Description:
 	// Overridden function to stop the thread.
-	void stop() override;
+	virtual void stop();
 
 	// Description:
 	// Overridden function to get the current grabbed frame.
-	cv::Mat getFrame() override;
-
-	// Description:
-	// Set emit function to display the captured frame.
-	// The display function should be capable of handling multi-threading updating.
-	void setFrameViewerSlot(const std::function<void(const cv::Mat&)>& _f) { emit_display_frame = _f; }
-
-	// Description:
-	// Set emit function to get the average frames per second of this thread
-	// as well as the total number of frames that has been processed/passed.
-	// The input function should be capable of handling multi-threading updating.
-	void setFrameStatisticsSlot(const std::function<void(const fvkAverageFpsStats&)>& _f) { emit_stats = _f; }
+	virtual cv::Mat getFrame();
 
 	// Description:
 	// Function that trigger the saveFrameToDisk function that saves the current image frame
@@ -80,7 +69,15 @@ public:
 	// Example:
 	// p->setFrameOutputLocation("D:\\frame.jpg");
 	// p->saveFrameOnClick();
-	void saveFrameOnClick() override;
+	virtual void saveFrameOnClick();
+
+	// Description:
+	// Function that returns the average frames per second of this thread.
+	int getAvgFps();
+	// Description:
+	// Function that returns the total number of process/passed frames.
+	int getNFrames();
+
 	// Description:
 	// Function to set the saved frame file path.
 	// The path folder should have writable permission, such as Pictures/Videos/Documents folder.
@@ -102,11 +99,15 @@ public:
 	int getDeviceIndex() const { return m_device_index; }
 
 	// Description:
-	// Function that returns the average frames per second of this thread.
-	int getAvgFps();
+	// Set emit function to display the captured frame.
+	// The display function should be capable of handling multi-threading updating.
+	void setFrameViewerSlot(const std::function<void(const cv::Mat&)>& _f) { emit_display_frame = _f; }
+
 	// Description:
-	// Function that returns the total number of process/passed frames.
-	int getNFrames();
+	// Set emit function to get the average frames per second of this thread
+	// as well as the total number of frames that has been processed/passed.
+	// The input function should be capable of handling multi-threading updating.
+	void setFrameStatisticsSlot(const std::function<void(const fvkAverageFpsStats&)>& _f) { emit_stats = _f; }
 
 	// Description:
 	// Function to get a pointer to video recorder.
@@ -123,12 +124,11 @@ public:
 	// Function to get a pointer to semaphore buffer which does synchronization between capturing and processing threads.
 	fvkSemaphoreBuffer<cv::Mat>* getSemaphoreBuffer() const { return p_buffer; }
 
-private:
+protected:
 	// Description:
 	// Function that saves the current frame to disk (file path must be specified by setSavedFile("")).
-	bool saveFrameToDisk(const cv::Mat& _frame);
+	virtual bool saveFrameToDisk(const cv::Mat& _frame);
 
-protected:
 	std::mutex m_savemutex;
 	std::mutex m_stopmutex;
 	std::mutex m_processing_mutex;

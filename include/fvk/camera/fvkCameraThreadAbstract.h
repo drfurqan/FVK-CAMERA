@@ -101,10 +101,10 @@ public:
 	//  _device is the id of the opened video capturing device (i.e. a camera index).
 	//  If there is a single camera connected, just pass 0.
 	//  In case of multiple cameras, try to pass 1 or 2 or 3, so on...
-	void setDeviceIndex(int _index) { m_device_index = _index; }
+	void setDeviceId(int _id) { m_device_index = _id; }
 	// Description:
 	// Function to get the camera device id.
-	int getDeviceIndex() const { return m_device_index; }
+	int getDeviceId() const { return m_device_index; }
 
 	// Description:
 	// Function to set the frame delay which makes delay one thread for sometime.

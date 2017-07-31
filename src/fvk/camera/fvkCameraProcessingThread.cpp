@@ -8,7 +8,8 @@ author:		Furqan Ullah (Post-doc, Ph.D.)
 website:    http://real3d.pk
 CopyRight:	All Rights Reserved
 
-purpose:	Class to create a thread for camera frame process.
+purpose:	Class to create a thread for processing of the grabbed camera frame.
+This thread is synchronized with the camera thread using a semaphore.
 
 /**********************************************************************************
 *	Fast Visualization Kit (FVK)
@@ -25,11 +26,10 @@ purpose:	Class to create a thread for camera frame process.
 using namespace R3D;
 
 fvkCameraProcessingThread::fvkCameraProcessingThread(int _device_index, fvkSemaphoreBuffer<cv::Mat>* _buffer, fvkCameraAbstract* _frameobserver) :
-fvkCameraProcessingThreadAbstract(),
 m_device_index(_device_index),
 p_buffer(_buffer),
 p_frameobserver(_frameobserver),
-p_ip( new fvkCameraImageProcessing()),
+p_ip(new fvkCameraImageProcessing()),
 p_vr(new fvkVideoWriter()),
 m_isstop(false),
 m_frame(cv::Mat()),

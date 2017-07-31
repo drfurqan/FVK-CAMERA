@@ -23,3 +23,6 @@ target_link_libraries(camera_program_3 LINK_PUBLIC ${LIBRARIES})
 
 add_executable (camera_program_4 camera_program_4.cpp)
 target_link_libraries(camera_program_4 LINK_PUBLIC ${LIBRARIES})
+
+add_executable (camera_program_5 camera_program_5.cpp)
+target_link_libraries(camera_program_5 LINK_PUBLIC ${LIBRARIES})
