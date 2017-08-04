@@ -71,7 +71,7 @@ public:
 	int getConvertColor();
 
 	// Flip directions.
-	enum FlipDirection
+	enum class FlipDirection
 	{
 		None = 0,
 		Horizontal,

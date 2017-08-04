@@ -26,7 +26,6 @@ purpose:	Thread safe class to create a video file using OpenCV video writer.
 #include "fvkExport.h"
 
 #include "opencv2/opencv.hpp"
-#include <mutex>
 
 namespace R3D
 {
@@ -86,13 +85,6 @@ public:
 	// Function that stops video recoding and finalize the video file.
 	// Without calling this function, video file won't be played.
 	void stop();
-
-	// Description:
-	// Function to pause the video recording.
-	void record(bool _b);
-	// Description:
-	// Function that returns true if the video recording is on pause state.
-	bool record();
 
 	// Description:
 	// Function to set the saved video file path.
@@ -158,9 +150,6 @@ private:
 	bool m_iscolor;
 	bool m_autocodec;
 	std::string m_codec;
-
-	bool m_pauserecord;
-	std::mutex m_recordmutex;
 };
 
 }

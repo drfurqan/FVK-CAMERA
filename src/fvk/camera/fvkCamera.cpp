@@ -159,7 +159,17 @@ bool fvkCamera::start()
 	}
 	return false;
 }
-
+bool fvkCamera::isConnected()
+{
+	if (p_ct)
+	{
+		if (p_ct->isOpened())
+		{
+			return true;
+		}
+	}
+	return false;
+}
 void fvkCamera::pause(bool _b) { if (p_ct) p_ct->pause(_b); }
 bool fvkCamera::pause() { if (p_ct) return p_ct->pause(); return false; }
 void fvkCamera::repeat(bool _b) { if (p_ct) p_ct->repeat(_b); }
@@ -198,7 +208,6 @@ int fvkCamera::getDeviceId() const
 	if (p_ct) return p_ct->getDeviceId();
 	return 0;
 }
-
 
 void fvkCamera::setFrameDelay(int _delay_msec)
 {
@@ -390,32 +399,32 @@ void fvkCamera::setAviRatio(double val)
 }
 void fvkCamera::setResolution(cv::Size _res)
 {
-	if (p_ct) if (p_ct->isOpened()) p_ct->setResolution(_res);
+	if (p_ct) p_ct->setResolution(_res);
 }
 /************************************************************************/
 /* Get Camera Settings                                                  */
 /************************************************************************/
 cv::Size fvkCamera::getResolution() const
 {
-	if (p_ct) if (p_ct->isOpened()) return p_ct->getResolution();
+	if (p_ct) return p_ct->getResolution();
 	return cv::Size(0, 0);
 }
 void fvkCamera::setWidth(int _w)
 {
-	if (p_ct) if (p_ct->isOpened()) p_ct->setWidth(_w);
+	if (p_ct) p_ct->setWidth(_w);
 }
 int fvkCamera::getWidth() const
 {
-	if (p_ct) if (p_ct->isOpened()) return p_ct->getWidth();
+	if (p_ct) return p_ct->getWidth();
 	return 0;
 }
 void fvkCamera::setHeight(int _h)
 {
-	if (p_ct) if (p_ct->isOpened()) p_ct->setHeight(_h);
+	if (p_ct) p_ct->setHeight(_h);
 }
 int fvkCamera::getHeight() const
 {
-	if (p_ct) if (p_ct->isOpened()) return p_ct->getHeight();
+	if (p_ct) return p_ct->getHeight();
 	return 0;
 }
 double fvkCamera::getSharpness() const

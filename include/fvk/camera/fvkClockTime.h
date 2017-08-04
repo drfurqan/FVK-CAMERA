@@ -1,6 +1,6 @@
 #pragma once
-#ifndef fvkTime_h__
-#define fvkTime_h__
+#ifndef fvkClockTime_h__
+#define fvkClockTime_h__
 
 /*********************************************************************************
 created:	2015/04/21   03:37AM
@@ -66,9 +66,13 @@ public:
 	// Description:
 	// Function to print the elapsed time. 
 	void print();
+
 	// Description:
-	// Function to get the current time.
+	// Function to get the current time in seconds.
 	static double getCurrentTime();
+	// Description:
+	// Function to get the local date and time.
+	static std::string getLocalTime(const char* _format = "%Y-%m-%d %X");
 
 private:
 	std::chrono::time_point<std::chrono::system_clock> m_startime;
@@ -78,4 +82,4 @@ private:
 
 }
 
-#endif // fvkTime_h__
+#endif // fvkClockTime_h__

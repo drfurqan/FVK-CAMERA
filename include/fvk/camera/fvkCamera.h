@@ -52,7 +52,7 @@ public:
 	// In case of multiple cameras, try to pass 1 or 2 or 3, so on...
 	// _resolution is the desired camera frame width and height.
 	// resolution Size(-1, -1) will do the auto-selection for the frame's width and height.
-	fvkCamera(int _device_id, cv::Size _resolution = cv::Size(-1, -1));
+	fvkCamera(int _device_id = 0, cv::Size _resolution = cv::Size(-1, -1));
 	// Description:
 	// Default constructor to create a camera object.
 	// _video_file is the location of the video file (eg. video.avi) or image sequence 
@@ -85,6 +85,11 @@ public:
 	// then play the video file.
 	// It returns true on success.
 	bool start();
+
+	// Description:
+	// Function that returns true if the camera device is connected, otherwise,
+	// it always returns false.
+	bool isConnected();
 
 	// Description:
 	// Function to pause the camera capturing thread.

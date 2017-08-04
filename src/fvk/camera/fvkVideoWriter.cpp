@@ -29,8 +29,7 @@ m_size(cv::Size(640, 480)),
 m_fps(25),
 m_iscolor(true),
 m_autocodec(false),
-m_codec(std::string("H264")),
-m_pauserecord(false)
+m_codec(std::string("H264"))
 {
 }
 fvkVideoWriter::~fvkVideoWriter()
@@ -72,21 +71,5 @@ void fvkVideoWriter::addFrame(const cv::Mat& _frame)
 {
 	// _frame must have the same size as has been specified when opening the video writer.
 	if (_frame.empty() || _frame.size() != m_size) return;
-	if (!m_writer.isOpened()) return;
-
-	m_recordmutex.lock();
-	if (m_pauserecord)
-		m_writer.write(_frame);
-	m_recordmutex.unlock();
-}
-
-void fvkVideoWriter::record(bool _b)
-{
-	std::unique_lock<std::mutex> locker(m_recordmutex);
-	m_pauserecord = _b;
-}
-bool fvkVideoWriter::record()
-{
-	std::unique_lock<std::mutex> locker(m_recordmutex);
-	return m_pauserecord;
+	m_writer.write(_frame);
 }

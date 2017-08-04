@@ -105,17 +105,20 @@ void fvkCameraImageProcessing::imageProcessing(cv::Mat& _frame)
 
 	if (m_denoislevel > 2)
 	{
-		if (m_denoismethod == fvkCameraImageProcessing::Gaussian)
-			cv::GaussianBlur(_frame, _frame, cv::Size(m_denoislevel, m_denoislevel), 0, 0);
-		else if (m_denoismethod == fvkCameraImageProcessing::Blur)
-			cv::blur(_frame, _frame, cv::Size(m_denoislevel, m_denoislevel));
-		else if (m_denoismethod == fvkCameraImageProcessing::Median)
-			cv::medianBlur(_frame, _frame, m_denoislevel);
-		else if (m_denoismethod == fvkCameraImageProcessing::Bilateral)
+		if (m_denoislevel % 2 != 0)
 		{
-			cv::Mat m(_frame.size(), _frame.type());
-			cv::bilateralFilter(_frame, m, m_denoislevel, m_denoislevel * 2, m_denoislevel / 2);
-			_frame = m;
+			if (m_denoismethod == fvkCameraImageProcessing::Gaussian)
+				cv::GaussianBlur(_frame, _frame, cv::Size(m_denoislevel, m_denoislevel), 0, 0);
+			else if (m_denoismethod == fvkCameraImageProcessing::Blur)
+				cv::blur(_frame, _frame, cv::Size(m_denoislevel, m_denoislevel));
+			else if (m_denoismethod == fvkCameraImageProcessing::Median)
+				cv::medianBlur(_frame, _frame, m_denoislevel);
+			else if (m_denoismethod == fvkCameraImageProcessing::Bilateral)
+			{
+				cv::Mat m(_frame.size(), _frame.type());
+				cv::bilateralFilter(_frame, m, m_denoislevel, m_denoislevel * 2, m_denoislevel / 2);
+				_frame = m;
+			}
 		}
 	}
 
@@ -215,11 +218,6 @@ void fvkCameraImageProcessing::imageProcessing(cv::Mat& _frame)
 		_frame = rotated;
 	}
 
-	//if (0)
-	//{
-	//	std::string fps = cv::format("Fps: %f", n);
-	//	cv::putText(_frame, fps, cv::Point(10, 10), cv::FONT_HERSHEY_PLAIN, 1.0, CV_RGB(0, 255, 0), 2.0);
-	//}
 	m_mutex.unlock();
 }
 
@@ -313,8 +311,7 @@ fvkCameraImageProcessing::DenoisingMethod fvkCameraImageProcessing::getDenoising
 void fvkCameraImageProcessing::setDenoisingLevel(int _value)
 {
 	std::lock_guard<std::mutex> locker(m_mutex);
-	if (_value % 2 != 0 && _value > 2)
-		m_denoislevel = _value;
+	m_denoislevel = _value;
 }
 int fvkCameraImageProcessing::getDenoisingLevel()
 {

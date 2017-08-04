@@ -74,7 +74,7 @@ public:
 	// In case of multiple cameras, try to pass 1 or 2 or 3, so on...
 	// _resolution is the desired camera frame width and height.
 	// resolution Size(-1, -1) will do the auto-selection for the frame's width and height.
-	CAMERA* add(int _device_id, cv::Size _resolution)
+	CAMERA* add(int _device_id, cv::Size _resolution = cv::Size(-1, -1))
 	{
 		if (getDeviceId(_device_id) != nullptr)
 			return nullptr;
@@ -90,7 +90,7 @@ public:
 	// (eg. img_%02d.jpg, which will read samples like img_00.jpg, img_01.jpg, img_02.jpg, ...)
 	// _resolution is the desired camera frame width and height.
 	// resolution Size(-1, -1) will do the auto-selection for the frame's width and height.
-	CAMERA* add(const std::string& _video_file, cv::Size _resolution)
+	CAMERA* add(const std::string& _video_file, cv::Size _resolution = cv::Size(-1, -1))
 	{
 		CAMERA* p = new CAMERA(_video_file, _resolution);
 		m_cameras.push_back(p);

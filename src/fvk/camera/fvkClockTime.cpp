@@ -21,6 +21,9 @@ purpose:	Class for elapsed time using std::chrono.
 
 #include <fvk/camera/fvkClockTime.h>
 #include <iostream>
+#include <sstream>
+#include <ctime>
+#include <iomanip>
 
 using namespace R3D;
 
@@ -62,4 +65,14 @@ double fvkClockTime::stop(bool _print)
 #endif // _DEBUG
 	}
 	return m_elapstime;
+}
+
+std::string fvkClockTime::getLocalTime(const char* _format)
+{
+	auto now = std::chrono::system_clock::now();
+	auto in_time_t = std::chrono::system_clock::to_time_t(now);
+
+	std::stringstream ss;
+	ss << std::put_time(std::localtime(&in_time_t), _format);
+	return ss.str();
 }

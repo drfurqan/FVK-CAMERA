@@ -56,6 +56,10 @@ fvkCameraProcessingThread::~fvkCameraProcessingThread()
 
 void fvkCameraProcessingThread::run()
 {
+	// make stats to zero for the new run.
+	m_avgfps.stats.fps = 0;
+	m_avgfps.stats.nframes = 0;
+
 	while (1)
 	{
 		// stop this thread.
@@ -87,7 +91,9 @@ void fvkCameraProcessingThread::run()
 		saveFrameToDisk(m_frame);
 
 		// add frame for the video recording.
-		if (p_vr) p_vr->addFrame(m_frame);
+		if (p_vr) 
+			if(p_vr->isOpened())
+				p_vr->addFrame(m_frame);
 
 		// update stats.
 		m_statsmutex.lock();
@@ -116,62 +122,16 @@ void fvkCameraProcessingThread::saveFrameOnClick()
 	m_iscapture = true;
 }
 
-static std::string __extractFileExt(const std::string& _str)
-{
-	std::string result = "";
-	size_t extPos = _str.rfind(".");
-	if (extPos != std::string::npos)
-		result = _str.substr(extPos);
-	result.erase(0, 1);	// remove the first dot.
-	return result;
-}
-
-static std::string __extractFilePath(const std::string& _str)
-{
-	std::string result = "";
-	size_t pathPos = _str.rfind("/");
-	if (pathPos == std::string::npos)
-		pathPos = _str.rfind("\\");
-	if (pathPos != std::string::npos)
-		result = _str.substr(0, pathPos);
-	return result;
-}
-static std::string __changeFileName(const std::string& _path, const std::string& _new_name)
-{
-#if defined(_WIN32)
-	return __extractFilePath(_path) + "\\" + _new_name + "." + __extractFileExt(_path);
-#else 
-	return __extractFilePath(_path) + "/" + _new_name + "." + __extractFileExt(_path);
-#endif
-}
-static std::string __extractFileNameWithExt(const std::string &aString)
-{
-	std::string result = "";
-	size_t pathPos = aString.rfind("/");
-	if (pathPos == std::string::npos)
-		pathPos = aString.rfind("\\");
-	if (pathPos != std::string::npos)
-		result = aString.substr(pathPos + 1);
-	return result;
-}
-static std::string __extractFileNameWithoutExt(const std::string &filepath)
-{
-	std::string aString = __extractFileNameWithExt(filepath);
-	size_t position = aString.find(".");
-	std::string result = (std::string::npos == position) ? aString : aString.substr(0, position);
-	return result;
-}
-
 bool fvkCameraProcessingThread::saveFrameToDisk(const cv::Mat& _frame)
 {
 	m_savemutex.lock();
 	bool b = false;
 	if (m_iscapture)
 	{
-		std::string _path(m_filelocation);
-		std::string n = __extractFileNameWithoutExt(_path) + "_" + std::to_string(m_device_index) + "_" + std::to_string(m_savedframes++);
-		std::string p = __changeFileName(_path, n);
-		b = cv::imwrite(p, m_frame);
+		std::vector<int> params;
+		params.push_back(cv::IMWRITE_JPEG_QUALITY);
+		params.push_back(98);   // that's percent, so 100 == no compression, 1 == full.
+		b = cv::imwrite(m_filelocation, _frame, params);
 		m_iscapture = false;
 	}
 	m_savemutex.unlock();
