@@ -26,6 +26,7 @@ purpose:	Class to create a thread for capturing frames from OpenCV camera.
 #include "fvkCameraThreadAbstract.h"
 #include "fvkSemaphoreBuffer.h"
 #include "fvkAverageFps.h"
+#include <functional>
 
 namespace R3D
 {
