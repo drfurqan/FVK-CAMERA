@@ -19,7 +19,7 @@ purpose:	Class to detect face in the specified frame.
 **********************************************************************************/
 
 #include <fvk/camera/fvkFaceDetector.h>
-#include <opencv2\imgproc.hpp>
+#include <opencv2/imgproc.hpp>
 #include <iostream>
 
 using namespace R3D;

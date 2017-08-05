@@ -24,7 +24,7 @@ purpose:	Class to draw RGB plot of an image using OpenCV.
 
 #include "fvkExport.h"
 
-#include "opencv2/opencv.hpp"
+#include <opencv2/opencv.hpp>
 
 class fvkPlotFigure;
 class fvkPlotSeries;
