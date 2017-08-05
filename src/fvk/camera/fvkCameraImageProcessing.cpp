@@ -378,22 +378,22 @@ bool fvkCameraImageProcessing::loadCascadeClassifier(const std::string& _filenam
 {
 	return m_ft.loadCascadeClassifier(_filename);
 }
-void fvkCameraImageProcessing::setFaceTrackingEnabled(bool _value)
+void fvkCameraImageProcessing::setFaceDetectionEnabled(bool _value)
 {
 	std::lock_guard<std::mutex> locker(m_mutex);
 	m_isfacetrack = _value;
 }
-bool fvkCameraImageProcessing::isFaceTrackingEnabled()
+bool fvkCameraImageProcessing::isFaceDetectionEnabled()
 {
 	std::lock_guard<std::mutex> locker(m_mutex);
 	return m_isfacetrack;
 }
-void fvkCameraImageProcessing::setTrackedFaceColor(const cv::Vec3b& _rgb)
+void fvkCameraImageProcessing::setDetectedFaceColor(const cv::Vec3b& _rgb)
 {
 	std::lock_guard<std::mutex> locker(m_mutex);
 	m_ft.setTrackedFaceColor(_rgb);
 }
-cv::Vec3b fvkCameraImageProcessing::getTrackedFaceColor()
+cv::Vec3b fvkCameraImageProcessing::getDetectedFaceColor()
 {
 	std::lock_guard<std::mutex> locker(m_mutex);
 	return m_ft.getTrackedFaceColor();

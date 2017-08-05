@@ -198,16 +198,19 @@ public:
 	// Description:
 	// Function to turn ON/OFF face tracking.
 	// Default value is false.
-	void setFaceTrackingEnabled(bool _value);
+	void setFaceDetectionEnabled(bool _value);
 	// Description:
 	// Function that returns true if face tracking is enabled.
-	bool isFaceTrackingEnabled();
+	bool isFaceDetectionEnabled();
 	// Description:
 	// Function to set RGB color to the rectangle of the tracked face.
-	void setTrackedFaceColor(const cv::Vec3b& _rgb);
+	void setDetectedFaceColor(const cv::Vec3b& _rgb);
 	// Description:
 	// Function to get RGB color to the rectangle of the tracked face.
-	cv::Vec3b getTrackedFaceColor();
+	cv::Vec3b getDetectedFaceColor();
+	// Description:
+	// Function to get a reference to face detector.
+	fvkSimpleFaceDetector& getSimpleFaceDetector() { return m_ft; }
 
 private:
 	FlipDirection m_flip;
@@ -226,7 +229,7 @@ private:
 	int m_zoomperc;
 
 	bool m_isfacetrack;
-	fvkFaceTracker m_ft;
+	fvkSimpleFaceDetector m_ft;
 
 	std::mutex m_mutex;
 };

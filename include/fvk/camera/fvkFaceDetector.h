@@ -35,7 +35,7 @@ namespace R3D
 class FVK_EXPORT fvkFaceDetector
 {
 public:
-	fvkFaceDetector(const std::string _cascade_file_path);
+	fvkFaceDetector();
 	~fvkFaceDetector();
 
 	bool setFaceCascade(const std::string& _cascade_file_path);
@@ -60,7 +60,7 @@ private:
 
 	static const double TICK_FREQUENCY;
 
-	cv::CascadeClassifier* m_faceCascade = nullptr;
+	cv::CascadeClassifier* m_faceCascade;
 	std::vector<cv::Rect> m_allFaces;
 	cv::Rect m_trackedFace;
 	cv::Rect m_faceRoi;
@@ -76,10 +76,10 @@ private:
 	double m_templateMatchingMaxDuration = 3;
 };
 
-class FVK_EXPORT fvkFaceTracker
+class FVK_EXPORT fvkSimpleFaceDetector
 {
 public:
-	fvkFaceTracker();
+	fvkSimpleFaceDetector();
 
 	// Description:
 	// Function to load a classifier from a file.

@@ -26,9 +26,15 @@ using namespace R3D;
 
 const double fvkFaceDetector::TICK_FREQUENCY = cv::getTickFrequency();
 
-fvkFaceDetector::fvkFaceDetector(const std::string _cascade_file_path)
+fvkFaceDetector::fvkFaceDetector() : 
+m_faceCascade(nullptr)
 {
-	setFaceCascade(_cascade_file_path);
+}
+fvkFaceDetector::~fvkFaceDetector()
+{
+	if (m_faceCascade) 
+		delete m_faceCascade;
+	m_faceCascade = nullptr;
 }
 
 bool fvkFaceDetector::setFaceCascade(const std::string& _cascade_file_path)
@@ -37,8 +43,14 @@ bool fvkFaceDetector::setFaceCascade(const std::string& _cascade_file_path)
 
     if (m_faceCascade == nullptr)
 		m_faceCascade = new cv::CascadeClassifier(_cascade_file_path);
-    else
-		m_faceCascade->load(_cascade_file_path);
+	else
+	{
+		if (!m_faceCascade->load(_cascade_file_path))
+		{
+			std::cerr << "ERROR: couldn't create cascade classifier. Make sure the file exists." << std::endl;
+			return false;
+		}
+	}
 
 	if (m_faceCascade->empty())
 	{
@@ -48,7 +60,7 @@ bool fvkFaceDetector::setFaceCascade(const std::string& _cascade_file_path)
 	return true;
 }
 
-cv::CascadeClassifier *fvkFaceDetector::faceCascade() const
+cv::CascadeClassifier* fvkFaceDetector::faceCascade() const
 {
     return m_faceCascade;
 }
@@ -86,11 +98,6 @@ void fvkFaceDetector::setTemplateMatchingMaxDuration(const double _s)
 double fvkFaceDetector::templateMatchingMaxDuration() const
 {
     return m_templateMatchingMaxDuration;
-}
-
-fvkFaceDetector::~fvkFaceDetector()
-{
-    if (m_faceCascade) delete m_faceCascade;
 }
 
 cv::Rect fvkFaceDetector::doubleRectSize(const cv::Rect& inputRect, const cv::Rect& frameSize) const
@@ -295,21 +302,25 @@ cv::Point fvkFaceDetector::operator >> (cv::Mat& _frame)
 /************************************************************************/
 #define DELAY_IN_FACE_DETECTION 5
 
-fvkFaceTracker::fvkFaceTracker() : 
+fvkSimpleFaceDetector::fvkSimpleFaceDetector() : 
 _face_rect_color(cv::Vec3b(166, 154, 75)),
-m_filepath("haarcascade_frontalface_default.xml"),
-m_fd(""),
+m_filepath(""),
 nframes(0)
 {
 }
 
-bool fvkFaceTracker::loadCascadeClassifier(const std::string& _filename)
+bool fvkSimpleFaceDetector::loadCascadeClassifier(const std::string& _filename)
 {
-	m_filepath = _filename;
-	return m_fd.setFaceCascade(_filename);
+	if (m_fd.setFaceCascade(_filename))
+	{
+		m_filepath = _filename;
+		return true;
+	}
+	m_filepath = "";
+	return false;
 }
 
-void fvkFaceTracker::execute(cv::Mat& _frame)
+void fvkSimpleFaceDetector::execute(cv::Mat& _frame)
 {
 	cv::rectangle(_frame, m_fd.face(), _face_rect_color);
 	if (nframes > DELAY_IN_FACE_DETECTION)
