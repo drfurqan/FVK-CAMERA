@@ -104,7 +104,7 @@ void fvkCameraProcessingThread::run()
 	}
 
 	if (p_vr) p_vr->stop();
-	std::cout << "Stopping camera processing thread...";
+	std::cout << "Stopping camera processing thread...\n";
 }
 cv::Mat fvkCameraProcessingThread::getFrame()
 {

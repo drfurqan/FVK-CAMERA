@@ -276,7 +276,7 @@ void fvkCamera::setMsec(double val)
 }
 void fvkCamera::setPosFrames(double val)
 {
-	if (p_ct) if (p_ct->isOpened()) setPosFrames(val);
+	if (p_ct) if (p_ct->isOpened()) p_ct->setPosFrames(val);
 }
 
 void fvkCamera::setSharpness(double val)
@@ -457,10 +457,10 @@ double fvkCamera::getWhiteBalanceRedV() const
 	if (p_ct) if (p_ct->isOpened()) return p_ct->getWhiteBalanceRedV();
 	return 0;
 }
-double fvkCamera::getFourCC() const
+std::string fvkCamera::getFourCC() const
 {
 	if (p_ct) if (p_ct->isOpened()) return p_ct->getFourCC();
-	return 0;
+	return "";
 }
 
 double fvkCamera::getConvertToRGB() const

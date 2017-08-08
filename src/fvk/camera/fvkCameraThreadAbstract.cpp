@@ -270,9 +270,18 @@ double fvkCameraThreadAbstract::getWhiteBalanceRedV()
 {
     return p_cam.get(cv::CAP_PROP_WHITE_BALANCE_RED_V);
 }
-double fvkCameraThreadAbstract::getFourCC()
+std::string fvkCameraThreadAbstract::getFourCC()
 {
-    return p_cam.get(cv::CAP_PROP_FOURCC);
+	unsigned int f = static_cast<unsigned int>(p_cam.get(cv::CAP_PROP_FOURCC));
+	char fourc[] =
+	{
+		(char)f,
+		(char)(f >> 8),
+		(char)(f >> 16),
+		(char)(f >> 24),
+		'\0',
+	};
+	return std::string(fourc);
 }
 
 double fvkCameraThreadAbstract::getConvertToRGB()
@@ -361,13 +370,13 @@ double fvkCameraThreadAbstract::getTriggerDelay()
 }
 double fvkCameraThreadAbstract::getMsec()
 {
-	return p_cam.get(cv::CAP_PROP_POS_MSEC);
+	return p_cam.get(CV_CAP_PROP_POS_MSEC);
 }
 double fvkCameraThreadAbstract::getPosFrames()
 {
-	return p_cam.get(cv::CAP_PROP_POS_FRAMES);
+	return p_cam.get(CV_CAP_PROP_POS_FRAMES);
 }
 double fvkCameraThreadAbstract::getAviRatio()
 {
-	return p_cam.get(cv::CAP_PROP_POS_AVI_RATIO);
+	return p_cam.get(CV_CAP_PROP_POS_AVI_RATIO);
 }

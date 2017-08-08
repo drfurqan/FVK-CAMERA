@@ -232,9 +232,11 @@ public:
 	void setFps(double _v);
 	double getFps() const;;
 	// Description:
-	// 4-character code of codec.
+	// Function to set a 4-character code of codec.
 	void setFourCC(double _v);
-	double getFourCC() const;
+	// Description:
+	// Function that returns the 4-character code that identify a video codec.
+	std::string getFourCC() const;
 	// Description:
 	// Number of frames in the video file.
 	void setFrameCount(double _v);
