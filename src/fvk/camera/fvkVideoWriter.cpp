@@ -49,7 +49,7 @@ int fvkVideoWriter::open()
 	{
 		if (m_codec.length() != 4) return -2;
 
-		m_writer.open(m_file, CV_FOURCC(m_codec[0], m_codec[1], m_codec[2], m_codec[3]), m_fps, m_size, m_iscolor);
+		m_writer.open(m_file, cv::VideoWriter::fourcc(m_codec[0], m_codec[1], m_codec[2], m_codec[3]), m_fps, m_size, m_iscolor);
 	}
 
 	if (!m_writer.isOpened()) return 0;

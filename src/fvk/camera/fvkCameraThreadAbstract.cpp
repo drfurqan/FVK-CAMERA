@@ -24,7 +24,7 @@ purpose:	OpenCV camera class interface.
 using namespace R3D;
 
 fvkCameraThreadAbstract::fvkCameraThreadAbstract() :
-m_device_index(-1),
+m_device_index(0),
 m_width(-1),
 m_height(-1),
 m_filepath(""),
@@ -58,12 +58,12 @@ bool fvkCameraThreadAbstract::open()
 	
 	return open(m_device_index);
 }
-bool fvkCameraThreadAbstract::open(const std::string& _avi_filename)
+bool fvkCameraThreadAbstract::open(const std::string& _avi_filename, cv::VideoCaptureAPIs _api)
 {
 	if (_avi_filename.empty()) 
 		return false;
 
-	bool r = p_cam.open(_avi_filename);
+	bool r = p_cam.open(_avi_filename, _api);
 	if (r)
 	{
 		if (m_width != -1) p_cam.set(cv::CAP_PROP_FRAME_WIDTH, m_width);

@@ -52,8 +52,9 @@ public:
 	// Function to connect the video file.
 	// _avi_filename is the name of the opened video file (eg. video.avi) or image sequence 
 	// (eg. img_%02d.jpg, which will read samples like img_00.jpg, img_01.jpg, img_02.jpg, ...)
+	// _api is the preferred API for a capture object.
 	// It returns true on success.
-	bool open(const std::string& _avi_filename);
+	bool open(const std::string& _avi_filename, cv::VideoCaptureAPIs _api = cv::CAP_ANY);
 	// Description:
 	// Function to connect the camera.
 	// If the video file is specified before the calling this function, then this method will try to 
