@@ -52,9 +52,9 @@ public:
 	// Function to connect the video file.
 	// _avi_filename is the name of the opened video file (eg. video.avi) or image sequence 
 	// (eg. img_%02d.jpg, which will read samples like img_00.jpg, img_01.jpg, img_02.jpg, ...)
-	// _api is the preferred API for a capture object.
+	// _api is the preferred API for a capture object. for more info see (cv::VideoCaptureAPIs).
 	// It returns true on success.
-	bool open(const std::string& _avi_filename, cv::VideoCaptureAPIs _api = cv::CAP_ANY);
+	bool open(const std::string& _avi_filename, int _api = cv::VideoCaptureAPIs::CAP_ANY);
 	// Description:
 	// Function to connect the camera.
 	// If the video file is specified before the calling this function, then this method will try to 
@@ -98,14 +98,21 @@ public:
 	virtual bool repeat() { return m_isrepeat; }
 
 	// Description:
-	// Function to set the camera device id.
+	// Function to set the camera device index.
 	//  _device is the id of the opened video capturing device (i.e. a camera index).
 	//  If there is a single camera connected, just pass 0.
 	//  In case of multiple cameras, try to pass 1 or 2 or 3, so on...
-	void setDeviceId(int _id) { m_device_index = _id; }
+	void setDeviceIndex(int _index) { m_device_index = _index; }
 	// Description:
-	// Function to get the camera device id.
-	int getDeviceId() const { return m_device_index; }
+	// Function to get the camera device index.
+	int getDeviceIndex() const { return m_device_index; }
+
+	// Description:
+	// Function to set the Video Capture preferred API for a capture object. for more info see (cv::VideoCaptureAPIs).
+	void setAPI(int _api) { m_videocapture_api = _api; }
+	// Description:
+	// Function to get the Video Capture preferred API for a capture object. for more info see (cv::VideoCaptureAPIs).
+	int getAPI() const { return m_videocapture_api; }
 
 	// Description:
 	// Function to set the frame delay which makes delay one thread for sometime.
@@ -285,6 +292,7 @@ protected:
 	int m_width;
 	int m_height;
 	std::string m_filepath;
+	int m_videocapture_api;
 	bool m_isstop;
 	bool m_ispause;
 	bool m_isrepeat;

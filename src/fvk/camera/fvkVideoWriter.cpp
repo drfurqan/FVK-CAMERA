@@ -31,6 +31,7 @@ m_iscolor(true),
 m_autocodec(false),
 m_codec(std::string("H264"))
 {
+	m_writer.set(cv::VideoWriterProperties::VIDEOWRITER_PROP_QUALITY, 100.0);
 }
 fvkVideoWriter::~fvkVideoWriter()
 {

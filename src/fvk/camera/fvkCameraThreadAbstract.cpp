@@ -28,6 +28,7 @@ m_device_index(0),
 m_width(-1),
 m_height(-1),
 m_filepath(""),
+m_videocapture_api(cv::VideoCaptureAPIs::CAP_ANY),
 m_isstop(false),
 m_ispause(false),
 m_isrepeat(true),
@@ -58,7 +59,7 @@ bool fvkCameraThreadAbstract::open()
 	
 	return open(m_device_index);
 }
-bool fvkCameraThreadAbstract::open(const std::string& _avi_filename, cv::VideoCaptureAPIs _api)
+bool fvkCameraThreadAbstract::open(const std::string& _avi_filename, int _api)
 {
 	if (_avi_filename.empty()) 
 		return false;
@@ -70,6 +71,7 @@ bool fvkCameraThreadAbstract::open(const std::string& _avi_filename, cv::VideoCa
 		if (m_height != -1) p_cam.set(cv::CAP_PROP_FRAME_HEIGHT, m_height);
 		m_frame_msec = static_cast<int>(1000.0 / getFps());		// frame delay of the opened video.
 		m_filepath = _avi_filename;
+		m_videocapture_api = _api;
 	}
 	else
 	{

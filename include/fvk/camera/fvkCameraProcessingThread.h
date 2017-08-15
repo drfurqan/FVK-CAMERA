@@ -41,11 +41,13 @@ class FVK_EXPORT fvkCameraProcessingThread
 public:
 	// Description:
 	// Default constructor.
-	//  _device is the id of the opened video capturing device (i.e. a camera index).
-	//  If there is a single camera connected, just pass 0.
-	//  In case of multiple cameras, try to pass 1 or 2 or 3, so on...
+	// _buffer is the semaphore to synchronizer the processing thread with this thread.
+	// _frameobserver is the parent class of Camera that will override the processFrame function.
+	// _device is the id of the opened video capturing device (i.e. a camera index).
+	// If there is a single camera connected, just pass 0.
+	// In case of multiple cameras, try to pass 1 or 2 or 3, so on...
 	// If _width and _height is specified, then this will become the camera frame resolution.
-	fvkCameraProcessingThread(int _device_id, fvkSemaphoreBuffer<cv::Mat>* _buffer, fvkCameraAbstract* _frameobserver);
+	fvkCameraProcessingThread(fvkSemaphoreBuffer<cv::Mat>* _buffer, fvkCameraAbstract* _frameobserver, int _device_id = 0);
 	// Description:
 	// Default destructor to stop the thread as well as recorder, and delete the data.
 	virtual ~fvkCameraProcessingThread();

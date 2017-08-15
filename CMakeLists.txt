@@ -14,7 +14,7 @@ project (fvk_camera)
 
 set(VERSION_MAJOR 1)
 set(VERSION_MINOR_0 1)
-set(VERSION_MINOR_1 0)
+set(VERSION_MINOR_1 2)
 set(VERSION_PLAIN ${VERSION_MAJOR}.${VERSION_MINOR_0}.${VERSION_MINOR_1})
 
 # ------------------------------------------------------------------------------

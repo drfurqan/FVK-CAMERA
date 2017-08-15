@@ -25,10 +25,10 @@ This thread is synchronized with the camera thread using a semaphore.
 
 using namespace R3D;
 
-fvkCameraProcessingThread::fvkCameraProcessingThread(int _device_index, fvkSemaphoreBuffer<cv::Mat>* _buffer, fvkCameraAbstract* _frameobserver) :
-m_device_index(_device_index),
+fvkCameraProcessingThread::fvkCameraProcessingThread(fvkSemaphoreBuffer<cv::Mat>* _buffer, fvkCameraAbstract* _frameobserver, int _device_index) :
 p_buffer(_buffer),
 p_frameobserver(_frameobserver),
+m_device_index(_device_index),
 p_ip(new fvkCameraImageProcessing()),
 p_vr(new fvkVideoWriter()),
 m_isstop(false),

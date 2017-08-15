@@ -104,10 +104,10 @@ public:
 	cv::Size getSize() const { return m_size; }
 	// Description:
 	// Function to set the desired frames per second.
-	void setFps(int _fps) { m_fps = _fps; }
+	void setFps(double _fps) { m_fps = _fps; }
 	// Description:
 	// Function to get the specified frames per second.
-	int getFps() const { return m_fps; }
+	double getFps() const { return m_fps; }
 	// Description:
 	// If it's true, video will be recored with RGB colors.
 	// Default value is true.
@@ -146,7 +146,7 @@ private:
 
 	std::string m_file;
 	cv::Size m_size;
-	int m_fps;
+	double m_fps;
 	bool m_iscolor;
 	bool m_autocodec;
 	std::string m_codec;

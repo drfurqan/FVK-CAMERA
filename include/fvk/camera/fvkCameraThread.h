@@ -42,14 +42,15 @@ public:
 	// If _width and _height is specified, then this will become the camera frame resolution.
 	// _buffer is the semaphore to synchronizer the processing thread with this thread.
 	// cv::Size(-1, -1) will do the auto-selection of the resolution, normally it enables the 640x480 resolution.
-	fvkCameraThread(int _device_id, fvkSemaphoreBuffer<cv::Mat>* _buffer, cv::Size _resolution = cv::Size(-1, -1));
+	fvkCameraThread(fvkSemaphoreBuffer<cv::Mat>* _buffer, int _device_id, cv::Size _resolution = cv::Size(-1, -1));
 	// Description:
 	// Default constructor to start the given video file.
-	// _video_file is the absolute path of the video file.
 	// _buffer is the semaphore to synchronizer the processing thread with this thread.
+	// _video_file is the absolute path of the video file.
 	// If _width and _height is specified, then this will become the video frame resolution.
 	// cv::Size(-1, -1) will do the auto-selection of the resolution, normally it enable the 640x480 resolution.
-	fvkCameraThread(const std::string& _video_file, fvkSemaphoreBuffer<cv::Mat>* _buffer, cv::Size _resolution = cv::Size(-1, -1));
+	// _api is the preferred API for a capture object. for more info see (cv::VideoCaptureAPIs).
+	fvkCameraThread(fvkSemaphoreBuffer<cv::Mat>* _buffer, const std::string& _video_file, cv::Size _resolution = cv::Size(-1, -1), int _api = cv::VideoCaptureAPIs::CAP_ANY);
 	// Description:
 	// Default destructor to stop the thread and releases the camera device or video file.
 	virtual ~fvkCameraThread();

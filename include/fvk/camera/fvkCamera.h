@@ -59,7 +59,7 @@ public:
 	// (eg. img_%02d.jpg, which will read samples like img_00.jpg, img_01.jpg, img_02.jpg, ...)
 	// _resolution is the desired camera frame width and height.
 	// resolution Size(-1, -1) will do the auto-selection for the frame's width and height.
-	fvkCamera(const std::string& _video_file, cv::Size _resolution = cv::Size(-1, -1));
+	fvkCamera(const std::string& _video_file, cv::Size _resolution = cv::Size(-1, -1), int _api = cv::VideoCaptureAPIs::CAP_ANY);
 	// Description:
 	// Constructor to create a camera object by specifying the camera and processing threads.
 	// This constructor is created for the derived classes of both fvkCameraThread and fvkCameraProcessingThread.
@@ -75,21 +75,20 @@ public:
 	// It returns true on success.
 	bool connect();
 	// Description:
-	// Function to disconnect the camera device or if the video file is specified,
-	// then close the video file.
-	// It terminates the camera as well as the processing threads.
-	// It returns true on success.
-	bool disconnect();
+	// Function that returns true if the camera device is connected, otherwise,
+	// it always returns false.
+	bool isConnected();
 	// Description:
 	// Function that starts the camera or if the video file is specified,
 	// then play the video file.
 	// It returns true on success.
 	bool start();
-
 	// Description:
-	// Function that returns true if the camera device is connected, otherwise,
-	// it always returns false.
-	bool isConnected();
+	// Function to disconnect the camera device or if the video file is specified,
+	// then close the video file.
+	// It terminates the camera as well as the processing threads.
+	// It returns true on success.
+	bool disconnect();
 
 	// Description:
 	// Function to pause the camera capturing thread.
@@ -162,14 +161,14 @@ public:
 	std::string getVideoFile() const;
 
 	// Description:
-	// Function to set the camera device id.
-	//  _device is the id of the opened video capturing device (i.e. a camera index).
-	//  If there is a single camera connected, just pass 0.
-	//  In case of multiple cameras, try to pass 1 or 2 or 3, so on...
-	void setDeviceId(int _id);
+	// Function to set the camera device index.
+	// _id is the index of the opened video capturing device (i.e. a camera index).
+	// If there is a single camera connected, just pass 0.
+	// In case of multiple cameras, try to pass 1 or 2 or 3, so on...
+	void setDeviceIndex(int _index);
 	// Description:
-	// Function to get the camera device id.
-	int getDeviceId() const;
+	// Function to get the camera device index.
+	int getDeviceIndex() const;
 
 	// Description:
 	// Function to set the frame delay which makes specified delay in the camera thread.
@@ -349,13 +348,6 @@ protected:
 	// Only virtual function that is expected to be overridden in the derived class
 	// to process the captured frame.
 	virtual void processFrame(cv::Mat& _frame) override;
-
-	// Description:
-	// Function that stops the camera thread.
-	void stopCameraThread();
-	// Description:
-	// Function that stops the camera processing thread.
-	void stopProcessingThread();
 
 	fvkCameraThread *p_ct;
 	fvkCameraProcessingThread *p_pt;

@@ -25,24 +25,22 @@ purpose:	Class to create a thread for capturing frames from OpenCV camera.
 
 using namespace R3D;
 
-fvkCameraThread::fvkCameraThread(int _device_index, fvkSemaphoreBuffer<cv::Mat>* _buffer, cv::Size _resolution) :
+fvkCameraThread::fvkCameraThread(fvkSemaphoreBuffer<cv::Mat>* _buffer, int _device_index, cv::Size _resolution) :
 fvkCameraThreadAbstract(),
 p_buffer(_buffer),
 m_sync_proc_thread(false)
 {
-	m_device_index = _device_index;
-	m_width = _resolution.width;
-	m_height = _resolution.height;
+	setDeviceIndex(_device_index);
+	setResolution(_resolution);
 }
-fvkCameraThread::fvkCameraThread(const std::string& _video_file, fvkSemaphoreBuffer<cv::Mat>* _buffer, cv::Size _resolution) :
+fvkCameraThread::fvkCameraThread(fvkSemaphoreBuffer<cv::Mat>* _buffer, const std::string& _video_file, cv::Size _resolution, int _api) :
 fvkCameraThreadAbstract(),
 p_buffer(_buffer),
 m_sync_proc_thread(false)
 {
-	m_filepath = _video_file;
-	m_device_index = -1;
-	m_width = _resolution.width;
-	m_height = _resolution.height;
+	setVideoFile(_video_file);
+	setResolution(_resolution);
+	setAPI(_api);
 }
 fvkCameraThread::~fvkCameraThread()
 {

@@ -33,17 +33,17 @@ p_stdct(nullptr),
 p_stdpt(nullptr)
 {
 	fvkSemaphoreBuffer<cv::Mat>* b = new fvkSemaphoreBuffer<cv::Mat>;
-	p_ct = new fvkCameraThread(_device_id, b, _resolution);
-	p_pt = new fvkCameraProcessingThread(_device_id, b, this);
+	p_ct = new fvkCameraThread(b, _device_id, _resolution);
+	p_pt = new fvkCameraProcessingThread(b, this, _device_id);
 }
-fvkCamera::fvkCamera(const std::string& _video_file, cv::Size _resolution) :
+fvkCamera::fvkCamera(const std::string& _video_file, cv::Size _resolution, int _api) :
 fvkCameraAbstract(),
 p_stdct(nullptr),
 p_stdpt(nullptr)
 {
 	fvkSemaphoreBuffer<cv::Mat>* b = new fvkSemaphoreBuffer<cv::Mat>;
-	p_ct = new fvkCameraThread(_video_file, b, _resolution);
-	p_pt = new fvkCameraProcessingThread(-1, b, this);
+	p_ct = new fvkCameraThread(b, _video_file, _resolution, _api);
+	p_pt = new fvkCameraProcessingThread(b, this, 0);
 }
 
 fvkCamera::fvkCamera(fvkCameraThread* _ct, fvkCameraProcessingThread* _pt) :
@@ -53,14 +53,14 @@ p_stdpt(nullptr),
 p_ct(nullptr),
 p_pt(nullptr)
 {
-	if (_ct && _pt)
-	{
-		fvkSemaphoreBuffer<cv::Mat>* b = new fvkSemaphoreBuffer<cv::Mat>;
-		_ct->setSemaphoreBuffer(b);
-		_pt->setSemaphoreBuffer(b);
+	//if (_ct && _pt)
+	//{
+		//fvkSemaphoreBuffer<cv::Mat>* b = new fvkSemaphoreBuffer<cv::Mat>;
+		//_ct->setSemaphoreBuffer(b);
+		//_pt->setSemaphoreBuffer(b);
 		p_ct = _ct;
 		p_pt = _pt;
-	}
+	//}
 }
 
 fvkCamera::~fvkCamera()
@@ -79,31 +79,28 @@ fvkCamera::~fvkCamera()
 		}
 	}
 }
-void fvkCamera::stopCameraThread()
-{
-	if (p_ct) p_ct->stop();
-	std::cout << "Camera thread has been successfully stopped.\n";
-}
-
-void fvkCamera::stopProcessingThread()
-{
-	if (p_pt) p_pt->stop();
-	std::cout << "Camera processing thread has been successfully stopped.\n";
-}
 bool fvkCamera::disconnect()
 {
-	stopProcessingThread();
+	// first stop the processing thread.
+	if (p_pt)
+	{
+		p_pt->stop();
+		std::cout << "Camera processing thread has been successfully stopped.\n";
+	}
+
+	// then stop the camera thread and release/close the device.
 	if (p_ct)
 	{
 		if (p_ct->isOpened())
 		{
-			stopCameraThread();
-			p_ct->close();
-
-			std::cout << "[" << p_ct->getDeviceId() << "] camera has been successfully disconnected.\n";
-			return true;
+			p_ct->stop();
+			if (p_ct->close())
+			{
+				std::cout << "[" << p_ct->getDeviceIndex() << "] camera has been successfully disconnected.\n";
+				return true;
+			}
 		}
-		std::cout << "[" << p_ct->getDeviceId() << "] WARNING: camera has already been disconnected.\n";
+		std::cout << "[" << p_ct->getDeviceIndex() << "] camera has been disconnected already.\n";
 	}
 	return false;
 }
@@ -113,14 +110,13 @@ bool fvkCamera::connect()
 	{
 		if (p_ct->isOpened())
 		{
-			std::cout << "[" << p_ct->getDeviceId() << "] WARNING: camera has already been connected.\n";
+			std::cout << "[" << p_ct->getDeviceIndex() << "] camera has been connected already.\n";
 			return false;
 		}
 
-		if (p_ct->open())
-			return true;
+		return p_ct->open();
 	}
-	std::cout << "WARNING: Could not open the camera or video file!\n";
+	std::cout << "Could not open the camera or video device!\n";
 	return false;
 }
 bool fvkCamera::start()
@@ -143,11 +139,6 @@ bool fvkCamera::start()
 		//	p_pt->run();
 		//});
 
-		//p_pt->getRecorder()->setFps(6);
-		//p_pt->getRecorder()->setOutputLocation("D:\\helloworld.avi");
-		//if (p_pt->getRecorder()->open() > 0)
-		//	p_pt->getRecorder()->record(true);
-
 		if (p_stdct) delete p_stdct;
 		p_stdct = new std::thread([&] { p_ct->run(); });
 		p_stdct->detach();
@@ -162,12 +153,7 @@ bool fvkCamera::start()
 bool fvkCamera::isConnected()
 {
 	if (p_ct)
-	{
-		if (p_ct->isOpened())
-		{
-			return true;
-		}
-	}
+		return p_ct->isOpened();
 	return false;
 }
 void fvkCamera::pause(bool _b) { if (p_ct) p_ct->pause(_b); }
@@ -199,13 +185,13 @@ std::string fvkCamera::getVideoFile() const
 	return "";
 }
 
-void fvkCamera::setDeviceId(int _id)
+void fvkCamera::setDeviceIndex(int _index)
 {
-	if (p_ct) p_ct->setDeviceId(_id);
+	if (p_ct) p_ct->setDeviceIndex(_index);
 }
-int fvkCamera::getDeviceId() const
+int fvkCamera::getDeviceIndex() const
 {
-	if (p_ct) return p_ct->getDeviceId();
+	if (p_ct) return p_ct->getDeviceIndex();
 	return 0;
 }
 
