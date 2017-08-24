@@ -63,11 +63,11 @@ public:
 	fvkAverageFpsStats stats;
 
 private:
-	std::queue<double> m_fps;
+	std::queue<int> m_fps;
 	fvkClockTime m_time;
 	int m_avgsize;
-	double m_capture_time;
-	double m_fpssum;
+	int m_capture_time;
+	int m_fpssum;
 	int m_fpssamples;
 };
 

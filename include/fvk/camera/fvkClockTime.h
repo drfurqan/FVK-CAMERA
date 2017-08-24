@@ -54,30 +54,30 @@ public:
 	// Function to start the clock.
 	void start();
 	// Description:
-	// Function that returns the elapsed time and restart the clock.
-	double restart();
+	// Function that returns the elapsed time (in milliseconds) and restart the clock.
+	int restart();
 	// Description:
 	// Function to stop the clock and print the execution time (if print = true). 
-	// It returns the elapsed time between start() and stop().
-	double stop(bool _print = false);
+	// It returns the elapsed time (in milliseconds) between start() and stop().
+	int stop(bool _print = false);
 	// Description:
-	// Function that returns the elapsed time (in seconds) between start() and stop().
-	double elapsed() const { return m_elapstime; }
+	// Function that returns the elapsed time (in milliseconds) between start() and stop().
+	int elapsed() const { return m_elapstime; }
 	// Description:
-	// Function to print the elapsed time. 
+	// Function to print the elapsed time (in milliseconds). 
 	void print();
 
 	// Description:
-	// Function to get the current time in seconds.
-	static double getCurrentTime();
+	// Function to get the current time in milliseconds.
+	static int getCurrentTime();
 	// Description:
 	// Function to get the local date and time.
 	static std::string getLocalTime(const char* _format = "%Y-%m-%d %X");
 
 private:
-	std::chrono::time_point<std::chrono::system_clock> m_startime;
+	std::chrono::time_point<std::chrono::steady_clock> m_startime;
 	std::string m_label;
-	double m_elapstime;
+	int m_elapstime;
 };
 
 }

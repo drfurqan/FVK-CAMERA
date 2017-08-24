@@ -39,31 +39,29 @@ void fvkClockTime::print()
 	std::cout << m_label << " took " << m_elapstime << " sec." << std::endl;
 #endif // _DEBUG
 }
-double fvkClockTime::getCurrentTime() 
+int fvkClockTime::getCurrentTime()
 { 
-	auto now = std::chrono::system_clock::now().time_since_epoch();
-	return static_cast<double>(std::chrono::duration_cast<std::chrono::seconds>(now).count());
+	auto now = std::chrono::high_resolution_clock::now().time_since_epoch();
+	return static_cast<int>(std::chrono::duration_cast<std::chrono::milliseconds>(now).count());
 }
 void fvkClockTime::start() 
 { 
-	m_startime = std::chrono::system_clock::now();
+	m_startime = std::chrono::high_resolution_clock::now();
 }
-double fvkClockTime::restart()
+int fvkClockTime::restart()
 {
-	double t = stop(false);
+	int t = stop(false);
 	start();
 	return t;
 }
-double fvkClockTime::stop(bool _print)
+int fvkClockTime::stop(bool _print)
 {
-	std::chrono::duration<double> elapsed_sec = std::chrono::system_clock::now() - m_startime;
-	m_elapstime = elapsed_sec.count();
-	if (_print)
-	{
+	auto t = std::chrono::high_resolution_clock::now() - m_startime;
+	m_elapstime = static_cast<int>(std::chrono::duration_cast<std::chrono::milliseconds>(t).count());
 #ifdef _DEBUG
-		std::cout << m_label << " took " << m_elapstime << " sec." << std::endl;
+	if (_print)
+		std::cout << m_label << " took " << m_elapstime << " milliseconds." << std::endl;
 #endif // _DEBUG
-	}
 	return m_elapstime;
 }
 

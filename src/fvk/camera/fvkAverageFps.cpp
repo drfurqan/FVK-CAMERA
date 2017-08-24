@@ -20,7 +20,7 @@ purpose:	Class to compute the average frames per second.
 **********************************************************************************/
 
 #include <fvk/camera/fvkAverageFps.h>
-
+#include <iostream>
 using namespace R3D;
 
 fvkAverageFps::fvkAverageFps(int _avg_size) :
@@ -32,11 +32,11 @@ m_fpssamples(0)
 }
 void fvkAverageFps::update()
 {
-	m_capture_time = 1.0 / m_time.restart();		// captured time in which one frame has been processed.
+	m_capture_time = m_time.restart();		// captured time in which one frame has been processed.
 
 	if (m_capture_time > 0)
 	{
-		m_fps.push(m_capture_time);
+		m_fps.push(static_cast<int>(1000 / m_capture_time));
 		m_fpssamples++;
 	}
 
@@ -47,12 +47,11 @@ void fvkAverageFps::update()
 	{
 		while (!m_fps.empty())
 		{
-			m_fpssum += m_fps.back();				// calculate the sum and clear the queue.
+			m_fpssum += m_fps.front();				// calculate the sum and clear the queue.
 			m_fps.pop();
 		}
 
-		stats.fps = static_cast<int>(m_fpssum / (static_cast<double>(m_avgsize)));
-
+		stats.fps = static_cast<int>(m_fpssum / m_avgsize);
 		m_fpssum = 0;
 		m_fpssamples = 0;
 	}
