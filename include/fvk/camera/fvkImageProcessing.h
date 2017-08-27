@@ -24,13 +24,13 @@ purpose:	Class to do some basic image processing.
 
 #include "fvkFaceDetector.h"
 
-#include <mutex>
 #include "opencv2/opencv.hpp"
+#include <mutex>
 
 namespace R3D
 {
 
-class FVK_EXPORT fvkCameraImageProcessing
+class FVK_EXPORT fvkImageProcessing
 {
 public:
 	// Description:
@@ -39,8 +39,12 @@ public:
 	//  If there is a single camera connected, just pass 0.
 	//  In case of multiple cameras, try to pass 1 or 2 or 3, so on...
 	// If _width and _height is specified, then this will become the camera frame resolution.
-	fvkCameraImageProcessing();
-	virtual ~fvkCameraImageProcessing();
+	fvkImageProcessing();
+	virtual ~fvkImageProcessing();
+
+	// Description:
+	// Function to reset all the parameters of this object.
+	void reset();
 
 	// Description:
 	// Denoising/smoothing methods. 
@@ -49,17 +53,18 @@ public:
 		Gaussian = 0,
 		Blur,
 		Median,
-		Bilateral
+		Bilateral,
+		NL_Mean		// Non-local Means Denoising algorithm
 	};
 
 	// Description:
 	// Function to set denoising/smoothing method.
 	// Default value is DenoisingMethod::Bilateral.
-	void setDenoisingMethod(fvkCameraImageProcessing::DenoisingMethod _value);
+	void setDenoisingMethod(fvkImageProcessing::DenoisingMethod _value);
 	// Description:
 	// Function to get denoising/smoothing method.
 	// Default value is DenoisingMethod::Bilateral.
-	fvkCameraImageProcessing::DenoisingMethod getDenoisingMethod();
+	fvkImageProcessing::DenoisingMethod getDenoisingMethod();
 	// Description:
 	// Function to set denoising/smoothing level/kernel.
 	// Default value is 0.
@@ -321,7 +326,7 @@ public:
 	// Description:
 	// Function to clips a color to max values when it falls outside of the specified range.
 	// _value should be between 0 and 100.
-	static void setDenoisingFilter(cv::Mat& _img, int _value, fvkCameraImageProcessing::DenoisingMethod _method);
+	static void setDenoisingFilter(cv::Mat& _img, int _value, fvkImageProcessing::DenoisingMethod _method);
 	// Description:
 	// Function to apply various kinds of image processing filters such as sharpen an image.
 	// _value should be between 0 and 100.
@@ -339,7 +344,7 @@ public:
 	// Function to do non-photorealistic rendering on the given image. 
 	// _value should be between 0 and 200.
 	// _sigma should be between 0 and 1.
-	static void setNonPhotorealisticFilter(cv::Mat& _img, int _value, float _sigma, fvkCameraImageProcessing::Filters _filter);
+	static void setNonPhotorealisticFilter(cv::Mat& _img, int _value, float _sigma, fvkImageProcessing::Filters _filter);
 	// Description:
 	// Function to adjust the brightness of the image.
 	// _value should be between -100 and 100.
@@ -381,7 +386,6 @@ public:
 	// Function to clips a color to max values when it falls outside of the specified range.
 	// _value should be between 0 and 100.
 	static void setClipFilter(cv::Mat& _img, int _value);
-
 
 	// Description:
 	// Function to perform image processing algorithms.

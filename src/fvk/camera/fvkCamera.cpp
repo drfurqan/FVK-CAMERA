@@ -50,16 +50,16 @@ fvkCamera::fvkCamera(fvkCameraThread* _ct, fvkCameraProcessingThread* _pt) :
 fvkCameraAbstract(),
 p_stdct(nullptr),
 p_stdpt(nullptr),
-p_ct(nullptr),
-p_pt(nullptr)
+p_ct(_ct),
+p_pt(_pt)
 {
 	//if (_ct && _pt)
 	//{
 		//fvkSemaphoreBuffer<cv::Mat>* b = new fvkSemaphoreBuffer<cv::Mat>;
 		//_ct->setSemaphoreBuffer(b);
 		//_pt->setSemaphoreBuffer(b);
-		p_ct = _ct;
-		p_pt = _pt;
+		//p_ct = _ct;
+		//p_pt = _pt;
 	//}
 }
 
@@ -238,7 +238,7 @@ fvkVideoWriter* fvkCamera::getRecorder() const
 	if (p_pt) return p_pt->getRecorder();
 	return nullptr;
 }
-fvkCameraImageProcessing* fvkCamera::imageProcessing() const
+fvkImageProcessing* fvkCamera::imageProcessing() const
 { 
 	if (p_pt) return p_pt->imageProcessing();
 	return nullptr;

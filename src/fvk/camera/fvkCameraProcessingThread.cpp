@@ -29,7 +29,7 @@ fvkCameraProcessingThread::fvkCameraProcessingThread(fvkSemaphoreBuffer<cv::Mat>
 p_buffer(_buffer),
 p_frameobserver(_frameobserver),
 m_device_index(_device_index),
-p_ip(new fvkCameraImageProcessing()),
+p_ip(new fvkImageProcessing()),
 p_vr(new fvkVideoWriter()),
 m_isstop(false),
 m_frame(cv::Mat()),

@@ -24,7 +24,7 @@ This thread is synchronized with the camera thread using a semaphore.
 * If not, please contact Dr. Furqan Ullah immediately:
 **********************************************************************************/
 
-#include "fvkCameraImageProcessing.h"
+#include "fvkImageProcessing.h"
 #include "fvkSemaphoreBuffer.h"
 #include "fvkVideoWriter.h"
 #include "fvkAverageFps.h"
@@ -117,7 +117,7 @@ public:
 
 	// Description:
 	// Function to get a pointer to image processing.
-	fvkCameraImageProcessing* imageProcessing() const { return p_ip; }
+	fvkImageProcessing* imageProcessing() const { return p_ip; }
 
 	// Description:
 	// Function to set a pointer to semaphore buffer which does synchronization between capturing and processing threads.
@@ -142,7 +142,7 @@ protected:
 	fvkAverageFps m_avgfps;
 	std::mutex m_statsmutex;
 
-	fvkCameraImageProcessing* p_ip;
+	fvkImageProcessing* p_ip;
 
 	fvkVideoWriter* p_vr;
 

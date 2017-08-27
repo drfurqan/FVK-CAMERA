@@ -18,11 +18,11 @@ purpose:	Class to do some basic image processing.
 * If not, please contact Dr. Furqan Ullah immediately:
 **********************************************************************************/
 
-#include <fvk/camera/fvkCameraImageProcessing.h>
+#include <fvk/camera/fvkImageProcessing.h>
 
 using namespace R3D;
 
-fvkCameraImageProcessing::fvkCameraImageProcessing() :
+fvkImageProcessing::fvkImageProcessing() :
 m_denoislevel(0),
 m_denoismethod(DenoisingMethod::Bilateral),
 m_sharplevel(0),
@@ -51,9 +51,39 @@ m_isfacetrack(false)
 {
 }
 
-fvkCameraImageProcessing::~fvkCameraImageProcessing()
+fvkImageProcessing::~fvkImageProcessing()
 {
 }
+
+void fvkImageProcessing::reset()
+{
+	m_denoislevel = 0;
+	m_denoismethod = DenoisingMethod::Gaussian;
+	m_sharplevel = 0;
+	m_details = 0;
+	m_smoothness = 0;
+	m_pencilsketch = 0;
+	m_stylization = 0;
+	m_brigtness = 0;
+	m_contrast = 0;
+	m_colorcontrast = 0;
+	m_saturation = 0;
+	m_vibrance = 0;
+	m_hue = 0;
+	m_gamma = 0;
+	m_sepia = 0;
+	m_clip = 0;
+	m_convertcolor = -1;
+	m_ndots = 0;
+	m_isemboss = false;
+	m_rotangle = 0;
+	m_isnegative = false;
+	m_zoomperc = 100;
+	m_flip = FlipDirection::None;
+	m_isgray = false;
+	m_isfacetrack = false;
+}
+
 
 static cv::Size __resizeKeepAspectRatio(int _old_w, int _old_h, int _new_w, int _new_h)
 {
@@ -73,33 +103,39 @@ static cv::Size __resizeKeepAspectRatio(int _old_w, int _old_h, int _new_w, int 
 	return cv::Size(_final_w, _final_h);
 }
 
-void fvkCameraImageProcessing::setDenoisingFilter(cv::Mat& _img, int _value, fvkCameraImageProcessing::DenoisingMethod _method)
+void fvkImageProcessing::setDenoisingFilter(cv::Mat& _img, int _value, fvkImageProcessing::DenoisingMethod _method)
 {
 	if (_img.empty() || _value < 2) return;
 
 	if (_value % 2 != 0)
 	{
 		cv::Mat m(_img.size(), _img.type());
-		if (_method == fvkCameraImageProcessing::DenoisingMethod::Gaussian)
+		if (_method == fvkImageProcessing::DenoisingMethod::Gaussian)
 			cv::GaussianBlur(_img, m, cv::Size(_value, _value), 0, 0);
-		else if (_method == fvkCameraImageProcessing::DenoisingMethod::Blur)
+		else if (_method == fvkImageProcessing::DenoisingMethod::Blur)
 			cv::blur(_img, m, cv::Size(_value, _value));
-		else if (_method == fvkCameraImageProcessing::DenoisingMethod::Median)
+		else if (_method == fvkImageProcessing::DenoisingMethod::Median)
 			cv::medianBlur(_img, m, _value);
-		else if (_method == fvkCameraImageProcessing::DenoisingMethod::Bilateral)
+		else if (_method == fvkImageProcessing::DenoisingMethod::Bilateral)
 			cv::bilateralFilter(_img, m, _value, _value * 2, _value / 2);
+		else if (_method == fvkImageProcessing::DenoisingMethod::NL_Mean)
+		{
+			if (_img.channels() == 3)
+				cv::fastNlMeansDenoisingColored(_img, m, 3.0f, 3.0f, _value, 21);
+			else
+				cv::fastNlMeansDenoising(_img, m, 3.0f, _value, 21);
+		}
 		_img = m;
 	}
 }
 
-void fvkCameraImageProcessing::setWeightedFilter(cv::Mat& _img, int _value, double _alpha, double _beta)
+void fvkImageProcessing::setWeightedFilter(cv::Mat& _img, int _value, double _alpha, double _beta)
 {
 	if (_img.empty() || _value == 0) return;
 
 	cv::Mat m(_img.size(), _img.type());
 	cv::GaussianBlur(_img, m, cv::Size(0, 0), static_cast<double>(_value));
 	cv::addWeighted(_img, _alpha, m, _beta, 0, m);
-
 	//cv::Mat kern = (cv::Mat_<char>(3, 3) <<
 	//	0, -1, 0,
 	//	-1, 5, -1,
@@ -108,24 +144,25 @@ void fvkCameraImageProcessing::setWeightedFilter(cv::Mat& _img, int _value, doub
 	_img = m;
 }
 
-void fvkCameraImageProcessing::setNonPhotorealisticFilter(cv::Mat& _img, int _value, float _sigma, fvkCameraImageProcessing::Filters _filter)
+void fvkImageProcessing::setNonPhotorealisticFilter(cv::Mat& _img, int _value, float _sigma, fvkImageProcessing::Filters _filter)
 {
 	if (_img.empty() || _value == 0) return;
+	if (_img.channels() != 3) return;
 
-	cv::Mat m(_img.size(), _img.type());
-	if(_filter == fvkCameraImageProcessing::Filters::Details)
+	cv::Mat m;
+	if(_filter == fvkImageProcessing::Filters::Details)
 		cv::detailEnhance(_img, m, static_cast<float>(_value), _sigma/*0.15f*/);
-	if (_filter == fvkCameraImageProcessing::Filters::Smoothing)
+	if (_filter == fvkImageProcessing::Filters::Smoothing)
 		cv::edgePreservingFilter(_img, m, cv::RECURS_FILTER, static_cast<float>(_value), _sigma/*0.1f*/);
-	if (_filter == fvkCameraImageProcessing::Filters::PencilSketch)
-		cv::pencilSketch(_img, m, m, static_cast<float>(_value), _sigma/*0.07f*/, 0.02f);
-	if (_filter == fvkCameraImageProcessing::Filters::Stylization)
+	if (_filter == fvkImageProcessing::Filters::PencilSketch)
+		cv::pencilSketch(_img, m, m, static_cast<float>(_value), _sigma/*0.07f*/, 0.03f);
+	if (_filter == fvkImageProcessing::Filters::Stylization)
 		cv::stylization(_img, m, static_cast<float>(_value), _sigma/*0.45f*/);
 	_img = m;
 }
 
 
-void fvkCameraImageProcessing::setBrightnessFilter(cv::Mat& _img, int _value)
+void fvkImageProcessing::setBrightnessFilter(cv::Mat& _img, int _value)
 {
 	if (_img.empty() || _value == 0) return;
 
@@ -163,7 +200,7 @@ void fvkCameraImageProcessing::setBrightnessFilter(cv::Mat& _img, int _value)
 
 }
 
-void fvkCameraImageProcessing::setContrastFilter(cv::Mat& _img, int _value)
+void fvkImageProcessing::setContrastFilter(cv::Mat& _img, int _value)
 {
 	if (_img.empty() || _value == 0) return;
 
@@ -173,7 +210,7 @@ void fvkCameraImageProcessing::setContrastFilter(cv::Mat& _img, int _value)
 	_img = m;
 }
 
-void fvkCameraImageProcessing::setColorContrastFilter(cv::Mat& _img, int _value)
+void fvkImageProcessing::setColorContrastFilter(cv::Mat& _img, int _value)
 {
 	if (_img.empty() || _value == 0) return;
 
@@ -231,10 +268,41 @@ void fvkCameraImageProcessing::setColorContrastFilter(cv::Mat& _img, int _value)
 		}
 		_img = m;
 	}
+	else if (_img.channels() == 4)
+	{
+		cv::Mat m(_img.size(), _img.type());
+		for (int y = 0; y < _img.rows; y++)
+		{
+			for (int x = 0; x < _img.cols; x++)
+			{
+				cv::Vec4f pixel = _img.at<cv::Vec4b>(cv::Point(x, y));
 
+				pixel.val[0] /= 255.f;
+				pixel.val[0] -= 0.5f;
+				pixel.val[0] *= value;
+				pixel.val[0] += 0.5f;
+				pixel.val[0] *= 255.f;
+
+				pixel.val[1] /= 255.f;
+				pixel.val[1] -= 0.5f;
+				pixel.val[1] *= value;
+				pixel.val[1] += 0.5f;
+				pixel.val[1] *= 255.f;
+
+				pixel.val[2] /= 255.f;
+				pixel.val[2] -= 0.5f;
+				pixel.val[2] *= value;
+				pixel.val[2] += 0.5f;
+				pixel.val[2] *= 255.f;
+
+				m.at<cv::Vec4b>(cv::Point(x, y)) = pixel;
+			}
+		}
+		_img = m;
+	}
 }
 
-void fvkCameraImageProcessing::setSaturationFilter(cv::Mat& _img, int _value)
+void fvkImageProcessing::setSaturationFilter(cv::Mat& _img, int _value)
 {
 	if (_img.empty() || _value == 0) return;
 
@@ -266,7 +334,7 @@ void fvkCameraImageProcessing::setSaturationFilter(cv::Mat& _img, int _value)
 	}
 }
 
-void fvkCameraImageProcessing::setVibranceFilter(cv::Mat& _img, int _value)
+void fvkImageProcessing::setVibranceFilter(cv::Mat& _img, int _value)
 {
 	if (_img.empty() || _value == 0) return;
 
@@ -303,13 +371,12 @@ void fvkCameraImageProcessing::setVibranceFilter(cv::Mat& _img, int _value)
 	}
 }
 
-void fvkCameraImageProcessing::setHueFilter(cv::Mat& _img, int _value)
+void fvkImageProcessing::setHueFilter(cv::Mat& _img, int _value)
 {
 	if (_img.empty() || _value == 0) return;
 
 	if (_img.channels() == 3)
 	{
-		int value = std::abs(_value - 255);
 		cv::Mat m;
 		cv::cvtColor(_img, m, cv::ColorConversionCodes::COLOR_BGR2HSV);	// BGR to HSV
 
@@ -319,7 +386,7 @@ void fvkCameraImageProcessing::setHueFilter(cv::Mat& _img, int _value)
 			{
 				cv::Vec3i pixel = m.at<cv::Vec3b>(cv::Point(x, y));
 
-				pixel.val[0] += value;
+				pixel.val[0] += _value;
 				if (pixel.val[0] < 0) 
 					pixel.val[0] = 0; 
 				else if (pixel.val[0] > 255) 
@@ -333,7 +400,7 @@ void fvkCameraImageProcessing::setHueFilter(cv::Mat& _img, int _value)
 	}
 }
 
-void fvkCameraImageProcessing::setGammaFilter(cv::Mat& _img, int _value)
+void fvkImageProcessing::setGammaFilter(cv::Mat& _img, int _value)
 {
 	if (_img.empty() || _value == 0) return;
 
@@ -359,7 +426,7 @@ void fvkCameraImageProcessing::setGammaFilter(cv::Mat& _img, int _value)
 	}
 }
 
-void fvkCameraImageProcessing::setSepiaFilter(cv::Mat& _img, int _value)
+void fvkImageProcessing::setSepiaFilter(cv::Mat& _img, int _value)
 {
 	if (_img.empty() || _value == 0) return;
 
@@ -385,7 +452,7 @@ void fvkCameraImageProcessing::setSepiaFilter(cv::Mat& _img, int _value)
 	}
 }
 
-void fvkCameraImageProcessing::setClipFilter(cv::Mat& _img, int _value)
+void fvkImageProcessing::setClipFilter(cv::Mat& _img, int _value)
 {
 	if (_img.empty() || _value == 0) return;
 
@@ -422,7 +489,7 @@ void fvkCameraImageProcessing::setClipFilter(cv::Mat& _img, int _value)
 	}
 }
 
-void fvkCameraImageProcessing::imageProcessing(cv::Mat& _frame)
+void fvkImageProcessing::imageProcessing(cv::Mat& _frame)
 {
 	m_mutex.lock();
 
@@ -436,16 +503,16 @@ void fvkCameraImageProcessing::imageProcessing(cv::Mat& _frame)
 		setWeightedFilter(_frame, m_sharplevel, 1.5, -0.5);
 
 	if (m_details > 0)
-		setNonPhotorealisticFilter(_frame, m_details, 0.15f, fvkCameraImageProcessing::Filters::Details);
+		setNonPhotorealisticFilter(_frame, m_details, 0.08f, fvkImageProcessing::Filters::Details);
 
 	if (m_smoothness > 0)
-		setNonPhotorealisticFilter(_frame, m_smoothness, 0.1f, fvkCameraImageProcessing::Filters::Smoothing);
+		setNonPhotorealisticFilter(_frame, m_smoothness, 0.1f, fvkImageProcessing::Filters::Smoothing);
 
 	if (m_pencilsketch > 0)
-		setNonPhotorealisticFilter(_frame, m_pencilsketch, 0.07f, fvkCameraImageProcessing::Filters::PencilSketch);
+		setNonPhotorealisticFilter(_frame, m_pencilsketch, 0.1f, fvkImageProcessing::Filters::PencilSketch);
 
 	if (m_stylization > 0)
-		setNonPhotorealisticFilter(_frame, m_stylization, 0.45f, fvkCameraImageProcessing::Filters::Stylization);
+		setNonPhotorealisticFilter(_frame, m_stylization, 0.45f, fvkImageProcessing::Filters::Stylization);
 
 	if (m_brigtness != 0)
 		setBrightnessFilter(_frame, m_brigtness);
@@ -468,10 +535,10 @@ void fvkCameraImageProcessing::imageProcessing(cv::Mat& _frame)
 	if (m_gamma != 0)
 		setGammaFilter(_frame, m_gamma);
 
-	if (m_sepia != 0)
+	if (m_sepia > 0)
 		setSepiaFilter(_frame, m_sepia);
 
-	if (m_clip != 0)
+	if (m_clip > 0)
 		setClipFilter(_frame, m_clip);
 
 	if (m_isnegative)
@@ -548,18 +615,16 @@ void fvkCameraImageProcessing::imageProcessing(cv::Mat& _frame)
 	{
 		cv::Size s = __resizeKeepAspectRatio(_frame.cols, _frame.rows, static_cast<int>(static_cast<float>(_frame.cols * (m_zoomperc / 100.f))), static_cast<int>(static_cast<float>(_frame.rows * (m_zoomperc / 100.f))));
 		cv::Mat m = cv::Mat::zeros(s, _frame.type());
-		cv::resize(_frame, m, s, 0, 0, cv::INTER_CUBIC);
+		cv::resize(_frame, m, s, 0, 0, cv::InterpolationFlags::INTER_LINEAR);
 		_frame = m;
 	}
 
 	if (m_rotangle != 0)
 	{
-		cv::Point2f cen;
-		cen.x = static_cast<float>(_frame.cols) / 2.f;
-		cen.y = static_cast<float>(_frame.rows) / 2.f;
-		cv::Mat rot_mat = cv::getRotationMatrix2D(cen, m_rotangle, 1);
+		cv::Point2d cen(static_cast<double>(_frame.cols) / 2.0, static_cast<double>(_frame.rows) / 2.0);
+		cv::Mat rot_mat = cv::getRotationMatrix2D(cen, m_rotangle, 1.0);
 		cv::Mat m;
-		cv::warpAffine(_frame, m, rot_mat, _frame.size(), cv::INTER_LINEAR);
+		cv::warpAffine(_frame, m, rot_mat, _frame.size(), cv::InterpolationFlags::INTER_LINEAR);
 		_frame = m;
 	}
 
@@ -588,261 +653,261 @@ void fvkCameraImageProcessing::imageProcessing(cv::Mat& _frame)
 	m_mutex.unlock();
 }
 
-void fvkCameraImageProcessing::setDenoisingMethod(fvkCameraImageProcessing::DenoisingMethod _value)
+void fvkImageProcessing::setDenoisingMethod(fvkImageProcessing::DenoisingMethod _value)
 {
 	std::lock_guard<std::mutex> locker(m_mutex);
 	m_denoismethod = _value;
 }
-fvkCameraImageProcessing::DenoisingMethod fvkCameraImageProcessing::getDenoisingMethod()
+fvkImageProcessing::DenoisingMethod fvkImageProcessing::getDenoisingMethod()
 {
 	std::lock_guard<std::mutex> locker(m_mutex);
 	return m_denoismethod;
 }
-void fvkCameraImageProcessing::setDenoisingLevel(int _value)
+void fvkImageProcessing::setDenoisingLevel(int _value)
 {
 	std::lock_guard<std::mutex> locker(m_mutex);
 	m_denoislevel = _value;
 }
-int fvkCameraImageProcessing::getDenoisingLevel()
+int fvkImageProcessing::getDenoisingLevel()
 {
 	std::lock_guard<std::mutex> locker(m_mutex);
 	return m_denoislevel;
 }
 
-void fvkCameraImageProcessing::setSharpeningLevel(int _value)
+void fvkImageProcessing::setSharpeningLevel(int _value)
 {
 	std::lock_guard<std::mutex> locker(m_mutex);
 	m_sharplevel = _value;
 }
-int fvkCameraImageProcessing::getSharpeningLevel()
+int fvkImageProcessing::getSharpeningLevel()
 {
 	std::lock_guard<std::mutex> locker(m_mutex);
 	return m_sharplevel;
 }
 
-void fvkCameraImageProcessing::setDetailLevel(int _value)
+void fvkImageProcessing::setDetailLevel(int _value)
 {
 	std::lock_guard<std::mutex> locker(m_mutex);
 	m_details = _value;
 }
-int fvkCameraImageProcessing::getDetailLevel()
+int fvkImageProcessing::getDetailLevel()
 {
 	std::lock_guard<std::mutex> locker(m_mutex);
 	return m_details;
 }
-void fvkCameraImageProcessing::setSmoothness(int _value)
+void fvkImageProcessing::setSmoothness(int _value)
 {
 	std::lock_guard<std::mutex> locker(m_mutex);
 	m_smoothness = _value;
 }
-int fvkCameraImageProcessing::getSmoothness()
+int fvkImageProcessing::getSmoothness()
 {
 	std::lock_guard<std::mutex> locker(m_mutex);
 	return m_smoothness;
 }
-void fvkCameraImageProcessing::setPencilSketchLevel(int _value)
+void fvkImageProcessing::setPencilSketchLevel(int _value)
 {
 	std::lock_guard<std::mutex> locker(m_mutex);
 	m_pencilsketch = _value;
 }
-int fvkCameraImageProcessing::getPencilSketchLevel()
+int fvkImageProcessing::getPencilSketchLevel()
 {
 	std::lock_guard<std::mutex> locker(m_mutex);
 	return m_pencilsketch;
 }
-void fvkCameraImageProcessing::setStylizationLevel(int _value)
+void fvkImageProcessing::setStylizationLevel(int _value)
 {
 	std::lock_guard<std::mutex> locker(m_mutex);
 	m_stylization = _value;
 }
-int fvkCameraImageProcessing::getStylizationLevel()
+int fvkImageProcessing::getStylizationLevel()
 {
 	std::lock_guard<std::mutex> locker(m_mutex);
 	return m_stylization;
 }
 
-void fvkCameraImageProcessing::setBrightness(int _value)
+void fvkImageProcessing::setBrightness(int _value)
 {
 	std::lock_guard<std::mutex> locker(m_mutex);
 	m_brigtness = _value;
 }
-int fvkCameraImageProcessing::getBrightness()
+int fvkImageProcessing::getBrightness()
 {
 	std::lock_guard<std::mutex> locker(m_mutex);
 	return m_brigtness;
 }
 
-void fvkCameraImageProcessing::setContrast(int _value)
+void fvkImageProcessing::setContrast(int _value)
 {
 	std::lock_guard<std::mutex> locker(m_mutex);
 	m_contrast = _value;
 }
-int fvkCameraImageProcessing::getContrast()
+int fvkImageProcessing::getContrast()
 {
 	std::lock_guard<std::mutex> locker(m_mutex);
 	return m_contrast;
 }
 
-void fvkCameraImageProcessing::setColorContrast(int _value)
+void fvkImageProcessing::setColorContrast(int _value)
 {
 	std::lock_guard<std::mutex> locker(m_mutex);
 	m_colorcontrast = _value;
 }
-int fvkCameraImageProcessing::getColorContrast()
+int fvkImageProcessing::getColorContrast()
 {
 	std::lock_guard<std::mutex> locker(m_mutex);
 	return m_colorcontrast;
 }
 
-void fvkCameraImageProcessing::setSaturation(int _value)
+void fvkImageProcessing::setSaturation(int _value)
 {
 	std::lock_guard<std::mutex> locker(m_mutex);
 	m_saturation = _value;
 }
-int fvkCameraImageProcessing::getSaturation()
+int fvkImageProcessing::getSaturation()
 {
 	std::lock_guard<std::mutex> locker(m_mutex);
 	return m_saturation;
 }
 
-void fvkCameraImageProcessing::setVibrance(int _value)
+void fvkImageProcessing::setVibrance(int _value)
 {
 	std::lock_guard<std::mutex> locker(m_mutex);
 	m_vibrance = _value;
 }
-int fvkCameraImageProcessing::getVibrance()
+int fvkImageProcessing::getVibrance()
 {
 	std::lock_guard<std::mutex> locker(m_mutex);
 	return m_vibrance;
 }
 
-void fvkCameraImageProcessing::setHue(int _value)
+void fvkImageProcessing::setHue(int _value)
 {
 	std::lock_guard<std::mutex> locker(m_mutex);
 	m_hue = _value;
 }
-int fvkCameraImageProcessing::getHue()
+int fvkImageProcessing::getHue()
 {
 	std::lock_guard<std::mutex> locker(m_mutex);
 	return m_hue;
 }
 
-void fvkCameraImageProcessing::setGamma(int _value)
+void fvkImageProcessing::setGamma(int _value)
 {
 	std::lock_guard<std::mutex> locker(m_mutex);
 	m_gamma = _value;
 }
-int fvkCameraImageProcessing::getGamma()
+int fvkImageProcessing::getGamma()
 {
 	std::lock_guard<std::mutex> locker(m_mutex);
 	return m_gamma;
 }
 
-void fvkCameraImageProcessing::setSepia(int _value)
+void fvkImageProcessing::setSepia(int _value)
 {
 	std::lock_guard<std::mutex> locker(m_mutex);
 	m_sepia = _value;
 }
-int fvkCameraImageProcessing::getSepia()
+int fvkImageProcessing::getSepia()
 {
 	std::lock_guard<std::mutex> locker(m_mutex);
 	return m_sepia;
 }
 
-void fvkCameraImageProcessing::setClip(int _value)
+void fvkImageProcessing::setClip(int _value)
 {
 	std::lock_guard<std::mutex> locker(m_mutex);
 	m_clip = _value;
 }
-int fvkCameraImageProcessing::getClip()
+int fvkImageProcessing::getClip()
 {
 	std::lock_guard<std::mutex> locker(m_mutex);
 	return m_clip;
 }
 
-void fvkCameraImageProcessing::setNegativeModeEnabled(bool _value)
+void fvkImageProcessing::setNegativeModeEnabled(bool _value)
 {
 	std::lock_guard<std::mutex> locker(m_mutex);
 	m_isnegative = _value;
 }
-bool fvkCameraImageProcessing::isNegativeModeEnabled()
+bool fvkImageProcessing::isNegativeModeEnabled()
 {
 	std::lock_guard<std::mutex> locker(m_mutex);
 	return m_isnegative;
 }
 
-void fvkCameraImageProcessing::setLightEmbossEnabled(bool _value)
+void fvkImageProcessing::setLightEmbossEnabled(bool _value)
 {
 	std::lock_guard<std::mutex> locker(m_mutex);
 	m_isemboss = _value;
 }
-bool fvkCameraImageProcessing::isLightEmbossEnabled()
+bool fvkImageProcessing::isLightEmbossEnabled()
 {
 	std::lock_guard<std::mutex> locker(m_mutex);
 	return m_isemboss;
 }
 
-void fvkCameraImageProcessing::setDotPatternLevel(int _value)
+void fvkImageProcessing::setDotPatternLevel(int _value)
 {
 	std::lock_guard<std::mutex> locker(m_mutex);
 	m_ndots = _value;
 }
-int fvkCameraImageProcessing::getDotPatternLevel()
+int fvkImageProcessing::getDotPatternLevel()
 {
 	std::lock_guard<std::mutex> locker(m_mutex);
 	return m_ndots;
 }
 
-void fvkCameraImageProcessing::setFlipDirection(FlipDirection _d)
+void fvkImageProcessing::setFlipDirection(FlipDirection _d)
 {
 	std::lock_guard<std::mutex> locker(m_mutex);
 	m_flip = _d;
 }
-fvkCameraImageProcessing::FlipDirection fvkCameraImageProcessing::getFlipDirection()
+fvkImageProcessing::FlipDirection fvkImageProcessing::getFlipDirection()
 {
 	std::lock_guard<std::mutex> locker(m_mutex);
 	return m_flip;
 }
 
-void fvkCameraImageProcessing::setZoomLevel(int _value)
+void fvkImageProcessing::setZoomLevel(int _value)
 {
 	std::lock_guard<std::mutex> locker(m_mutex);
 	m_zoomperc = _value;
 }
-int fvkCameraImageProcessing::getZoomLevel()
+int fvkImageProcessing::getZoomLevel()
 {
 	std::lock_guard<std::mutex> locker(m_mutex);
 	return m_zoomperc;
 }
 
-void fvkCameraImageProcessing::setRotationAngle(double _value)
+void fvkImageProcessing::setRotationAngle(double _value)
 {
 	std::lock_guard<std::mutex> locker(m_mutex);
 	m_rotangle = _value;
 }
-double fvkCameraImageProcessing::getRotationAngle()
+double fvkImageProcessing::getRotationAngle()
 {
 	std::lock_guard<std::mutex> locker(m_mutex);
 	return m_rotangle;
 }
 
-void fvkCameraImageProcessing::setConvertColor(int _value)
+void fvkImageProcessing::setConvertColor(int _value)
 {
 	std::lock_guard<std::mutex> locker(m_mutex);
 	m_convertcolor = _value;
 }
-int fvkCameraImageProcessing::getConvertColor()
+int fvkImageProcessing::getConvertColor()
 {
 	std::lock_guard<std::mutex> locker(m_mutex);
 	return m_convertcolor;
 }
 
-void fvkCameraImageProcessing::setGrayScaleEnabled(bool _value)
+void fvkImageProcessing::setGrayScaleEnabled(bool _value)
 {
 	std::lock_guard<std::mutex> locker(m_mutex);
 	m_isgray = _value;
 }
-bool fvkCameraImageProcessing::isGrayScaleEnabled()
+bool fvkImageProcessing::isGrayScaleEnabled()
 {
 	std::lock_guard<std::mutex> locker(m_mutex);
 	return m_isgray;
@@ -851,26 +916,26 @@ bool fvkCameraImageProcessing::isGrayScaleEnabled()
 /************************************************************************/
 /*                                                                      */
 /************************************************************************/
-bool fvkCameraImageProcessing::loadCascadeClassifier(const std::string& _filename)
+bool fvkImageProcessing::loadCascadeClassifier(const std::string& _filename)
 {
 	return m_ft.loadCascadeClassifier(_filename);
 }
-void fvkCameraImageProcessing::setFaceDetectionEnabled(bool _value)
+void fvkImageProcessing::setFaceDetectionEnabled(bool _value)
 {
 	std::lock_guard<std::mutex> locker(m_mutex);
 	m_isfacetrack = _value;
 }
-bool fvkCameraImageProcessing::isFaceDetectionEnabled()
+bool fvkImageProcessing::isFaceDetectionEnabled()
 {
 	std::lock_guard<std::mutex> locker(m_mutex);
 	return m_isfacetrack;
 }
-void fvkCameraImageProcessing::setDetectedFaceColor(const cv::Vec3b& _rgb)
+void fvkImageProcessing::setDetectedFaceColor(const cv::Vec3b& _rgb)
 {
 	std::lock_guard<std::mutex> locker(m_mutex);
 	m_ft.setTrackedFaceColor(_rgb);
 }
-cv::Vec3b fvkCameraImageProcessing::getDetectedFaceColor()
+cv::Vec3b fvkImageProcessing::getDetectedFaceColor()
 {
 	std::lock_guard<std::mutex> locker(m_mutex);
 	return m_ft.getTrackedFaceColor();

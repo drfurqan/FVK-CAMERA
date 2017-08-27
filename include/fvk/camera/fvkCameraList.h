@@ -76,7 +76,7 @@ public:
 	// resolution Size(-1, -1) will do the auto-selection for the frame's width and height.
 	CAMERA* add(int _device_id, cv::Size _resolution = cv::Size(-1, -1))
 	{
-		if (getDeviceId(_device_id) != nullptr)
+		if (getBy(_device_id) != nullptr)
 			return nullptr;
 
 		CAMERA* p = new CAMERA(_device_id, _resolution);
@@ -90,9 +90,9 @@ public:
 	// (eg. img_%02d.jpg, which will read samples like img_00.jpg, img_01.jpg, img_02.jpg, ...)
 	// _resolution is the desired camera frame width and height.
 	// resolution Size(-1, -1) will do the auto-selection for the frame's width and height.
-	CAMERA* add(const std::string& _video_file, cv::Size _resolution = cv::Size(-1, -1))
+	CAMERA* add(const std::string& _video_file, cv::Size _resolution = cv::Size(-1, -1), int _api = cv::VideoCaptureAPIs::CAP_ANY)
 	{
-		CAMERA* p = new CAMERA(_video_file, _resolution);
+		CAMERA* p = new CAMERA(_video_file, _resolution, _api);
 		m_cameras.push_back(p);
 		return p;
 	}
@@ -105,7 +105,7 @@ public:
 	{
 		if (!_p) return nullptr;
 
-		if (getDeviceId(_p->getDeviceId()) != nullptr)
+		if (getBy(_p->getDeviceIndex()) != nullptr)
 			return nullptr;
 
 		m_cameras.push_back(_p);
@@ -121,12 +121,12 @@ public:
 	}
 	// Description:
 	// Function to get a pointer to camera device by it's id.
-	CAMERA* getDeviceId(int _deviceid) const
+	CAMERA* getBy(int _device_index) const
 	{
 		auto it = std::find_if(m_cameras.begin(), m_cameras.end(),
-			[&_deviceid](const CAMERA* _p)
+			[&_device_index](const CAMERA* _p)
 		{
-			return _p->getDeviceId() == _deviceid;
+			return _p->getDeviceIndex() == _device_index;
 		});
 		if (it != m_cameras.end())
 			return (*it);
@@ -136,9 +136,9 @@ public:
 	// Description:
 	// Function to remove a camera from the list.
 	// It returns true on success.
-	bool remove(int _deviceid)
+	bool remove(int _device_index)
 	{
-		CAMERA* p = getDeviceId(_deviceid);
+		CAMERA* p = getBy(_device_index);
 		if (p)
 		{
 			m_cameras.erase(std::remove(m_cameras.begin(), m_cameras.end(), p), m_cameras.end());

@@ -32,7 +32,7 @@ Both thread are synchronized with semaphore methodology.
 namespace R3D
 {
 
-class fvkCameraImageProcessing;
+class fvkImageProcessing;
 class fvkCameraProcessingThread;
 
 class FVK_EXPORT fvkCameraAbstract
@@ -131,7 +131,7 @@ public:
 
 	// Description:
 	// Function to get a pointer to image processing.
-	fvkCameraImageProcessing* imageProcessing() const;
+	fvkImageProcessing* imageProcessing() const;
 
 	// Description:
 	// Function that saves the current image frame
