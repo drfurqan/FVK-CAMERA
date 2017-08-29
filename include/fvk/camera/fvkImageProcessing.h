@@ -63,7 +63,7 @@ public:
 	void setDenoisingMethod(fvkImageProcessing::DenoisingMethod _value);
 	// Description:
 	// Function to get denoising/smoothing method.
-	// Default value is DenoisingMethod::Bilateral.
+	// Default value is DenoisingMethod::Gaussian.
 	fvkImageProcessing::DenoisingMethod getDenoisingMethod();
 	// Description:
 	// Function to set denoising/smoothing level/kernel.
@@ -288,7 +288,7 @@ public:
 	// setConvertColor(CV_BGR2HSV);
 	void setConvertColor(int _value);
 	// Description:
-	// Function to get the constract for color conversion.
+	// Function to get color conversion code.
 	int getConvertColor();
 
 	// Description:
@@ -297,6 +297,24 @@ public:
 	// Description:
 	// Function that returns true if the gray-scale or black-and-white mode is ON.
 	bool isGrayScaleEnabled();
+
+	// Description:
+	// Function to specify the binary threshold value.
+	// _value should be between 0 and 255.
+	// Default value is 0.
+	void setThresholdValue(int _value);
+	// Description:
+	// Function to get the binary threshold value.
+	int getThresholdValue();
+
+	// Description:
+	// Function to specify the equalize clip limit value.
+	// _value should be between 0 and 100.
+	// Default value is 0.
+	void setEqualizeClipLimit(double _value);
+	// Description:
+	// Function to get the equalize clip limit value.
+	double getEqualizeClipLimit();
 
 	/************************************************************************/
 	/*                                                                      */
@@ -386,6 +404,10 @@ public:
 	// Function to clips a color to max values when it falls outside of the specified range.
 	// _value should be between 0 and 100.
 	static void setClipFilter(cv::Mat& _img, int _value);
+	// Description:
+	// Function to clips a color to max values when it falls outside of the specified range.
+	// _value should be between 0 and 100.
+	static void setEqualizeFilter(cv::Mat& _img, double _cliplimit, cv::Size _tile_grid_size = cv::Size(4, 4));
 
 	// Description:
 	// Function to perform image processing algorithms.
@@ -416,6 +438,8 @@ private:
 	FlipDirection m_flip;
 	bool m_isgray;
 	int m_convertcolor;
+	int m_threshold;
+	double m_equalizelimit;
 
 	bool m_isfacetrack;
 	fvkSimpleFaceDetector m_ft;

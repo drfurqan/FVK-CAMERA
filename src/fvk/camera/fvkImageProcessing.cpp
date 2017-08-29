@@ -24,7 +24,7 @@ using namespace R3D;
 
 fvkImageProcessing::fvkImageProcessing() :
 m_denoislevel(0),
-m_denoismethod(DenoisingMethod::Bilateral),
+m_denoismethod(DenoisingMethod::Gaussian),
 m_sharplevel(0),
 m_details(0),
 m_smoothness(0),
@@ -47,7 +47,9 @@ m_isnegative(false),
 m_zoomperc(100),
 m_flip(FlipDirection::None),
 m_isgray(false),
-m_isfacetrack(false)
+m_isfacetrack(false),
+m_threshold(0),
+m_equalizelimit(0)
 {
 }
 
@@ -82,6 +84,8 @@ void fvkImageProcessing::reset()
 	m_flip = FlipDirection::None;
 	m_isgray = false;
 	m_isfacetrack = false;
+	m_threshold = 0;
+	m_equalizelimit = 0;
 }
 
 
@@ -136,11 +140,13 @@ void fvkImageProcessing::setWeightedFilter(cv::Mat& _img, int _value, double _al
 	cv::Mat m(_img.size(), _img.type());
 	cv::GaussianBlur(_img, m, cv::Size(0, 0), static_cast<double>(_value));
 	cv::addWeighted(_img, _alpha, m, _beta, 0, m);
+
 	//cv::Mat kern = (cv::Mat_<char>(3, 3) <<
 	//	0, -1, 0,
-	//	-1, 5, -1,
+	//	-1, _value, -1,
 	//	0, -1, 0);
-	//cv::filter2D(m, m, -1, kern);
+	//cv::filter2D(_img, m, -1, kern);
+
 	_img = m;
 }
 
@@ -488,6 +494,63 @@ void fvkImageProcessing::setClipFilter(cv::Mat& _img, int _value)
 		_img = m;
 	}
 }
+void fvkImageProcessing::setEqualizeFilter(cv::Mat& _img, double _cliplimit, cv::Size _tile_grid_size)
+{
+	if (_img.empty() || _cliplimit == 0) return;
+
+	if (_img.channels() == 1)
+	{
+		cv::Mat m;
+		cv::Ptr<cv::CLAHE> p = cv::createCLAHE(_cliplimit, _tile_grid_size);
+		p->apply(_img, m);
+		_img = m;
+	}
+	else if (_img.channels() == 3)
+	{
+		cv::Mat m;
+		std::vector<cv::Mat> channels(3);
+		cv::cvtColor(_img, m, CV_BGR2YCrCb);	//change to YCrCb format
+		cv::split(m, channels);					// split the image into channels
+		cv::Ptr<cv::CLAHE> p = cv::createCLAHE(_cliplimit, _tile_grid_size);
+		p->apply(channels[0], channels[0]);
+		cv::merge(channels, m);					// merge 3 channels including the modified one
+		cv::cvtColor(m, m, CV_YCrCb2BGR);		// change to BGR format
+		_img = m;
+	}
+	else if (_img.channels() == 4)
+	{
+		cv::Mat m;
+		std::vector<cv::Mat> channels(4);
+		cv::split(_img, channels);
+
+		std::vector<cv::Mat> channels3(3);
+		channels3[0] = channels[0];
+		channels3[1] = channels[1];
+		channels3[2] = channels[2];
+		cv::merge(channels3, m);
+
+		cv::cvtColor(m, m, CV_BGR2YCrCb);
+		cv::split(m, channels3);
+		cv::Ptr<cv::CLAHE> p = cv::createCLAHE(_cliplimit, _tile_grid_size);
+		p->apply(channels3[0], channels3[0]);
+		cv::merge(channels3, m);
+		cv::cvtColor(m, m, CV_YCrCb2BGR);
+		
+		cv::Mat dst(_img.size(), _img.type());
+		for (int y = 0; y < m.rows; y++)
+		{
+			for (int x = 0; x < m.cols; x++)
+			{
+				cv::Vec3b pixel = m.at<cv::Vec3b>(cv::Point(x, y));
+				cv::Vec4b p(pixel.val[0], pixel.val[1], pixel.val[2], channels[3].at<uchar>(cv::Point(x, y)));
+				dst.at<cv::Vec4b>(cv::Point(x, y)) = p;
+
+			}
+		}
+
+		_img = dst;
+	}
+}
 
 void fvkImageProcessing::imageProcessing(cv::Mat& _frame)
 {
@@ -499,14 +562,21 @@ void fvkImageProcessing::imageProcessing(cv::Mat& _frame)
 	if (m_denoislevel > 2)
 		setDenoisingFilter(_frame, m_denoislevel, m_denoismethod);
 
+	if (m_smoothness > 0)
+	{
+		setNonPhotorealisticFilter(_frame, m_smoothness, 0.3f, fvkImageProcessing::Filters::Smoothing);
+	}
+
+	if (m_equalizelimit > 0)
+	{
+		setEqualizeFilter(_frame, m_equalizelimit, cv::Size(2, 2));
+	}
+
 	if (m_sharplevel > 0)
 		setWeightedFilter(_frame, m_sharplevel, 1.5, -0.5);
 
 	if (m_details > 0)
-		setNonPhotorealisticFilter(_frame, m_details, 0.08f, fvkImageProcessing::Filters::Details);
-
-	if (m_smoothness > 0)
-		setNonPhotorealisticFilter(_frame, m_smoothness, 0.1f, fvkImageProcessing::Filters::Smoothing);
+		setNonPhotorealisticFilter(_frame, m_details, 0.02f, fvkImageProcessing::Filters::Details);
 
 	if (m_pencilsketch > 0)
 		setNonPhotorealisticFilter(_frame, m_pencilsketch, 0.1f, fvkImageProcessing::Filters::PencilSketch);
@@ -648,6 +718,18 @@ void fvkImageProcessing::imageProcessing(cv::Mat& _frame)
 			cv::cvtColor(_frame, m, cv::ColorConversionCodes::COLOR_BGRA2GRAY);
 			_frame = m;
 		}
+	}
+
+	if (m_threshold > 0)
+	{
+		cv::Mat m;
+		if (_frame.channels() == 3)
+			cv::cvtColor(_frame, m, CV_BGR2GRAY);
+		else if (_frame.channels() == 4)
+			cv::cvtColor(_frame, m, CV_BGRA2GRAY);
+		cv::GaussianBlur(m, m, cv::Size(5, 5), 0, 0);
+		cv::threshold(m, m, 255 - m_threshold, 255, cv::THRESH_BINARY);
+		_frame = m;
 	}
 
 	m_mutex.unlock();
@@ -911,6 +993,27 @@ bool fvkImageProcessing::isGrayScaleEnabled()
 {
 	std::lock_guard<std::mutex> locker(m_mutex);
 	return m_isgray;
+}
+
+void fvkImageProcessing::setThresholdValue(int _value)
+{
+	std::lock_guard<std::mutex> locker(m_mutex);
+	m_threshold = _value;
+}
+int fvkImageProcessing::getThresholdValue()
+{
+	std::lock_guard<std::mutex> locker(m_mutex);
+	return m_threshold;
+}
+void fvkImageProcessing::setEqualizeClipLimit(double _value)
+{
+	std::lock_guard<std::mutex> locker(m_mutex);
+	m_equalizelimit = _value;
+}
+double fvkImageProcessing::getEqualizeClipLimit()
+{
+	std::lock_guard<std::mutex> locker(m_mutex);
+	return m_equalizelimit;
 }
 
 /************************************************************************/

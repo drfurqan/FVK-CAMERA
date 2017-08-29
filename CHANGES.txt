@@ -1,6 +1,14 @@
 ================================================================================
-Camera module of Fast Visualization Kit (FVK) INSTALL v1.1.2
+Camera module of Fast Visualization Kit (FVK) INSTALL v1.1.3
 ================================================================================
+
+New features and changes in version 1.1.3:            (Release Date: 2017.08.29)
+--------------------------------------------------------------------------------
+
+1. Fixed average frame calculation.
+2. Fixes in ClockTimer class.
+3. Fixes in ImageProcessing class and added several filters in it.
+4. Fixes in frame tracking.
 
 New features and changes in version 1.1.2:            (Release Date: 2017.08.12)
 --------------------------------------------------------------------------------

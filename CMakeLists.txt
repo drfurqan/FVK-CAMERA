@@ -14,7 +14,7 @@ project (fvk_camera)
 
 set(VERSION_MAJOR 1)
 set(VERSION_MINOR_0 1)
-set(VERSION_MINOR_1 2)
+set(VERSION_MINOR_1 3)
 set(VERSION_PLAIN ${VERSION_MAJOR}.${VERSION_MINOR_0}.${VERSION_MINOR_1})
 
 # ------------------------------------------------------------------------------
@@ -34,7 +34,7 @@ endif(OPTION_BUILD_EXAMPLES)
 set(CPPFILES
 ${CMAKE_SOURCE_DIR}/src/fvk/camera/fvkAverageFps.cpp
 ${CMAKE_SOURCE_DIR}/src/fvk/camera/fvkCamera.cpp
-${CMAKE_SOURCE_DIR}/src/fvk/camera/fvkCameraImageProcessing.cpp
+${CMAKE_SOURCE_DIR}/src/fvk/camera/fvkImageProcessing.cpp
 ${CMAKE_SOURCE_DIR}/src/fvk/camera/fvkCameraProcessingThread.cpp
 ${CMAKE_SOURCE_DIR}/src/fvk/camera/fvkCameraThread.cpp
 ${CMAKE_SOURCE_DIR}/src/fvk/camera/fvkCameraThreadAbstract.cpp
@@ -54,7 +54,7 @@ ${CMAKE_SOURCE_DIR}/src/fvk/camera/fvkVideoWriter.cpp
 set(HEADERFILES
 ${CMAKE_SOURCE_DIR}/include/fvk/camera/fvkAverageFps.h
 ${CMAKE_SOURCE_DIR}/include/fvk/camera/fvkCamera.h
-${CMAKE_SOURCE_DIR}/include/fvk/camera/fvkCameraImageProcessing.h
+${CMAKE_SOURCE_DIR}/include/fvk/camera/fvkImageProcessing.h
 ${CMAKE_SOURCE_DIR}/include/fvk/camera/fvkCameraProcessingThread.h
 ${CMAKE_SOURCE_DIR}/include/fvk/camera/fvkCameraThread.h
 ${CMAKE_SOURCE_DIR}/include/fvk/camera/fvkCameraThreadAbstract.h
