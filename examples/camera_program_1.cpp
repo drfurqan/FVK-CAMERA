@@ -21,7 +21,7 @@ First method to set a function to show the grabbed frames.
 **********************************************************************************/
 
 #include <fvk/camera/fvkCamera.h>
-#include <fvk/camera/fvkCameraImageProcessing.h>
+#include <fvk/camera/fvkImageProcessing.h>
 
 using namespace R3D;
 
@@ -62,7 +62,7 @@ int main()
 
 	// fvkCamera class also gives some basic image processing filters.
 	// Bilateral filter denoises the grabbed image with the kernel size 9.
-	cam.imageProcessing()->setDenoisingMethod(fvkCameraImageProcessing::DenoisingMethod::Bilateral);
+	cam.imageProcessing()->setDenoisingMethod(fvkImageProcessing::DenoisingMethod::Bilateral);
 	cam.imageProcessing()->setDenoisingLevel(9);
 
 	// OpenCV event loop that will prevent to exit the main loop.

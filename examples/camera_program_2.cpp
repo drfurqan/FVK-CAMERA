@@ -21,7 +21,7 @@ Second method to set a function to show the grabbed frames.
 **********************************************************************************/
 
 #include <fvk/camera/fvkCamera.h>
-#include <fvk/camera/fvkCameraImageProcessing.h>
+#include <fvk/camera/fvkImageProcessing.h>
 
 using namespace R3D;
 

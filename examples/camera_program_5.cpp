@@ -21,7 +21,7 @@ the grabbed image frames.
 
 #include <fvk/camera/fvkCamera.h>
 #include <fvk/camera/fvkCameraList.h>
-#include <fvk/camera/fvkCameraImageProcessing.h>
+#include <fvk/camera/fvkImageProcessing.h>
 
 using namespace R3D;
 

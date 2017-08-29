@@ -75,7 +75,7 @@ public:
 	static std::string getLocalTime(const char* _format = "%Y-%m-%d %X");
 
 private:
-	std::chrono::time_point<std::chrono::steady_clock> m_startime;
+	std::chrono::time_point<std::chrono::system_clock> m_startime;
 	std::string m_label;
 	int m_elapstime;
 };

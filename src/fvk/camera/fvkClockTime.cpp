@@ -41,12 +41,12 @@ void fvkClockTime::print()
 }
 int fvkClockTime::getCurrentTime()
 { 
-	auto now = std::chrono::high_resolution_clock::now().time_since_epoch();
+	auto now = std::chrono::system_clock::now().time_since_epoch();
 	return static_cast<int>(std::chrono::duration_cast<std::chrono::milliseconds>(now).count());
 }
 void fvkClockTime::start() 
 { 
-	m_startime = std::chrono::high_resolution_clock::now();
+	m_startime = std::chrono::system_clock::now();
 }
 int fvkClockTime::restart()
 {
@@ -56,7 +56,7 @@ int fvkClockTime::restart()
 }
 int fvkClockTime::stop(bool _print)
 {
-	auto t = std::chrono::high_resolution_clock::now() - m_startime;
+	auto t = std::chrono::system_clock::now() - m_startime;
 	m_elapstime = static_cast<int>(std::chrono::duration_cast<std::chrono::milliseconds>(t).count());
 #ifdef _DEBUG
 	if (_print)
