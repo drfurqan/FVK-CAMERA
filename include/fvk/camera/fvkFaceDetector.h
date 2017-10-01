@@ -35,19 +35,49 @@ namespace R3D
 class FVK_EXPORT fvkFaceDetector
 {
 public:
+	// Description:
+	// Default constructor.
 	fvkFaceDetector();
+	// Description:
+	// Default destructor.
 	~fvkFaceDetector();
 
+	// Description:
+	// Function to reset the default parameters.
+	void reset();
+
+	// Description:
+	// Function to load a classifier from a file.
 	bool setFaceCascade(const std::string& _cascade_file_path);
-	cv::CascadeClassifier* faceCascade() const;
+	// Description:
+	// Function to get a pointer to face cascade.
+	cv::CascadeClassifier* getFaceCascade() const;
+	// Description:
+	// Function to get a rectangle around the detected face.
+	cv::Rect getRect() const;
+	// Description:
+	// Function to get a position of the detected face.
+	cv::Point getPosition() const;
+	// Description:
+	// Function to set the width of the detectable face.
 	void setResizedWidth(const int _width);
-	int resizedWidth() const;
-	cv::Rect face() const;
-	cv::Point facePosition() const;
+	// Description:
+	// Function to get the width of the detectable face.
+	int getResizedWidth() const;
+	// Description:
+	// Function to set the maximum duration for the template matching.
 	void setTemplateMatchingMaxDuration(const double _s);
+	// Description:
+	// Function to get the maximum duration for the template matching.
 	double templateMatchingMaxDuration() const;
+	// Description:
+	// Function that detects all faces in the given frame and get the biggest face.
 	void detectFaceAllSizes(const cv::Mat& _frame);
+	// Description:
+	// Function that detects the biggest face in the given frame and track it.
 	cv::Point detect(cv::Mat& _frame);
+	// Description:
+	// Overloaded operator of the above function.
 	cv::Point operator >> (cv::Mat& _frame);
 
 private:
@@ -70,7 +100,7 @@ private:
 	int64 m_templateMatchingStartTime = 0;
 	int64 m_templateMatchingCurrentTime = 0;
 	bool m_foundFace = false;
-	double m_scale;
+	double m_scale = 1;
 	int m_resizedWidth = 320;
 	cv::Point m_facePosition;
 	double m_templateMatchingMaxDuration = 3;
@@ -91,23 +121,15 @@ public:
 	std::string getCascadeClassifierFilePath() const { return m_filepath; }
 
 	// Description:
-	// Function to set RGB color to the rectangle of the detected face.
-	void setTrackedFaceColor(const cv::Vec3b& _rgb) { _face_rect_color = _rgb; }
-	// Description:
-	// Function to get RGB color to the rectangle of the detected face.
-	cv::Vec3b getTrackedFaceColor() const { return _face_rect_color; }
-
-	// Description:
 	// Function to get a reference to face detector.
-	fvkFaceDetector& getFaceDetector() { return m_fd; }
+	fvkFaceDetector& get() { return m_fd; }
 
 	// Description:
-	// Function that detect faces, then selects the biggest face, and then start
-	// tracking it.
-	virtual void execute(cv::Mat& _frame);
+	// Function that detect all the faces in the given frame.
+	// It selects the biggest face for tracking.
+	virtual void detect(cv::Mat& _frame, int _frame_delay_in_detection = 5);
 
 protected:
-	cv::Vec3b _face_rect_color;
 	std::string m_filepath;
 	fvkFaceDetector m_fd;
 	int nframes;

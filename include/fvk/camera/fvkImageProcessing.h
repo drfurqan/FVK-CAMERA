@@ -332,12 +332,6 @@ public:
 	// Function that returns true if face tracking is enabled.
 	bool isFaceDetectionEnabled();
 	// Description:
-	// Function to set RGB color to the rectangle of the tracked face.
-	void setDetectedFaceColor(const cv::Vec3b& _rgb);
-	// Description:
-	// Function to get RGB color to the rectangle of the tracked face.
-	cv::Vec3b getDetectedFaceColor();
-	// Description:
 	// Function to get a reference to face detector.
 	fvkSimpleFaceDetector& getSimpleFaceDetector() { return m_ft; }
 

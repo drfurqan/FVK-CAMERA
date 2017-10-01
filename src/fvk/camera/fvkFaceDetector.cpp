@@ -36,6 +36,11 @@ fvkFaceDetector::~fvkFaceDetector()
 		delete m_faceCascade;
 	m_faceCascade = nullptr;
 }
+void fvkFaceDetector::reset()
+{
+	m_templateMatchingRunning = false;
+	m_foundFace = false;
+}
 
 bool fvkFaceDetector::setFaceCascade(const std::string& _cascade_file_path)
 {
@@ -57,10 +62,13 @@ bool fvkFaceDetector::setFaceCascade(const std::string& _cascade_file_path)
 		std::cerr << "ERROR: couldn't create cascade classifier. Make sure the file exists." << std::endl;
 		return false;
 	}
+
+	reset();
+
 	return true;
 }
 
-cv::CascadeClassifier* fvkFaceDetector::faceCascade() const
+cv::CascadeClassifier* fvkFaceDetector::getFaceCascade() const
 {
     return m_faceCascade;
 }
@@ -70,12 +78,12 @@ void fvkFaceDetector::setResizedWidth(const int _width)
     m_resizedWidth = std::max(_width, 1);
 }
 
-int fvkFaceDetector::resizedWidth() const
+int fvkFaceDetector::getResizedWidth() const
 {
     return m_resizedWidth;
 }
 
-cv::Rect fvkFaceDetector::face() const
+cv::Rect fvkFaceDetector::getRect() const
 {
     cv::Rect faceRect = m_trackedFace;
 	faceRect.x = static_cast<int>(faceRect.x / m_scale);
@@ -85,7 +93,7 @@ cv::Rect fvkFaceDetector::face() const
     return faceRect;
 }
 
-cv::Point fvkFaceDetector::facePosition() const
+cv::Point fvkFaceDetector::getPosition() const
 {
 	return cv::Point(static_cast<int>(m_facePosition.x / m_scale), static_cast<int>(m_facePosition.y / m_scale));
 }
@@ -303,7 +311,6 @@ cv::Point fvkFaceDetector::operator >> (cv::Mat& _frame)
 #define DELAY_IN_FACE_DETECTION 5
 
 fvkSimpleFaceDetector::fvkSimpleFaceDetector() : 
-_face_rect_color(cv::Vec3b(166, 154, 75)),
 m_filepath(""),
 nframes(0)
 {
@@ -320,10 +327,9 @@ bool fvkSimpleFaceDetector::loadCascadeClassifier(const std::string& _filename)
 	return false;
 }
 
-void fvkSimpleFaceDetector::execute(cv::Mat& _frame)
+void fvkSimpleFaceDetector::detect(cv::Mat& _frame, int _frame_delay_in_detection)
 {
-	cv::rectangle(_frame, m_fd.face(), _face_rect_color);
-	if (nframes > DELAY_IN_FACE_DETECTION)
+	if (nframes > _frame_delay_in_detection)
 	{
 		m_fd.detect(_frame);
 		nframes = 0;

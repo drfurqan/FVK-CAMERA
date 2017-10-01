@@ -557,20 +557,16 @@ void fvkImageProcessing::imageProcessing(cv::Mat& _frame)
 	m_mutex.lock();
 
 	if (m_isfacetrack)
-		m_ft.execute(_frame);
+		m_ft.detect(_frame, 5);
 
 	if (m_denoislevel > 2)
 		setDenoisingFilter(_frame, m_denoislevel, m_denoismethod);
 
 	if (m_smoothness > 0)
-	{
 		setNonPhotorealisticFilter(_frame, m_smoothness, 0.3f, fvkImageProcessing::Filters::Smoothing);
-	}
 
 	if (m_equalizelimit > 0)
-	{
 		setEqualizeFilter(_frame, m_equalizelimit, cv::Size(2, 2));
-	}
 
 	if (m_sharplevel > 0)
 		setWeightedFilter(_frame, m_sharplevel, 1.5, -0.5);
@@ -731,6 +727,9 @@ void fvkImageProcessing::imageProcessing(cv::Mat& _frame)
 		cv::threshold(m, m, 255 - m_threshold, 255, cv::THRESH_BINARY);
 		_frame = m;
 	}
+
+	if(m_isfacetrack)
+		cv::rectangle(_frame, m_ft.get().getRect(), cv::Vec3b(166, 154, 75));
 
 	m_mutex.unlock();
 }
@@ -1032,14 +1031,4 @@ bool fvkImageProcessing::isFaceDetectionEnabled()
 {
 	std::lock_guard<std::mutex> locker(m_mutex);
 	return m_isfacetrack;
-}
-void fvkImageProcessing::setDetectedFaceColor(const cv::Vec3b& _rgb)
-{
-	std::lock_guard<std::mutex> locker(m_mutex);
-	m_ft.setTrackedFaceColor(_rgb);
-}
-cv::Vec3b fvkImageProcessing::getDetectedFaceColor()
-{
-	std::lock_guard<std::mutex> locker(m_mutex);
-	return m_ft.getTrackedFaceColor();
 }
