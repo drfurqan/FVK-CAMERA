@@ -501,7 +501,7 @@ void fvkImageProcessing::setEqualizeFilter(cv::Mat& _img, double _cliplimit, cv:
 	if (_img.channels() == 1)
 	{
 		cv::Mat m;
-		cv::Ptr<cv::CLAHE> p = cv::createCLAHE(_cliplimit, _tile_grid_size);
+		cv::Ptr<cv::CLAHE> p = cv::createCLAHE(_cliplimit, _tile_grid_size); // adaptive histogram equalization
 		p->apply(_img, m);
 		_img = m;
 	}
@@ -563,10 +563,10 @@ void fvkImageProcessing::imageProcessing(cv::Mat& _frame)
 		setDenoisingFilter(_frame, m_denoislevel, m_denoismethod);
 
 	if (m_smoothness > 0)
-		setNonPhotorealisticFilter(_frame, m_smoothness, 0.3f, fvkImageProcessing::Filters::Smoothing);
+		setNonPhotorealisticFilter(_frame, m_smoothness, 0.1f, fvkImageProcessing::Filters::Smoothing);
 
 	if (m_equalizelimit > 0)
-		setEqualizeFilter(_frame, m_equalizelimit, cv::Size(2, 2));
+		setEqualizeFilter(_frame, m_equalizelimit, cv::Size(8, 8));
 
 	if (m_sharplevel > 0)
 		setWeightedFilter(_frame, m_sharplevel, 1.5, -0.5);

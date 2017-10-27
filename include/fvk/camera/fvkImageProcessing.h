@@ -401,7 +401,7 @@ public:
 	// Description:
 	// Function to clips a color to max values when it falls outside of the specified range.
 	// _value should be between 0 and 100.
-	static void setEqualizeFilter(cv::Mat& _img, double _cliplimit, cv::Size _tile_grid_size = cv::Size(4, 4));
+	static void setEqualizeFilter(cv::Mat& _img, double _cliplimit, cv::Size _tile_grid_size = cv::Size(8, 8));
 
 	// Description:
 	// Function to perform image processing algorithms.
