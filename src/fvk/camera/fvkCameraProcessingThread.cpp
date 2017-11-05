@@ -29,8 +29,6 @@ fvkCameraProcessingThread::fvkCameraProcessingThread(fvkSemaphoreBuffer<cv::Mat>
 p_buffer(_buffer),
 p_frameobserver(_frameobserver),
 m_device_index(_device_index),
-p_ip(new fvkImageProcessing()),
-p_vr(new fvkVideoWriter()),
 m_isstop(false),
 m_frame(cv::Mat()),
 m_rect(cv::Rect(0, 0, 50, 50)),
@@ -43,14 +41,7 @@ m_iscapture(false)
 fvkCameraProcessingThread::~fvkCameraProcessingThread()
 {
 	stop();
-	if (p_vr)
-	{
-		p_vr->stop();
-		delete p_vr;
-		p_vr = nullptr;
-	}
-	if (p_ip) delete p_ip;
-	p_ip = nullptr;
+	m_vr.stop();
 	std::cout << "Camera processing thread has been stopped.\n";
 }
 
@@ -66,7 +57,7 @@ void fvkCameraProcessingThread::run()
 		m_stopmutex.lock();
 		if (m_isstop)
 		{
-			if (p_vr) p_vr->stop();
+			m_vr.stop();
 			m_isstop = false;
 			m_stopmutex.unlock();
 			break;
@@ -77,7 +68,7 @@ void fvkCameraProcessingThread::run()
 		m_frame = p_buffer->get();
 
 		// do some basic image processing
-		if (p_ip) p_ip->imageProcessing(m_frame);
+		m_ip.imageProcessing(m_frame);
 
 		// send frame to the observer to process it on another class.
 		if (p_frameobserver)
@@ -91,9 +82,8 @@ void fvkCameraProcessingThread::run()
 		saveFrameToDisk(m_frame);
 
 		// add frame for the video recording.
-		if (p_vr) 
-			if(p_vr->isOpened())
-				p_vr->addFrame(m_frame);
+		if (m_vr.isOpened())
+			m_vr.addFrame(m_frame);
 
 		// update stats.
 		m_statsmutex.lock();
@@ -103,7 +93,7 @@ void fvkCameraProcessingThread::run()
 			emit_stats(m_avgfps.stats);
 	}
 
-	if (p_vr) p_vr->stop();
+	m_vr.stop();
 	std::cout << "Stopping camera processing thread...\n";
 }
 cv::Mat fvkCameraProcessingThread::getFrame()

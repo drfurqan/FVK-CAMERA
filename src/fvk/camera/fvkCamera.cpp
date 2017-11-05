@@ -233,15 +233,13 @@ int fvkCamera::getNFrames() const
 	if (p_pt) return p_pt->getNFrames();
 	return 0;
 }
-fvkVideoWriter* fvkCamera::getRecorder() const
+fvkVideoWriter& fvkCamera::writer()
 {
-	if (p_pt) return p_pt->getRecorder();
-	return nullptr;
+	return p_pt->writer();
 }
-fvkImageProcessing* fvkCamera::imageProcessing() const
+fvkImageProcessing& fvkCamera::imageProcessing()
 { 
-	if (p_pt) return p_pt->imageProcessing();
-	return nullptr;
+	return p_pt->imageProcessing();
 }
 
 void fvkCamera::processFrame(cv::Mat& _frame)

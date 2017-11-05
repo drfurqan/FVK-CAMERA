@@ -126,12 +126,12 @@ public:
 	void setFrameStatisticsSlot(const std::function<void(const fvkAverageFpsStats&)>& _f);
 	
 	// Description:
-	// Function to get a pointer to video recorder.
-	fvkVideoWriter* getRecorder() const;
+	// Function to get a reference to video writer.
+	fvkVideoWriter& writer();
 
 	// Description:
-	// Function to get a pointer to image processing.
-	fvkImageProcessing* imageProcessing() const;
+	// Function to get a reference to image processing.
+	fvkImageProcessing& imageProcessing();
 
 	// Description:
 	// Function that saves the current image frame
@@ -351,8 +351,8 @@ protected:
 
 	fvkCameraThread *p_ct;
 	fvkCameraProcessingThread *p_pt;
-	std::thread* p_stdct;
-	std::thread* p_stdpt;
+	std::thread *p_stdct;
+	std::thread *p_stdpt;
 };
 
 }

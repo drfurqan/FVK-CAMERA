@@ -112,12 +112,12 @@ public:
 	void setFrameStatisticsSlot(const std::function<void(const fvkAverageFpsStats&)>& _f) { emit_stats = _f; }
 
 	// Description:
-	// Function to get a pointer to video recorder.
-	fvkVideoWriter* getRecorder() const { return p_vr; }
+	// Function to get a reference to video writer.
+	fvkVideoWriter& writer() { return m_vr; }
 
 	// Description:
-	// Function to get a pointer to image processing.
-	fvkImageProcessing* imageProcessing() const { return p_ip; }
+	// Function to get a reference to image processing.
+	fvkImageProcessing& imageProcessing() { return m_ip; }
 
 	// Description:
 	// Function to set a pointer to semaphore buffer which does synchronization between capturing and processing threads.
@@ -142,9 +142,8 @@ protected:
 	fvkAverageFps m_avgfps;
 	std::mutex m_statsmutex;
 
-	fvkImageProcessing* p_ip;
-
-	fvkVideoWriter* p_vr;
+	fvkImageProcessing m_ip;
+	fvkVideoWriter m_vr;
 
 	int m_device_index;
 	bool m_isstop;
