@@ -50,7 +50,7 @@ public:
 	// It stops all the running threads and releases all the camera.
 	void clear()
 	{
-		for (auto &it : m_cameras)
+		for (auto& it : m_cameras)
 			delete it;
 		m_cameras.clear();
 
@@ -74,7 +74,7 @@ public:
 	// In case of multiple cameras, try to pass 1 or 2 or 3, so on...
 	// _resolution is the desired camera frame width and height.
 	// resolution Size(-1, -1) will do the auto-selection for the frame's width and height.
-	CAMERA* add(int _device_id, cv::Size _resolution = cv::Size(-1, -1))
+	auto add(int _device_id, cv::Size _resolution = cv::Size(-1, -1))
 	{
 		if (getBy(_device_id) != nullptr)
 			return nullptr;
@@ -90,7 +90,7 @@ public:
 	// (eg. img_%02d.jpg, which will read samples like img_00.jpg, img_01.jpg, img_02.jpg, ...)
 	// _resolution is the desired camera frame width and height.
 	// resolution Size(-1, -1) will do the auto-selection for the frame's width and height.
-	CAMERA* add(const std::string& _video_file, cv::Size _resolution = cv::Size(-1, -1), int _api = cv::VideoCaptureAPIs::CAP_ANY)
+	auto add(const std::string& _video_file, cv::Size _resolution = cv::Size(-1, -1), int _api = cv::VideoCaptureAPIs::CAP_ANY)
 	{
 		CAMERA* p = new CAMERA(_video_file, _resolution, _api);
 		m_cameras.push_back(p);
@@ -101,7 +101,7 @@ public:
 	// It returns NULL if a camera with the same device id is already in the list.
 	// Function to add a camera object by specifying the camera and processing threads.
 	// This function is created for the derived classes of both fvkCameraThread and fvkCameraProcessingThread.
-	CAMERA* add(CAMERA* _p)
+	auto add(CAMERA* _p)
 	{
 		if (!_p) return nullptr;
 
@@ -114,14 +114,15 @@ public:
 
 	// Description:
 	// Function to get a pointer to camera by index of the camera list.
-	CAMERA* get(unsigned int _index) const 
+	auto get(unsigned int _index) const
 	{
-		if (_index >= m_cameras.size()) return nullptr;
+		if (_index >= m_cameras.size()) 
+			return nullptr;
 		return m_cameras[_index]; 
 	}
 	// Description:
 	// Function to get a pointer to camera device by it's id.
-	CAMERA* getBy(int _device_index) const
+	auto getBy(int _device_index) const
 	{
 		auto it = std::find_if(m_cameras.begin(), m_cameras.end(),
 			[&_device_index](const CAMERA* _p)
@@ -136,9 +137,9 @@ public:
 	// Description:
 	// Function to remove a camera from the list.
 	// It returns true on success.
-	bool remove(int _device_index)
+	auto remove(int _device_index)
 	{
-		CAMERA* p = getBy(_device_index);
+		auto p = getBy(_device_index);
 		if (p)
 		{
 			m_cameras.erase(std::remove(m_cameras.begin(), m_cameras.end(), p), m_cameras.end());
@@ -150,7 +151,7 @@ public:
 	}
 	// Description:
 	// Function to get the total number of cameras in the list.
-	size_t getSize() const { return m_cameras.size(); }
+	auto getSize() const { return m_cameras.size(); }
 
 private:
 	std::vector<CAMERA*> m_cameras;

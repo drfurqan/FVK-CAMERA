@@ -1,7 +1,7 @@
 /*********************************************************************************
 created:	2015/04/21   03:37AM
-modified:	2017/02/10   11:37PM
-filename: 	fvkTime.cpp
+modified:	2017/02/09   11:37PM
+filename: 	fvkClockTime.cpp
 file base:	fvkClockTime
 file ext:	cpp
 author:		Furqan Ullah (Post-doc, Ph.D.)
@@ -36,10 +36,10 @@ m_label(_label)
 void fvkClockTime::print()
 { 
 #ifdef _DEBUG
-	std::cout << m_label << " took " << m_elapstime << " sec." << std::endl;
+	std::cout << m_label << " took " << m_elapstime << " milliseconds." << std::endl;
 #endif // _DEBUG
 }
-int fvkClockTime::getCurrentTime()
+auto fvkClockTime::getCurrentTime() -> int
 { 
 	auto now = std::chrono::system_clock::now().time_since_epoch();
 	return static_cast<int>(std::chrono::duration_cast<std::chrono::milliseconds>(now).count());
@@ -48,13 +48,13 @@ void fvkClockTime::start()
 { 
 	m_startime = std::chrono::system_clock::now();
 }
-int fvkClockTime::restart()
+auto fvkClockTime::restart() -> int
 {
-	int t = stop(false);
+	auto t = stop(false);
 	start();
 	return t;
 }
-int fvkClockTime::stop(bool _print)
+auto fvkClockTime::stop(bool _print) -> int
 {
 	auto t = std::chrono::system_clock::now() - m_startime;
 	m_elapstime = static_cast<int>(std::chrono::duration_cast<std::chrono::milliseconds>(t).count());
@@ -65,7 +65,7 @@ int fvkClockTime::stop(bool _print)
 	return m_elapstime;
 }
 
-std::string fvkClockTime::getLocalTime(const char* _format)
+auto fvkClockTime::getLocalTime(const char* _format) -> std::string
 {
 	auto now = std::chrono::system_clock::now();
 	auto in_time_t = std::chrono::system_clock::to_time_t(now);

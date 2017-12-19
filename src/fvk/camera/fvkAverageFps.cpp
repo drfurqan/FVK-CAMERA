@@ -51,7 +51,7 @@ void fvkAverageFps::update()
 			m_fps.pop();
 		}
 
-		stats.fps = static_cast<int>(m_fpssum / m_avgsize);
+		stats.nfps = static_cast<int>(m_fpssum / m_avgsize);
 		m_fpssum = 0;
 		m_fpssamples = 0;
 	}

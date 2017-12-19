@@ -33,7 +33,12 @@ namespace R3D
 class FVK_EXPORT fvkSemaphore
 {
 public:
+	// Description:
+	// Default constructor that takes count and constructs the object.
 	explicit fvkSemaphore(int _count = 0);
+	
+	// Description:
+	// Non-implemented.
 	fvkSemaphore(const fvkSemaphore&) = delete;
 	fvkSemaphore(fvkSemaphore&&) = delete;
 	fvkSemaphore& operator=(const fvkSemaphore&) = delete;
@@ -44,14 +49,14 @@ public:
 	void wait();
 	// Description:
 	// It does not block the thread, but wait until get notify by calling notify() method and returns true.
-	bool try_wait();
+	auto try_wait() -> bool;
 	// Description:
 	// It notifies to wait() method to unblock the thread, and also
 	// it notifies to try_wait() method to unblock as well and return true to proceed.
 	void notify();
 
 	template <typename _Rep, typename _Period>
-	bool wait_for(const std::chrono::duration<_Rep, _Period>& _d)
+	auto wait_for(const std::chrono::duration<_Rep, _Period>& _d)
 	{
 		std::unique_lock<std::mutex> lock{ m_mutex };
 		auto finished = m_cv.wait_for(lock, _d, [&] { return m_count > 0; });
@@ -61,7 +66,7 @@ public:
 	}
 
 	template <typename _Clock, typename _Duration>
-	bool wait_until(const std::chrono::time_point<_Clock, _Duration>& _t)
+	auto wait_until(const std::chrono::time_point<_Clock, _Duration>& _t)
 	{
 		std::unique_lock<std::mutex> lock{ m_mutex };
 		auto finished = m_cv.wait_until(lock, _t, [&] { return m_count > 0; });

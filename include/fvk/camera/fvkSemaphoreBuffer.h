@@ -98,7 +98,7 @@ public:
 		return _value;
 	}
 
-	bool empty() const
+	auto empty() const
 	{
 		std::lock_guard<std::mutex> lk(m_mutex);
 		return m_data.empty();

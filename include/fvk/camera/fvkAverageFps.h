@@ -32,8 +32,13 @@ namespace R3D
 class FVK_EXPORT fvkAverageFpsStats
 {
 public:
-	fvkAverageFpsStats() : fps(0), nframes(0) { }
-	int fps, nframes;
+	fvkAverageFpsStats() : 
+		nfps(0), 
+		nframes(0) 
+	{ 
+	}
+	int nfps;		// frame per seconds
+	int nframes;	// total number of processed frames
 };
 
 class FVK_EXPORT fvkAverageFps
@@ -52,19 +57,23 @@ public:
 
 	// Description:
 	// Function to set number of frames to be used for the average calculation.
+	// This should not be called when a thread is executed.
+	// Call it before executing the thread.
 	void setAverageSize(int _avg_size) { m_avgsize = _avg_size; }
 	// Description:
 	// Function to get number of frames to be used for the average calculation.
-	int getAverageSize() const { return m_avgsize; }
+	// This should not be called when a thread is executed.
+	// Call it before executing the thread.
+	auto getAverageSize() const { return m_avgsize; }
 
 	// Description:
-	// public stat member that gives you the average fps and the total number
-	// of processed frames.
-	fvkAverageFpsStats stats;
+	// Function that gives you the average fps and the total number of processed frames.
+	auto& getStats() { return stats; }
 
 private:
 	std::queue<int> m_fps;
 	fvkClockTime m_time;
+	fvkAverageFpsStats stats;
 	int m_avgsize;
 	int m_capture_time;
 	int m_fpssum;

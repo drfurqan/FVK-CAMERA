@@ -40,7 +40,7 @@ void fvkSemaphore::wait()
 	--m_count;
 }
 
-bool fvkSemaphore::try_wait()
+auto fvkSemaphore::try_wait() -> bool
 {
 	std::lock_guard<std::mutex> lock{ m_mutex };
 	if (m_count > 0)

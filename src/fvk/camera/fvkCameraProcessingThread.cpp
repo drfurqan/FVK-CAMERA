@@ -29,81 +29,55 @@ fvkCameraProcessingThread::fvkCameraProcessingThread(fvkSemaphoreBuffer<cv::Mat>
 p_buffer(_buffer),
 p_frameobserver(_frameobserver),
 m_device_index(_device_index),
-m_isstop(false),
 m_frame(cv::Mat()),
 m_rect(cv::Rect(0, 0, 50, 50)),
 m_filelocation("D:\\saved_snapshot.jpg"),
 m_savedframes(0),
 m_iscapture(false)
 {
+	setDelay(0);
 }
 
 fvkCameraProcessingThread::~fvkCameraProcessingThread()
 {
 	stop();
 	m_vr.stop();
+#ifdef _DEBUG
 	std::cout << "Camera processing thread has been stopped.\n";
+#endif // _DEBUG
 }
 
 void fvkCameraProcessingThread::run()
 {
-	// make stats to zero for the new run.
-	m_avgfps.stats.fps = 0;
-	m_avgfps.stats.nframes = 0;
+	//m_vr.stop();
 
-	while (1)
-	{
-		// stop this thread.
-		m_stopmutex.lock();
-		if (m_isstop)
-		{
-			m_vr.stop();
-			m_isstop = false;
-			m_stopmutex.unlock();
-			break;
-		}
-		m_stopmutex.unlock();
+	// get a frame from the camera thread.
+	m_frame = p_buffer->get();
 
-		// get a frame from the camera thread.
-		m_frame = p_buffer->get();
+	// do some basic image processing
+	m_ip.imageProcessing(m_frame);
 
-		// do some basic image processing
-		m_ip.imageProcessing(m_frame);
+	// send frame to the observer to process it on another class.
+	if (p_frameobserver)
+		p_frameobserver->processFrame(m_frame);
 
-		// send frame to the observer to process it on another class.
-		if (p_frameobserver)
-			p_frameobserver->processFrame(m_frame);
+	// emit signal to inform to image box for the new frame.
+	if (emit_display_frame)
+		emit_display_frame(m_frame);
 
-		// emit signal to inform to image box for the new frame.
-		if (emit_display_frame)
-			emit_display_frame(m_frame);
+	// save current frame to disk.
+	saveFrameToDisk(m_frame);
 
-		// save current frame to disk.
-		saveFrameToDisk(m_frame);
+	// add frame for the video recording.
+	if (m_vr.isOpened())
+		m_vr.addFrame(m_frame);
 
-		// add frame for the video recording.
-		if (m_vr.isOpened())
-			m_vr.addFrame(m_frame);
-
-		// update stats.
-		m_statsmutex.lock();
-		m_avgfps.update();
-		m_statsmutex.unlock();
-		if (emit_stats)
-			emit_stats(m_avgfps.stats);
-	}
-
-	m_vr.stop();
-	std::cout << "Stopping camera processing thread...\n";
+	if (emit_stats)
+		emit_stats(m_avgfps.getStats());
 }
 cv::Mat fvkCameraProcessingThread::getFrame()
 {
 	return p_buffer->get().clone();
-}
-void fvkCameraProcessingThread::stop()
-{
-	std::unique_lock<std::mutex> locker(m_stopmutex);
-	m_isstop = true;
 }
 
 void fvkCameraProcessingThread::saveFrameOnClick()
@@ -112,10 +86,10 @@ void fvkCameraProcessingThread::saveFrameOnClick()
 	m_iscapture = true;
 }
 
-bool fvkCameraProcessingThread::saveFrameToDisk(const cv::Mat& _frame)
+auto fvkCameraProcessingThread::saveFrameToDisk(const cv::Mat& _frame) -> bool
 {
 	m_savemutex.lock();
-	bool b = false;
+	auto b = false;
 	if (m_iscapture)
 	{
 		std::vector<int> params;
@@ -126,15 +100,4 @@ bool fvkCameraProcessingThread::saveFrameToDisk(const cv::Mat& _frame)
 	}
 	m_savemutex.unlock();
 	return b;
-}
-
-int fvkCameraProcessingThread::getAvgFps()
-{
-	std::unique_lock<std::mutex> locker(m_statsmutex);
-	return m_avgfps.stats.fps;
-}
-int fvkCameraProcessingThread::getNFrames()
-{
-	std::unique_lock<std::mutex> locker(m_statsmutex);
-	return m_avgfps.stats.nframes;
 }

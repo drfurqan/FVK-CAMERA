@@ -29,11 +29,7 @@ m_width(-1),
 m_height(-1),
 m_filepath(""),
 m_videocapture_api(cv::VideoCaptureAPIs::CAP_ANY),
-m_isstop(false),
-m_ispause(false),
-m_isrepeat(true),
-m_frame(cv::Mat()),
-m_frame_msec(33)
+m_frame(cv::Mat())
 {
 }
 fvkCameraThreadAbstract::~fvkCameraThreadAbstract()
@@ -41,7 +37,7 @@ fvkCameraThreadAbstract::~fvkCameraThreadAbstract()
 	close();
 }
 
-bool fvkCameraThreadAbstract::open(int _device_id)
+auto fvkCameraThreadAbstract::open(int _device_id) -> bool
 {
 	bool r = p_cam.open(_device_id);
 	if (r)
@@ -52,24 +48,23 @@ bool fvkCameraThreadAbstract::open(int _device_id)
 	}
 	return r;
 }
-bool fvkCameraThreadAbstract::open()
+auto fvkCameraThreadAbstract::open() -> bool
 {
 	if (open(m_filepath))
 		return true;
 	
 	return open(m_device_index);
 }
-bool fvkCameraThreadAbstract::open(const std::string& _avi_filename, int _api)
+auto fvkCameraThreadAbstract::open(const std::string& _avi_filename, int _api) -> bool
 {
 	if (_avi_filename.empty()) 
 		return false;
 
-	bool r = p_cam.open(_avi_filename, _api);
+	auto r = p_cam.open(_avi_filename, _api);
 	if (r)
 	{
 		if (m_width != -1) p_cam.set(cv::CAP_PROP_FRAME_WIDTH, m_width);
 		if (m_height != -1) p_cam.set(cv::CAP_PROP_FRAME_HEIGHT, m_height);
-		m_frame_msec = static_cast<int>(1000.0 / getFps());		// frame delay of the opened video.
 		m_filepath = _avi_filename;
 		m_videocapture_api = _api;
 	}
@@ -80,12 +75,12 @@ bool fvkCameraThreadAbstract::open(const std::string& _avi_filename, int _api)
 	return r;
 }
 
-bool fvkCameraThreadAbstract::isOpened()
+auto fvkCameraThreadAbstract::isOpened() -> bool
 {
 	return p_cam.isOpened();
 }
 
-bool fvkCameraThreadAbstract::close()
+auto fvkCameraThreadAbstract::close() -> bool
 {
 	if (p_cam.isOpened())
 	{
@@ -234,47 +229,47 @@ void fvkCameraThreadAbstract::setAviRatio(double val)
 /************************************************************************/
 /* Get Camera Settings                                                  */
 /************************************************************************/
-cv::Size fvkCameraThreadAbstract::getResolution()
+auto fvkCameraThreadAbstract::getResolution() -> cv::Size
 {
 	cv::Size size(m_width, m_height);
 	if(!isOpened()) return size;
 	return cv::Size(static_cast<int>(p_cam.get(cv::CAP_PROP_FRAME_WIDTH)), static_cast<int>(p_cam.get(cv::CAP_PROP_FRAME_HEIGHT)));
 }
-int fvkCameraThreadAbstract::getWidth()
+auto fvkCameraThreadAbstract::getWidth() -> int
 {
 	return static_cast<int>(p_cam.get(cv::CAP_PROP_FRAME_WIDTH));
 }
-int fvkCameraThreadAbstract::getHeight()
+auto fvkCameraThreadAbstract::getHeight() -> int
 {
 	return static_cast<int>(p_cam.get(cv::CAP_PROP_FRAME_HEIGHT));
 }
-double fvkCameraThreadAbstract::getSharpness()
+auto fvkCameraThreadAbstract::getSharpness() -> double
 {
     return p_cam.get(cv::CAP_PROP_SHARPNESS);
 }
-double fvkCameraThreadAbstract::getAutoExposure()
+auto fvkCameraThreadAbstract::getAutoExposure() -> double
 {
     return p_cam.get(cv::CAP_PROP_AUTO_EXPOSURE);
 }
-double fvkCameraThreadAbstract::getFps()
+auto fvkCameraThreadAbstract::getFps() -> double
 {
     return p_cam.get(cv::CAP_PROP_FPS);
 }
-double fvkCameraThreadAbstract::getFrameCount()
+auto fvkCameraThreadAbstract::getFrameCount() -> double
 {
 	return p_cam.get(cv::CAP_PROP_FRAME_COUNT);
 }
-double fvkCameraThreadAbstract::getWhiteBalanceBlueU()
+auto fvkCameraThreadAbstract::getWhiteBalanceBlueU() -> double
 {
     return p_cam.get(cv::CAP_PROP_WHITE_BALANCE_BLUE_U);
 }
-double fvkCameraThreadAbstract::getWhiteBalanceRedV()
+auto fvkCameraThreadAbstract::getWhiteBalanceRedV() -> double
 {
     return p_cam.get(cv::CAP_PROP_WHITE_BALANCE_RED_V);
 }
-std::string fvkCameraThreadAbstract::getFourCC()
+auto fvkCameraThreadAbstract::getFourCC() -> std::string
 {
-	unsigned int f = static_cast<unsigned int>(p_cam.get(cv::CAP_PROP_FOURCC));
+	auto f = static_cast<unsigned int>(p_cam.get(cv::CAP_PROP_FOURCC));
 	char fourc[] =
 	{
 		(char)f,
@@ -286,99 +281,99 @@ std::string fvkCameraThreadAbstract::getFourCC()
 	return std::string(fourc);
 }
 
-double fvkCameraThreadAbstract::getConvertToRGB()
+auto fvkCameraThreadAbstract::getConvertToRGB() -> double
 {
 	return p_cam.get(cv::CAP_PROP_CONVERT_RGB);
 }
-double fvkCameraThreadAbstract::getBrightness()
+auto fvkCameraThreadAbstract::getBrightness() -> double
 {
 	return p_cam.get(cv::CAP_PROP_BRIGHTNESS);
 }
-double fvkCameraThreadAbstract::getContrast()
+auto fvkCameraThreadAbstract::getContrast() -> double
 {
 	return p_cam.get(cv::CAP_PROP_CONTRAST);
 }
-double fvkCameraThreadAbstract::getSaturation()
+auto fvkCameraThreadAbstract::getSaturation() -> double
 {
 	return p_cam.get(cv::CAP_PROP_SATURATION);
 }
-double fvkCameraThreadAbstract::getHue()
+auto fvkCameraThreadAbstract::getHue() -> double
 {
 	return p_cam.get(cv::CAP_PROP_HUE);
 }
-double fvkCameraThreadAbstract::getGain()
+auto fvkCameraThreadAbstract::getGain() -> double
 {
 	return p_cam.get(cv::CAP_PROP_GAIN);
 }
-double fvkCameraThreadAbstract::getExposure()
+auto fvkCameraThreadAbstract::getExposure() -> double
 {
 	return p_cam.get(cv::CAP_PROP_EXPOSURE);
 }
-double fvkCameraThreadAbstract::getRectification()
+auto fvkCameraThreadAbstract::getRectification() -> double
 {
 	return p_cam.get(cv::CAP_PROP_RECTIFICATION);
 }
-double fvkCameraThreadAbstract::getFormat()
+auto fvkCameraThreadAbstract::getFormat() -> double
 {
 	return p_cam.get(cv::CAP_PROP_FORMAT);
 }
-double fvkCameraThreadAbstract::getMode()
+auto fvkCameraThreadAbstract::getMode() -> double
 {
 	return p_cam.get(cv::CAP_PROP_MODE);
 }
-double fvkCameraThreadAbstract::getGamma()
+auto fvkCameraThreadAbstract::getGamma() -> double
 {
 	return p_cam.get(cv::CAP_PROP_GAMMA);
 }
-double fvkCameraThreadAbstract::getTemperature()
+auto fvkCameraThreadAbstract::getTemperature() -> double
 {
 	return p_cam.get(cv::CAP_PROP_TEMPERATURE);
 }
-double fvkCameraThreadAbstract::getZoom()
+auto fvkCameraThreadAbstract::getZoom() -> double
 {
 	return p_cam.get(cv::CAP_PROP_ZOOM);
 }
-double fvkCameraThreadAbstract::getFocus()
+auto fvkCameraThreadAbstract::getFocus() -> double
 {
 	return p_cam.get(cv::CAP_PROP_FOCUS);
 }
-double fvkCameraThreadAbstract::getIsoSpeed()
+auto fvkCameraThreadAbstract::getIsoSpeed() -> double
 {
 	return p_cam.get(cv::CAP_PROP_ISO_SPEED);
 }
-double fvkCameraThreadAbstract::getBackLight()
+auto fvkCameraThreadAbstract::getBackLight() -> double
 {
 	return p_cam.get(cv::CAP_PROP_BACKLIGHT);
 }
-double fvkCameraThreadAbstract::getPan()
+auto fvkCameraThreadAbstract::getPan() -> double
 {
 	return p_cam.get(cv::CAP_PROP_PAN);
 }
-double fvkCameraThreadAbstract::getTilt()
+auto fvkCameraThreadAbstract::getTilt() -> double
 {
 	return p_cam.get(cv::CAP_PROP_TILT);
 }
-double fvkCameraThreadAbstract::getRoll()
+auto fvkCameraThreadAbstract::getRoll() -> double
 {
 	return p_cam.get(cv::CAP_PROP_ROLL);
 }
-double fvkCameraThreadAbstract::getTrigger()
+auto fvkCameraThreadAbstract::getTrigger() -> double
 {
 	return p_cam.get(cv::CAP_PROP_TRIGGER);
 }
-double fvkCameraThreadAbstract::getTriggerDelay()
+auto fvkCameraThreadAbstract::getTriggerDelay() -> double
 {
 	return p_cam.get(cv::CAP_PROP_TRIGGER_DELAY);
 }
-double fvkCameraThreadAbstract::getMsec()
+auto fvkCameraThreadAbstract::getMsec() -> double
 {
 	return p_cam.get(CV_CAP_PROP_POS_MSEC);
 }
-double fvkCameraThreadAbstract::getPosFrames()
+auto fvkCameraThreadAbstract::getPosFrames() -> double
 {
 	return p_cam.get(CV_CAP_PROP_POS_FRAMES);
 }
-double fvkCameraThreadAbstract::getAviRatio()
+auto fvkCameraThreadAbstract::getAviRatio() -> double
 {
 	return p_cam.get(CV_CAP_PROP_POS_AVI_RATIO);
 }

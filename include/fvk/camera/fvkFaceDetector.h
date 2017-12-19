@@ -48,43 +48,43 @@ public:
 
 	// Description:
 	// Function to load a classifier from a file.
-	bool setFaceCascade(const std::string& _cascade_file_path);
+	auto setFaceCascade(const std::string& _cascade_file_path) -> bool;
 	// Description:
 	// Function to get a pointer to face cascade.
-	cv::CascadeClassifier* getFaceCascade() const;
+	auto getFaceCascade() const { return m_faceCascade; }
 	// Description:
 	// Function to get a rectangle around the detected face.
-	cv::Rect getRect() const;
+	auto getRect() const -> cv::Rect;
 	// Description:
 	// Function to get a position of the detected face.
-	cv::Point getPosition() const;
+	auto getPosition() const -> cv::Point;
 	// Description:
 	// Function to set the width of the detectable face.
 	void setResizedWidth(const int _width);
 	// Description:
 	// Function to get the width of the detectable face.
-	int getResizedWidth() const;
+	auto getResizedWidth() const -> int;
 	// Description:
 	// Function to set the maximum duration for the template matching.
 	void setTemplateMatchingMaxDuration(const double _s);
 	// Description:
 	// Function to get the maximum duration for the template matching.
-	double templateMatchingMaxDuration() const;
+	auto templateMatchingMaxDuration() const -> double;
 	// Description:
 	// Function that detects all faces in the given frame and get the biggest face.
 	void detectFaceAllSizes(const cv::Mat& _frame);
 	// Description:
 	// Function that detects the biggest face in the given frame and track it.
-	cv::Point detect(cv::Mat& _frame);
+	auto detect(cv::Mat& _frame) -> cv::Point;
 	// Description:
 	// Overloaded operator of the above function.
-	cv::Point operator >> (cv::Mat& _frame);
+	auto operator >> (cv::Mat& _frame) -> cv::Point;
 
 private:
-	cv::Rect doubleRectSize(const cv::Rect &inputRect, const cv::Rect &frameSize) const;
-	cv::Rect biggestFace(std::vector<cv::Rect> &faces) const;
-	cv::Point centerOfRect(const cv::Rect &rect) const;
-	cv::Mat getFaceTemplate(const cv::Mat &frame, cv::Rect face);
+	auto doubleRectSize(const cv::Rect &inputRect, const cv::Rect &frameSize) const -> cv::Rect;
+	auto biggestFace(std::vector<cv::Rect> &faces) const -> cv::Rect;
+	auto centerOfRect(const cv::Rect &rect) const -> cv::Point;
+	auto getFaceTemplate(const cv::Mat &frame, cv::Rect face) -> cv::Mat;
 	void detectFaceAroundRoi(const cv::Mat &frame);
 	void detectFacesTemplateMatching(const cv::Mat &frame);
 
@@ -115,14 +115,14 @@ public:
 	// Function to load a classifier from a file.
 	// filename Name of the file from which the classifier is loaded.
 	// It returns true on success.
-	bool loadCascadeClassifier(const std::string& _filename);
+	auto loadCascadeClassifier(const std::string& _filename) -> bool;
 	// Description:
 	// Function to get the file path of the classifier.
-	std::string getCascadeClassifierFilePath() const { return m_filepath; }
+	auto getCascadeClassifierFilePath() const { return m_filepath; }
 
 	// Description:
 	// Function to get a reference to face detector.
-	fvkFaceDetector& get() { return m_fd; }
+	auto& get() { return m_fd; }
 
 	// Description:
 	// Function that detect all the faces in the given frame.

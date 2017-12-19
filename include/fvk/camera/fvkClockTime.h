@@ -12,7 +12,8 @@ author:		Furqan Ullah (Post-doc, Ph.D.)
 website:    http://real3d.pk
 CopyRight:	All Rights Reserved
 
-purpose:	Class for elapsed time using std::chrono.
+purpose:	class for checking the elapsed time between start and stop
+using std::chrono.
 
 /**********************************************************************************
 *	Fast Visualization Kit (FVK)
@@ -49,30 +50,30 @@ public:
 	void setLabel(const std::string& _label) { m_label = _label; }
 	// Description:
 	// Function to get the label of this class object.
-	std::string getLabel() const { return m_label; }
+	auto getLabel() const { return m_label; }
 	// Description:
 	// Function to start the clock.
 	void start();
 	// Description:
 	// Function that returns the elapsed time (in milliseconds) and restart the clock.
-	int restart();
+	auto restart() -> int;
 	// Description:
 	// Function to stop the clock and print the execution time (if print = true). 
 	// It returns the elapsed time (in milliseconds) between start() and stop().
-	int stop(bool _print = false);
+	auto stop(bool _print = false) -> int;
 	// Description:
 	// Function that returns the elapsed time (in milliseconds) between start() and stop().
-	int elapsed() const { return m_elapstime; }
+	auto elapsed() const { return m_elapstime; }
 	// Description:
 	// Function to print the elapsed time (in milliseconds). 
 	void print();
 
 	// Description:
 	// Function to get the current time in milliseconds.
-	static int getCurrentTime();
+	static auto getCurrentTime() -> int;
 	// Description:
 	// Function to get the local date and time.
-	static std::string getLocalTime(const char* _format = "%Y-%m-%d %X");
+	static auto getLocalTime(const char* _format = "%Y-%m-%d %X") -> std::string;
 
 private:
 	std::chrono::time_point<std::chrono::system_clock> m_startime;

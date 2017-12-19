@@ -624,19 +624,19 @@ IplImage* __getImage8U(const IplImage* _img, double scale)
 	return I;
 }
 
-IplImage* fvkImagePlot::getPlottedImage(const IplImage* Inimg, int plotsize_w, int plotsize_h, int row_number, int border_size, bool isRedCurve, bool isGreenCurve, bool isBlueCurve, bool isRGBCurve,
-	bool isInverted, bool isAxis, bool isLabel, int R, int G, int B, std::string Plotname, std::string PlotLabel)
+auto fvkImagePlot::getPlottedImage(const IplImage* Inimg, int plotsize_w, int plotsize_h, int row_number, int border_size, bool isRedCurve, bool isGreenCurve, bool isBlueCurve, bool isRGBCurve,
+	bool isInverted, bool isAxis, bool isLabel, int R, int G, int B, std::string Plotname, std::string PlotLabel) -> IplImage*
 {
 	if (Inimg == nullptr) return nullptr;
 	if (!CV_IS_IMAGE(Inimg)) return nullptr;
 	if (Inimg->nChannels == 2) return nullptr;
 
-	IplImage* img = __getImage8U(Inimg, 255.0);
+	auto img = __getImage8U(Inimg, 255.0);
 	if (img == nullptr) return nullptr;
 
 	if (img->nChannels == 1)
 	{
-		IplImage *t = cvCreateImage(cvSize(img->width, img->height), IPL_DEPTH_8U, 3);
+		auto t = cvCreateImage(cvSize(img->width, img->height), IPL_DEPTH_8U, 3);
 		cvCvtColor(img, t, CV_GRAY2BGR);
 		cvReleaseImage(&img); img = nullptr;
 		img = cvCreateImage(cvSize(t->width, t->height), IPL_DEPTH_8U, 3);
@@ -645,7 +645,7 @@ IplImage* fvkImagePlot::getPlottedImage(const IplImage* Inimg, int plotsize_w, i
 	}
 	else if (img->nChannels == 4)
 	{
-		IplImage *t = cvCreateImage(cvSize(img->width, img->height), IPL_DEPTH_8U, 3);
+		auto t = cvCreateImage(cvSize(img->width, img->height), IPL_DEPTH_8U, 3);
 		cvCvtColor(img, t, CV_BGRA2BGR);
 		cvReleaseImage(&img); img = nullptr;
 		img = cvCreateImage(cvSize(t->width, t->height), IPL_DEPTH_8U, 3);
@@ -661,7 +661,7 @@ IplImage* fvkImagePlot::getPlottedImage(const IplImage* Inimg, int plotsize_w, i
 
 	if (isRGBCurve)
 	{
-		unsigned char *pb = __ImageRowPtr(img, unsigned char, row_number);
+		auto pb = __ImageRowPtr(img, unsigned char, row_number);
 		pm.plot(Plotname, pb + 2, img->width, 3, 200, 0, 0);
 		if (isLabel) pm.setLabel("B");
 		pm.plot(Plotname, pb + 1, img->width, 3, 0, 200, 0);
@@ -671,12 +671,12 @@ IplImage* fvkImagePlot::getPlottedImage(const IplImage* Inimg, int plotsize_w, i
 	}
 	else
 	{
-		IplImage *t = cvCreateImage(cvSize(img->width, img->height), IPL_DEPTH_8U, 1);
+		auto t = cvCreateImage(cvSize(img->width, img->height), IPL_DEPTH_8U, 1);
 		if (isRedCurve) cvSplit(img, 0, 0, t, 0);
 		else if (isGreenCurve) cvSplit(img, 0, t, 0, 0);
 		else if (isBlueCurve) cvSplit(img, t, 0, 0, 0);
 		if (t->imageData == nullptr) { if (img) cvReleaseImage(&img); return nullptr; }
-		unsigned char *pb = __ImageRowPtr(t, unsigned char, row_number);
+		auto pb = __ImageRowPtr(t, unsigned char, row_number);
 		pm.plot(Plotname, pb, t->width, 1, R, G, B);
 		if (t) cvReleaseImage(&t);
 	}
@@ -695,7 +695,7 @@ IplImage* fvkImagePlot::getPlottedImage(const IplImage* Inimg, int plotsize_w, i
 
 	pm.calculatePlot();
 
-	IplImage* I = pm.getPlottedImage(Plotname);
+	auto I = pm.getPlottedImage(Plotname);
 	if (I != nullptr)
 	{
 		if (img->width != I->width || img->height != I->height)
@@ -721,13 +721,13 @@ IplImage* fvkImagePlot::getPlottedImage(const IplImage* Inimg, int plotsize_w, i
 void fvkImagePlot::plot(cv::Mat& _img)
 {
 	// get cv::Mat image from IplImage pointer.
-	IplImage* t = cvCreateImage(cvSize(_img.cols, _img.rows), IPL_DEPTH_8U, _img.channels());
+	auto t = cvCreateImage(cvSize(_img.cols, _img.rows), IPL_DEPTH_8U, _img.channels());
 	if (!t) return;
 	IplImage copy = _img;
 	IplImage* newCopy = &copy;
 	cvCopy(newCopy, t);
 
-	IplImage* m = getPlottedImage(
+	auto m = getPlottedImage(
 		t,
 		m_plotsize.width,
 		m_plotsize.height,
@@ -754,7 +754,7 @@ void fvkImagePlot::plot(cv::Mat& _img)
 }
 void fvkImagePlot::plot(IplImage* _img)
 {
-	IplImage* m = getPlottedImage(
+	auto m = getPlottedImage(
 		_img,
 		m_plotsize.width,
 		m_plotsize.height,

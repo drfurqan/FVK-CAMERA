@@ -92,8 +92,8 @@ void fvkImageProcessing::reset()
 static cv::Size __resizeKeepAspectRatio(int _old_w, int _old_h, int _new_w, int _new_h)
 {
 	int _final_w = 0, _final_h = 0;
-	double w2 = _new_h * (_old_w / static_cast<double>(_old_h));
-	double h1 = _new_w * (_old_h / static_cast<double>(_old_w));
+	auto w2 = _new_h * (_old_w / static_cast<double>(_old_h));
+	auto h1 = _new_w * (_old_h / static_cast<double>(_old_w));
 	if (h1 <= _new_h)
 	{
 		_final_w = _new_w;
@@ -172,8 +172,8 @@ void fvkImageProcessing::setBrightnessFilter(cv::Mat& _img, int _value)
 {
 	if (_img.empty() || _value == 0) return;
 
-	int value = cvFloor(255.f * (static_cast<float>(_value) / 100.f));
-	cv::Mat m = cv::Mat::zeros(_img.size(), _img.type());
+	auto value = cvFloor(255.f * (static_cast<float>(_value) / 100.f));
+	auto m = cv::Mat(cv::Mat::zeros(_img.size(), _img.type()));
 	_img.convertTo(m, -1, 1.0, static_cast<double>(value));
 	_img = m;
 
@@ -210,8 +210,8 @@ void fvkImageProcessing::setContrastFilter(cv::Mat& _img, int _value)
 {
 	if (_img.empty() || _value == 0) return;
 
-	double value = std::pow(static_cast<double>(_value + 100) / 100.0, 2.0);
-	cv::Mat m = cv::Mat::zeros(_img.size(), _img.type());
+	auto value = std::pow(static_cast<double>(_value + 100) / 100.0, 2.0);
+	auto m = cv::Mat(cv::Mat::zeros(_img.size(), _img.type()));
 	_img.convertTo(m, -1, value, 0.0);
 	_img = m;
 }
@@ -220,16 +220,16 @@ void fvkImageProcessing::setColorContrastFilter(cv::Mat& _img, int _value)
 {
 	if (_img.empty() || _value == 0) return;
 
-	float value = std::pow(static_cast<float>(_value + 100) / 100.f, 2.f);
+	auto value = std::pow(static_cast<float>(_value + 100) / 100.f, 2.f);
 
 	if (_img.channels() == 1)
 	{
 		cv::Mat m(_img.size(), _img.type());
-		for (int y = 0; y < _img.rows; y++)
+		for (auto y = 0; y < _img.rows; y++)
 		{
-			for (int x = 0; x < _img.cols; x++)
+			for (auto x = 0; x < _img.cols; x++)
 			{
-				float p = static_cast<float>(_img.at<uchar>(cv::Point(x, y)));
+				auto p = static_cast<float>(_img.at<uchar>(cv::Point(x, y)));
 
 				p /= 255.f;
 				p -= 0.5f;
@@ -245,9 +245,9 @@ void fvkImageProcessing::setColorContrastFilter(cv::Mat& _img, int _value)
 	else if (_img.channels() == 3)
 	{
 		cv::Mat m(_img.size(), _img.type());
-		for (int y = 0; y < _img.rows; y++)
+		for (auto y = 0; y < _img.rows; y++)
 		{
-			for (int x = 0; x < _img.cols; x++)
+			for (auto x = 0; x < _img.cols; x++)
 			{
 				cv::Vec3f pixel = _img.at<cv::Vec3b>(cv::Point(x, y));
 
@@ -277,9 +277,9 @@ void fvkImageProcessing::setColorContrastFilter(cv::Mat& _img, int _value)
 	else if (_img.channels() == 4)
 	{
 		cv::Mat m(_img.size(), _img.type());
-		for (int y = 0; y < _img.rows; y++)
+		for (auto y = 0; y < _img.rows; y++)
 		{
-			for (int x = 0; x < _img.cols; x++)
+			for (auto x = 0; x < _img.cols; x++)
 			{
 				cv::Vec4f pixel = _img.at<cv::Vec4b>(cv::Point(x, y));
 
@@ -312,14 +312,14 @@ void fvkImageProcessing::setSaturationFilter(cv::Mat& _img, int _value)
 {
 	if (_img.empty() || _value == 0) return;
 
-	float value = _value * -0.01f;
+	auto value = _value * -0.01f;
 
 	if (_img.channels() == 3)
 	{
 		cv::Mat m(_img.size(), _img.type());
-		for (int y = 0; y < _img.rows; y++)
+		for (auto y = 0; y < _img.rows; y++)
 		{
-			for (int x = 0; x < _img.cols; x++)
+			for (auto x = 0; x < _img.cols; x++)
 			{
 				cv::Vec3f pixel = _img.at<cv::Vec3b>(cv::Point(x, y));
 
@@ -344,21 +344,21 @@ void fvkImageProcessing::setVibranceFilter(cv::Mat& _img, int _value)
 {
 	if (_img.empty() || _value == 0) return;
 
-	float value = _value * -1.0f;
+	auto value = _value * -1.0f;
 
 	if (_img.channels() == 3)
 	{
 		cv::Mat m(_img.size(), _img.type());
-		for (int y = 0; y < _img.rows; y++)
+		for (auto y = 0; y < _img.rows; y++)
 		{
-			for (int x = 0; x < _img.cols; x++)
+			for (auto x = 0; x < _img.cols; x++)
 			{
 				cv::Vec3f pixel = _img.at<cv::Vec3b>(cv::Point(x, y));
 
-				float maxi = std::max(std::max(pixel.val[0], pixel.val[1]), pixel.val[2]);
+				auto maxi = std::max(std::max(pixel.val[0], pixel.val[1]), pixel.val[2]);
 
-				float avg = (pixel.val[0] + pixel.val[1] + pixel.val[2]) / 3.f;
-				float amt = ((std::abs(maxi - avg) * 2.f / 255.f) * value) / 100.f;
+				auto avg = (pixel.val[0] + pixel.val[1] + pixel.val[2]) / 3.f;
+				auto amt = ((std::abs(maxi - avg) * 2.f / 255.f) * value) / 100.f;
 
 
 				if (pixel.val[0] != maxi)
@@ -386,11 +386,11 @@ void fvkImageProcessing::setHueFilter(cv::Mat& _img, int _value)
 		cv::Mat m;
 		cv::cvtColor(_img, m, cv::ColorConversionCodes::COLOR_BGR2HSV);	// BGR to HSV
 
-		for (int y = 0; y < m.rows; y++)
+		for (auto y = 0; y < m.rows; y++)
 		{
-			for (int x = 0; x < m.cols; x++)
+			for (auto x = 0; x < m.cols; x++)
 			{
-				cv::Vec3i pixel = m.at<cv::Vec3b>(cv::Point(x, y));
+				cv::Vec3f pixel = m.at<cv::Vec3b>(cv::Point(x, y));
 
 				pixel.val[0] += _value;
 				if (pixel.val[0] < 0) 
@@ -410,14 +410,14 @@ void fvkImageProcessing::setGammaFilter(cv::Mat& _img, int _value)
 {
 	if (_img.empty() || _value == 0) return;
 
-	float value = 1.f - static_cast<float>(_value) / 100.f;
+	auto value = 1.f - static_cast<float>(_value) / 100.f;
 
 	if (_img.channels() == 3)
 	{
 		cv::Mat m(_img.size(), _img.type());
-		for (int y = 0; y < _img.rows; y++)
+		for (auto y = 0; y < _img.rows; y++)
 		{
-			for (int x = 0; x < _img.cols; x++)
+			for (auto x = 0; x < _img.cols; x++)
 			{
 				cv::Vec3f pixel = _img.at<cv::Vec3b>(cv::Point(x, y));
 
@@ -438,12 +438,12 @@ void fvkImageProcessing::setSepiaFilter(cv::Mat& _img, int _value)
 
 	if (_img.channels() == 3)
 	{
-		double value = static_cast<double>(_value) / 100.0;
+		auto value = static_cast<double>(_value) / 100.0;
 		cv::Mat m(_img.size(), _img.type());
 
-		for (int y = 0; y < _img.rows; y++)
+		for (auto y = 0; y < _img.rows; y++)
 		{
-			for (int x = 0; x < _img.cols; x++)
+			for (auto x = 0; x < _img.cols; x++)
 			{
 				cv::Vec3d p = _img.at<cv::Vec3b>(cv::Point(x, y));
 
@@ -462,14 +462,14 @@ void fvkImageProcessing::setClipFilter(cv::Mat& _img, int _value)
 {
 	if (_img.empty() || _value == 0) return;
 
-	float value = std::abs(static_cast<float>(_value)) * 2.55f;
+	auto value = std::abs(static_cast<float>(_value)) * 2.55f;
 
 	if (_img.channels() == 3)
 	{
 		cv::Mat m(_img.size(), _img.type());
-		for (int y = 0; y < _img.rows; y++)
+		for (auto y = 0; y < _img.rows; y++)
 		{
-			for (int x = 0; x < _img.cols; x++)
+			for (auto x = 0; x < _img.cols; x++)
 			{
 				cv::Vec3f pixel = _img.at<cv::Vec3b>(cv::Point(x, y));
 
@@ -537,12 +537,12 @@ void fvkImageProcessing::setEqualizeFilter(cv::Mat& _img, double _cliplimit, cv:
 		cv::cvtColor(m, m, CV_YCrCb2BGR);
 		
 		cv::Mat dst(_img.size(), _img.type());
-		for (int y = 0; y < m.rows; y++)
+		for (auto y = 0; y < m.rows; y++)
 		{
-			for (int x = 0; x < m.cols; x++)
+			for (auto x = 0; x < m.cols; x++)
 			{
-				cv::Vec3b pixel = m.at<cv::Vec3b>(cv::Point(x, y));
-				cv::Vec4b p(pixel.val[0], pixel.val[1], pixel.val[2], channels[3].at<uchar>(cv::Point(x, y)));
+				auto pixel = m.at<cv::Vec3b>(cv::Point(x, y));
+				auto p = cv::Vec4b(pixel.val[0], pixel.val[1], pixel.val[2], channels[3].at<uchar>(cv::Point(x, y)));
 				dst.at<cv::Vec4b>(cv::Point(x, y)) = p;
 
 			}
@@ -632,16 +632,16 @@ void fvkImageProcessing::imageProcessing(cv::Mat& _frame)
 		else if (_frame.channels() == 1)
 			cv::cvtColor(_frame, _frame, cv::ColorConversionCodes::COLOR_GRAY2BGR);
 
-		cv::Mat dst = cv::Mat::zeros(_frame.size(), CV_8UC3);
-		cv::Mat cir = cv::Mat::zeros(_frame.size(), CV_8UC1);
-		int bsize = m_ndots;
+		auto dst = cv::Mat(cv::Mat::zeros(_frame.size(), CV_8UC3));
+		auto cir = cv::Mat(cv::Mat::zeros(_frame.size(), CV_8UC1));
+		auto bsize = m_ndots;
 
-		for (int i = 0; i < _frame.rows; i += bsize)
+		for (auto i = 0; i < _frame.rows; i += bsize)
 		{
-			for (int j = 0; j < _frame.cols; j += bsize)
+			for (auto j = 0; j < _frame.cols; j += bsize)
 			{
-				cv::Rect rect = cv::Rect(j, i, bsize, bsize) & cv::Rect(0, 0, _frame.cols, _frame.rows);
-				cv::Mat sub_dst(dst, rect);
+				auto rect = cv::Rect(j, i, bsize, bsize) & cv::Rect(0, 0, _frame.cols, _frame.rows);
+				auto sub_dst = cv::Mat(dst, rect);
 				sub_dst.setTo(cv::mean(_frame(rect)));
 				cv::circle(cir, cv::Point(j + bsize / 2, i + bsize / 2), bsize / 2 - 1, CV_RGB(255, 255, 255), -1, CV_AA);
 			}
@@ -679,16 +679,16 @@ void fvkImageProcessing::imageProcessing(cv::Mat& _frame)
 
 	if (m_zoomperc > 0 && m_zoomperc != 100)
 	{
-		cv::Size s = __resizeKeepAspectRatio(_frame.cols, _frame.rows, static_cast<int>(static_cast<float>(_frame.cols * (m_zoomperc / 100.f))), static_cast<int>(static_cast<float>(_frame.rows * (m_zoomperc / 100.f))));
-		cv::Mat m = cv::Mat::zeros(s, _frame.type());
+		auto s = __resizeKeepAspectRatio(_frame.cols, _frame.rows, static_cast<int>(static_cast<float>(_frame.cols * (m_zoomperc / 100.f))), static_cast<int>(static_cast<float>(_frame.rows * (m_zoomperc / 100.f))));
+		auto m = cv::Mat(cv::Mat::zeros(s, _frame.type()));
 		cv::resize(_frame, m, s, 0, 0, cv::InterpolationFlags::INTER_LINEAR);
 		_frame = m;
 	}
 
 	if (m_rotangle != 0)
 	{
-		cv::Point2d cen(static_cast<double>(_frame.cols) / 2.0, static_cast<double>(_frame.rows) / 2.0);
-		cv::Mat rot_mat = cv::getRotationMatrix2D(cen, m_rotangle, 1.0);
+		auto cen = cv::Point2d(static_cast<double>(_frame.cols) / 2.0, static_cast<double>(_frame.rows) / 2.0);
+		auto rot_mat = cv::getRotationMatrix2D(cen, m_rotangle, 1.0);
 		cv::Mat m;
 		cv::warpAffine(_frame, m, rot_mat, _frame.size(), cv::InterpolationFlags::INTER_LINEAR);
 		_frame = m;
@@ -739,7 +739,7 @@ void fvkImageProcessing::setDenoisingMethod(fvkImageProcessing::DenoisingMethod 
 	std::lock_guard<std::mutex> locker(m_mutex);
 	m_denoismethod = _value;
 }
-fvkImageProcessing::DenoisingMethod fvkImageProcessing::getDenoisingMethod()
+auto fvkImageProcessing::getDenoisingMethod() -> fvkImageProcessing::DenoisingMethod
 {
 	std::lock_guard<std::mutex> locker(m_mutex);
 	return m_denoismethod;
@@ -749,7 +749,7 @@ void fvkImageProcessing::setDenoisingLevel(int _value)
 	std::lock_guard<std::mutex> locker(m_mutex);
 	m_denoislevel = _value;
 }
-int fvkImageProcessing::getDenoisingLevel()
+auto fvkImageProcessing::getDenoisingLevel() -> int
 {
 	std::lock_guard<std::mutex> locker(m_mutex);
 	return m_denoislevel;
@@ -760,7 +760,7 @@ void fvkImageProcessing::setSharpeningLevel(int _value)
 	std::lock_guard<std::mutex> locker(m_mutex);
 	m_sharplevel = _value;
 }
-int fvkImageProcessing::getSharpeningLevel()
+auto fvkImageProcessing::getSharpeningLevel() -> int
 {
 	std::lock_guard<std::mutex> locker(m_mutex);
 	return m_sharplevel;
@@ -771,7 +771,7 @@ void fvkImageProcessing::setDetailLevel(int _value)
 	std::lock_guard<std::mutex> locker(m_mutex);
 	m_details = _value;
 }
-int fvkImageProcessing::getDetailLevel()
+auto fvkImageProcessing::getDetailLevel() -> int
 {
 	std::lock_guard<std::mutex> locker(m_mutex);
 	return m_details;
@@ -781,7 +781,7 @@ void fvkImageProcessing::setSmoothness(int _value)
 	std::lock_guard<std::mutex> locker(m_mutex);
 	m_smoothness = _value;
 }
-int fvkImageProcessing::getSmoothness()
+auto fvkImageProcessing::getSmoothness() -> int
 {
 	std::lock_guard<std::mutex> locker(m_mutex);
 	return m_smoothness;
@@ -791,7 +791,7 @@ void fvkImageProcessing::setPencilSketchLevel(int _value)
 	std::lock_guard<std::mutex> locker(m_mutex);
 	m_pencilsketch = _value;
 }
-int fvkImageProcessing::getPencilSketchLevel()
+auto fvkImageProcessing::getPencilSketchLevel() -> int
 {
 	std::lock_guard<std::mutex> locker(m_mutex);
 	return m_pencilsketch;
@@ -801,7 +801,7 @@ void fvkImageProcessing::setStylizationLevel(int _value)
 	std::lock_guard<std::mutex> locker(m_mutex);
 	m_stylization = _value;
 }
-int fvkImageProcessing::getStylizationLevel()
+auto fvkImageProcessing::getStylizationLevel() -> int
 {
 	std::lock_guard<std::mutex> locker(m_mutex);
 	return m_stylization;
@@ -812,7 +812,7 @@ void fvkImageProcessing::setBrightness(int _value)
 	std::lock_guard<std::mutex> locker(m_mutex);
 	m_brigtness = _value;
 }
-int fvkImageProcessing::getBrightness()
+auto fvkImageProcessing::getBrightness() -> int
 {
 	std::lock_guard<std::mutex> locker(m_mutex);
 	return m_brigtness;
@@ -823,7 +823,7 @@ void fvkImageProcessing::setContrast(int _value)
 	std::lock_guard<std::mutex> locker(m_mutex);
 	m_contrast = _value;
 }
-int fvkImageProcessing::getContrast()
+auto fvkImageProcessing::getContrast() -> int
 {
 	std::lock_guard<std::mutex> locker(m_mutex);
 	return m_contrast;
@@ -834,7 +834,7 @@ void fvkImageProcessing::setColorContrast(int _value)
 	std::lock_guard<std::mutex> locker(m_mutex);
 	m_colorcontrast = _value;
 }
-int fvkImageProcessing::getColorContrast()
+auto fvkImageProcessing::getColorContrast() -> int
 {
 	std::lock_guard<std::mutex> locker(m_mutex);
 	return m_colorcontrast;
@@ -845,7 +845,7 @@ void fvkImageProcessing::setSaturation(int _value)
 	std::lock_guard<std::mutex> locker(m_mutex);
 	m_saturation = _value;
 }
-int fvkImageProcessing::getSaturation()
+auto fvkImageProcessing::getSaturation() -> int
 {
 	std::lock_guard<std::mutex> locker(m_mutex);
 	return m_saturation;
@@ -856,7 +856,7 @@ void fvkImageProcessing::setVibrance(int _value)
 	std::lock_guard<std::mutex> locker(m_mutex);
 	m_vibrance = _value;
 }
-int fvkImageProcessing::getVibrance()
+auto fvkImageProcessing::getVibrance() -> int
 {
 	std::lock_guard<std::mutex> locker(m_mutex);
 	return m_vibrance;
@@ -867,7 +867,7 @@ void fvkImageProcessing::setHue(int _value)
 	std::lock_guard<std::mutex> locker(m_mutex);
 	m_hue = _value;
 }
-int fvkImageProcessing::getHue()
+auto fvkImageProcessing::getHue() -> int
 {
 	std::lock_guard<std::mutex> locker(m_mutex);
 	return m_hue;
@@ -878,7 +878,7 @@ void fvkImageProcessing::setGamma(int _value)
 	std::lock_guard<std::mutex> locker(m_mutex);
 	m_gamma = _value;
 }
-int fvkImageProcessing::getGamma()
+auto fvkImageProcessing::getGamma() -> int
 {
 	std::lock_guard<std::mutex> locker(m_mutex);
 	return m_gamma;
@@ -889,7 +889,7 @@ void fvkImageProcessing::setSepia(int _value)
 	std::lock_guard<std::mutex> locker(m_mutex);
 	m_sepia = _value;
 }
-int fvkImageProcessing::getSepia()
+auto fvkImageProcessing::getSepia() -> int
 {
 	std::lock_guard<std::mutex> locker(m_mutex);
 	return m_sepia;
@@ -900,7 +900,7 @@ void fvkImageProcessing::setClip(int _value)
 	std::lock_guard<std::mutex> locker(m_mutex);
 	m_clip = _value;
 }
-int fvkImageProcessing::getClip()
+auto fvkImageProcessing::getClip() -> int
 {
 	std::lock_guard<std::mutex> locker(m_mutex);
 	return m_clip;
@@ -911,7 +911,7 @@ void fvkImageProcessing::setNegativeModeEnabled(bool _value)
 	std::lock_guard<std::mutex> locker(m_mutex);
 	m_isnegative = _value;
 }
-bool fvkImageProcessing::isNegativeModeEnabled()
+auto fvkImageProcessing::isNegativeModeEnabled() -> bool
 {
 	std::lock_guard<std::mutex> locker(m_mutex);
 	return m_isnegative;
@@ -922,7 +922,7 @@ void fvkImageProcessing::setLightEmbossEnabled(bool _value)
 	std::lock_guard<std::mutex> locker(m_mutex);
 	m_isemboss = _value;
 }
-bool fvkImageProcessing::isLightEmbossEnabled()
+auto fvkImageProcessing::isLightEmbossEnabled() -> bool
 {
 	std::lock_guard<std::mutex> locker(m_mutex);
 	return m_isemboss;
@@ -933,7 +933,7 @@ void fvkImageProcessing::setDotPatternLevel(int _value)
 	std::lock_guard<std::mutex> locker(m_mutex);
 	m_ndots = _value;
 }
-int fvkImageProcessing::getDotPatternLevel()
+auto fvkImageProcessing::getDotPatternLevel() -> int
 {
 	std::lock_guard<std::mutex> locker(m_mutex);
 	return m_ndots;
@@ -944,7 +944,7 @@ void fvkImageProcessing::setFlipDirection(FlipDirection _d)
 	std::lock_guard<std::mutex> locker(m_mutex);
 	m_flip = _d;
 }
-fvkImageProcessing::FlipDirection fvkImageProcessing::getFlipDirection()
+auto fvkImageProcessing::getFlipDirection() -> fvkImageProcessing::FlipDirection
 {
 	std::lock_guard<std::mutex> locker(m_mutex);
 	return m_flip;
@@ -955,7 +955,7 @@ void fvkImageProcessing::setZoomLevel(int _value)
 	std::lock_guard<std::mutex> locker(m_mutex);
 	m_zoomperc = _value;
 }
-int fvkImageProcessing::getZoomLevel()
+auto fvkImageProcessing::getZoomLevel() -> int
 {
 	std::lock_guard<std::mutex> locker(m_mutex);
 	return m_zoomperc;
@@ -966,7 +966,7 @@ void fvkImageProcessing::setRotationAngle(double _value)
 	std::lock_guard<std::mutex> locker(m_mutex);
 	m_rotangle = _value;
 }
-double fvkImageProcessing::getRotationAngle()
+auto fvkImageProcessing::getRotationAngle() -> double
 {
 	std::lock_guard<std::mutex> locker(m_mutex);
 	return m_rotangle;
@@ -977,7 +977,7 @@ void fvkImageProcessing::setConvertColor(int _value)
 	std::lock_guard<std::mutex> locker(m_mutex);
 	m_convertcolor = _value;
 }
-int fvkImageProcessing::getConvertColor()
+auto fvkImageProcessing::getConvertColor() -> int
 {
 	std::lock_guard<std::mutex> locker(m_mutex);
 	return m_convertcolor;
@@ -988,7 +988,7 @@ void fvkImageProcessing::setGrayScaleEnabled(bool _value)
 	std::lock_guard<std::mutex> locker(m_mutex);
 	m_isgray = _value;
 }
-bool fvkImageProcessing::isGrayScaleEnabled()
+auto fvkImageProcessing::isGrayScaleEnabled() -> bool
 {
 	std::lock_guard<std::mutex> locker(m_mutex);
 	return m_isgray;
@@ -999,7 +999,7 @@ void fvkImageProcessing::setThresholdValue(int _value)
 	std::lock_guard<std::mutex> locker(m_mutex);
 	m_threshold = _value;
 }
-int fvkImageProcessing::getThresholdValue()
+auto fvkImageProcessing::getThresholdValue() -> int
 {
 	std::lock_guard<std::mutex> locker(m_mutex);
 	return m_threshold;
@@ -1009,7 +1009,7 @@ void fvkImageProcessing::setEqualizeClipLimit(double _value)
 	std::lock_guard<std::mutex> locker(m_mutex);
 	m_equalizelimit = _value;
 }
-double fvkImageProcessing::getEqualizeClipLimit()
+auto fvkImageProcessing::getEqualizeClipLimit() -> double
 {
 	std::lock_guard<std::mutex> locker(m_mutex);
 	return m_equalizelimit;
@@ -1018,7 +1018,7 @@ double fvkImageProcessing::getEqualizeClipLimit()
 /************************************************************************/
 /*                                                                      */
 /************************************************************************/
-bool fvkImageProcessing::loadCascadeClassifier(const std::string& _filename)
+auto fvkImageProcessing::loadCascadeClassifier(const std::string& _filename) -> bool
 {
 	return m_ft.loadCascadeClassifier(_filename);
 }
@@ -1027,7 +1027,7 @@ void fvkImageProcessing::setFaceDetectionEnabled(bool _value)
 	std::lock_guard<std::mutex> locker(m_mutex);
 	m_isfacetrack = _value;
 }
-bool fvkImageProcessing::isFaceDetectionEnabled()
+auto fvkImageProcessing::isFaceDetectionEnabled() -> bool
 {
 	std::lock_guard<std::mutex> locker(m_mutex);
 	return m_isfacetrack;

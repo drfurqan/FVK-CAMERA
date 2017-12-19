@@ -25,13 +25,12 @@ purpose:	Class to create a thread for capturing frames from OpenCV camera.
 
 #include "fvkCameraThreadAbstract.h"
 #include "fvkSemaphoreBuffer.h"
-#include "fvkAverageFps.h"
-#include <functional>
+#include "fvkThread.h"
 
 namespace R3D
 {
 
-class FVK_EXPORT fvkCameraThread : public fvkCameraThreadAbstract
+class FVK_EXPORT fvkCameraThread : public fvkThread, public fvkCameraThreadAbstract
 {
 public:
 	// Description:
@@ -53,38 +52,24 @@ public:
 	fvkCameraThread(fvkSemaphoreBuffer<cv::Mat>* _buffer, const std::string& _video_file, cv::Size _resolution = cv::Size(-1, -1), int _api = cv::VideoCaptureAPIs::CAP_ANY);
 	// Description:
 	// Default destructor to stop the thread and releases the camera device or video file.
-	virtual ~fvkCameraThread();
+	~fvkCameraThread();
 
 	// Description:
-	// Function that starts the camera loop.
-	virtual void run() override;
+	// Overridden function to process the camera frame.
+	void run();
 
-	// Description:
-	// Overridden function to pause the camera capturing thread.
-	virtual void pause(bool _b) override;
-	// Description:
-	// Overridden function that returns true if the camera capturing thread is on pause state.
-	virtual bool pause() override;
-	// Description:
-	// Function to stop the camera capturing thread.
-	virtual void stop() override;
 	// Description:
 	// Set true if you want to restart or repeat the video when it finishes. (only for videos)
 	// Default in true.
-	virtual void repeat(bool _b) override;
+	void repeat(bool _b);
 	// It returns true if the repeat flag for the video is on. (only for videos)
 	// Default in true.
-	virtual bool repeat() override;
-	// Description:
-	// Function to get the current grabbed frame.
-	virtual cv::Mat getFrame() override;
+	auto repeat() -> bool;
 
 	// Description:
-	// Function that returns the average frames per second of this thread.
-	int getAvgFps();
-	// Description:
-	// Function that returns the total number of process/passed frames.
-	int getNFrames();
+	// Function to get the current grabbed frame.
+	cv::Mat getFrame() override;
+
 	// Description:
 	// Set the emit function to get the average frames per second of this thread
 	// as well as the total number of frames that has been processed/passed.
@@ -96,7 +81,7 @@ public:
 	void setSemaphoreBuffer(fvkSemaphoreBuffer<cv::Mat>* _p) { p_buffer = _p; }
 	// Description:
 	// Function to get a pointer to semaphore buffer which does synchronization between capturing and processing threads.
-	fvkSemaphoreBuffer<cv::Mat>* getSemaphoreBuffer() const { return p_buffer; }
+	auto getSemaphoreBuffer() const { return p_buffer; }
 
 	// Description:
 	// Function to enable the perfect synchronization between the processing thread and the camera thread.
@@ -106,7 +91,7 @@ public:
 	void setSyncEnabled(bool _b);
 	// Description:
 	// Function that returns true if the perfect synchronization is enabled.
-	bool isSyncEnabled();
+	auto isSyncEnabled() -> bool;
 
 protected:
 	// Description:
@@ -115,19 +100,14 @@ protected:
 	// otherwise capturing from camera device will be ON. 
 	// In order to grab from the camera device, the video file path
 	// should be empty, like setVideoFile("");
-	virtual bool grab(cv::Mat& _m_frame) override;
-
-	std::mutex m_stopmutex;
-	std::mutex m_pausemutex;
-	std::mutex m_repeatmutex;
-	std::condition_variable m_pausecond;
-	fvkSemaphoreBuffer<cv::Mat> *p_buffer;
-
+	bool grab(cv::Mat& _m_frame) override;
+	
+	fvkSemaphoreBuffer<cv::Mat>* p_buffer;
 	std::function<void(const fvkAverageFpsStats&)> emit_stats;
-	fvkAverageFps m_avgfps;
-	std::mutex m_statsmutex;
 	std::mutex m_syncmutex;
+	std::mutex m_repeatmutex;
 	bool m_sync_proc_thread;
+	bool m_isrepeat;
 };
 
 }

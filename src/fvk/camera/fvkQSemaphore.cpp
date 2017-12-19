@@ -47,7 +47,7 @@ void fvkQSemaphore::acquire(int _n /*= 1*/)
 	m_count -= _n;
 }
 
-bool fvkQSemaphore::tryAcquire(int _n /*= 1*/)
+auto fvkQSemaphore::tryAcquire(int _n /*= 1*/) -> bool
 {
 	std::lock_guard<std::mutex> lk(m_mutex);
 	if (_n > m_count) return false;
@@ -55,7 +55,7 @@ bool fvkQSemaphore::tryAcquire(int _n /*= 1*/)
 	return true;
 }
 
-int fvkQSemaphore::count()
+auto fvkQSemaphore::count() -> int
 {
 	std::lock_guard<std::mutex> lk(m_mutex);
 	return m_count;

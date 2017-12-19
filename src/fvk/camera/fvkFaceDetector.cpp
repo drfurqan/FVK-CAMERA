@@ -42,7 +42,7 @@ void fvkFaceDetector::reset()
 	m_foundFace = false;
 }
 
-bool fvkFaceDetector::setFaceCascade(const std::string& _cascade_file_path)
+auto fvkFaceDetector::setFaceCascade(const std::string& _cascade_file_path) -> bool
 {
 	if (_cascade_file_path.empty()) return false;
 
@@ -68,22 +68,17 @@ bool fvkFaceDetector::setFaceCascade(const std::string& _cascade_file_path)
 	return true;
 }
 
-cv::CascadeClassifier* fvkFaceDetector::getFaceCascade() const
-{
-    return m_faceCascade;
-}
-
 void fvkFaceDetector::setResizedWidth(const int _width)
 {
     m_resizedWidth = std::max(_width, 1);
 }
 
-int fvkFaceDetector::getResizedWidth() const
+auto fvkFaceDetector::getResizedWidth() const -> int
 {
     return m_resizedWidth;
 }
 
-cv::Rect fvkFaceDetector::getRect() const
+auto fvkFaceDetector::getRect() const -> cv::Rect
 {
     cv::Rect faceRect = m_trackedFace;
 	faceRect.x = static_cast<int>(faceRect.x / m_scale);
@@ -93,7 +88,7 @@ cv::Rect fvkFaceDetector::getRect() const
     return faceRect;
 }
 
-cv::Point fvkFaceDetector::getPosition() const
+auto fvkFaceDetector::getPosition() const -> cv::Point
 {
 	return cv::Point(static_cast<int>(m_facePosition.x / m_scale), static_cast<int>(m_facePosition.y / m_scale));
 }
@@ -103,12 +98,12 @@ void fvkFaceDetector::setTemplateMatchingMaxDuration(const double _s)
     m_templateMatchingMaxDuration = _s;
 }
 
-double fvkFaceDetector::templateMatchingMaxDuration() const
+auto fvkFaceDetector::templateMatchingMaxDuration() const -> double
 {
     return m_templateMatchingMaxDuration;
 }
 
-cv::Rect fvkFaceDetector::doubleRectSize(const cv::Rect& inputRect, const cv::Rect& frameSize) const
+auto fvkFaceDetector::doubleRectSize(const cv::Rect& inputRect, const cv::Rect& frameSize) const -> cv::Rect
 {
     cv::Rect outputRect;
     // Double rect size
@@ -139,12 +134,12 @@ cv::Rect fvkFaceDetector::doubleRectSize(const cv::Rect& inputRect, const cv::Re
     return outputRect;
 }
 
-cv::Point fvkFaceDetector::centerOfRect(const cv::Rect& rect) const
+auto fvkFaceDetector::centerOfRect(const cv::Rect& rect) const -> cv::Point
 {
     return cv::Point(rect.x + rect.width / 2, rect.y + rect.height / 2);
 }
 
-cv::Rect fvkFaceDetector::biggestFace(std::vector<cv::Rect>& faces) const
+auto fvkFaceDetector::biggestFace(std::vector<cv::Rect>& faces) const -> cv::Rect
 {
     assert(!faces.empty());
 
@@ -160,7 +155,7 @@ cv::Rect fvkFaceDetector::biggestFace(std::vector<cv::Rect>& faces) const
 /*
 * Face template is small patch in the middle of detected face.
 */
-cv::Mat fvkFaceDetector::getFaceTemplate(const cv::Mat& _frame, cv::Rect _face)
+auto fvkFaceDetector::getFaceTemplate(const cv::Mat& _frame, cv::Rect _face) -> cv::Mat
 {
     _face.x += _face.width / 4;
     _face.y += _face.height / 4;
@@ -239,7 +234,7 @@ void fvkFaceDetector::detectFacesTemplateMatching(const cv::Mat& frame)
 {
     // Calculate duration of template matching
     m_templateMatchingCurrentTime = cv::getTickCount();
-    double duration = (double)(m_templateMatchingCurrentTime - m_templateMatchingStartTime) / TICK_FREQUENCY;
+	auto duration = (double)(m_templateMatchingCurrentTime - m_templateMatchingStartTime) / TICK_FREQUENCY;
 
     // If template matching lasts for more than 2 seconds face is possibly lost
     // so disable it and redetect using cascades
@@ -277,11 +272,11 @@ void fvkFaceDetector::detectFacesTemplateMatching(const cv::Mat& frame)
     m_facePosition = centerOfRect(m_trackedFace);
 }
 
-cv::Point fvkFaceDetector::detect(cv::Mat& _frame)
+auto fvkFaceDetector::detect(cv::Mat& _frame) -> cv::Point
 {
     // Downscale frame to m_resizedWidth width - keep aspect ratio
 	m_scale = static_cast<double>(std::min(m_resizedWidth, _frame.cols) / static_cast<double>(_frame.cols));
-	cv::Size resizedFrameSize = cv::Size(static_cast<int>(m_scale*_frame.cols), static_cast<int>(m_scale*_frame.rows));
+	auto resizedFrameSize = cv::Size(static_cast<int>(m_scale*_frame.cols), static_cast<int>(m_scale*_frame.rows));
 
     cv::Mat resizedFrame;
     cv::resize(_frame, resizedFrame, resizedFrameSize);
@@ -300,7 +295,7 @@ cv::Point fvkFaceDetector::detect(cv::Mat& _frame)
     return m_facePosition;
 }
 
-cv::Point fvkFaceDetector::operator >> (cv::Mat& _frame)
+auto fvkFaceDetector::operator >> (cv::Mat& _frame) -> cv::Point
 {
 	return detect(_frame);
 }
@@ -316,7 +311,7 @@ nframes(0)
 {
 }
 
-bool fvkSimpleFaceDetector::loadCascadeClassifier(const std::string& _filename)
+auto fvkSimpleFaceDetector::loadCascadeClassifier(const std::string& _filename) -> bool
 {
 	if (m_fd.setFaceCascade(_filename))
 	{

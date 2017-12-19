@@ -38,7 +38,7 @@ fvkVideoWriter::~fvkVideoWriter()
 	stop();
 }
 
-int fvkVideoWriter::open()
+auto fvkVideoWriter::open() -> int
 {
 	if (m_writer.isOpened()) return -1;
 
@@ -58,7 +58,7 @@ int fvkVideoWriter::open()
 	return 1;
 }
 
-bool fvkVideoWriter::isOpened()
+auto fvkVideoWriter::isOpened() -> bool
 {
 	return m_writer.isOpened();
 }
@@ -71,6 +71,8 @@ void fvkVideoWriter::stop()
 void fvkVideoWriter::addFrame(const cv::Mat& _frame)
 {
 	// _frame must have the same size as has been specified when opening the video writer.
-	if (_frame.empty() || _frame.size() != m_size) return;
+	if (_frame.empty() || _frame.size() != m_size) 
+		return;
+
 	m_writer.write(_frame);
 }

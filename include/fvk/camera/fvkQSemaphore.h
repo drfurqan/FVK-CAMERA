@@ -47,7 +47,7 @@ public:
 	// try to acquire a semaphore count.
 	// It's actually a "try_wait" method.
 	// It does not block the thread, but wait until get notify by calling release() method and returns true.
-	bool tryAcquire(int _n = 1);
+	auto tryAcquire(int _n = 1) -> bool;
 	// Description:
 	// release one semaphore count.
 	// It's actually a "notify" method.
@@ -57,7 +57,7 @@ public:
 
 	// Description:
 	// Function that return total number of available count.
-	int count();
+	auto count() -> int;
 
 private:
 	std::mutex m_mutex;

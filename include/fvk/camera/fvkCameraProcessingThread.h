@@ -27,16 +27,14 @@ This thread is synchronized with the camera thread using a semaphore.
 #include "fvkImageProcessing.h"
 #include "fvkSemaphoreBuffer.h"
 #include "fvkVideoWriter.h"
-#include "fvkAverageFps.h"
-#include "fvkClockTime.h"
-#include <functional>
+#include "fvkThread.h"
 
 namespace R3D
 {
 
 class fvkCameraAbstract;
 
-class FVK_EXPORT fvkCameraProcessingThread
+class FVK_EXPORT fvkCameraProcessingThread : public fvkThread
 {
 public:
 	// Description:
@@ -50,19 +48,15 @@ public:
 	fvkCameraProcessingThread(fvkSemaphoreBuffer<cv::Mat>* _buffer, fvkCameraAbstract* _frameobserver, int _device_id = 0);
 	// Description:
 	// Default destructor to stop the thread as well as recorder, and delete the data.
-	virtual ~fvkCameraProcessingThread();
+	~fvkCameraProcessingThread();
 
 	// Description:
-	// Overridden function that starts the thread.
-	virtual void run();
-
-	// Description:
-	// Overridden function to stop the thread.
-	virtual void stop();
+	// Overridden function to process the camera frame.
+	void run();
 
 	// Description:
 	// Overridden function to get the current grabbed frame.
-	virtual cv::Mat getFrame();
+	cv::Mat getFrame();
 
 	// Description:
 	// Function that trigger the saveFrameToDisk function that saves the current image frame
@@ -71,14 +65,7 @@ public:
 	// Example:
 	// p->setFrameOutputLocation("D:\\frame.jpg");
 	// p->saveFrameOnClick();
-	virtual void saveFrameOnClick();
-
-	// Description:
-	// Function that returns the average frames per second of this thread.
-	int getAvgFps();
-	// Description:
-	// Function that returns the total number of process/passed frames.
-	int getNFrames();
+	void saveFrameOnClick();
 
 	// Description:
 	// Function to set the saved frame file path.
@@ -88,7 +75,7 @@ public:
 	void setFrameOutputLocation(const std::string& _path_with_filename) { m_filelocation = _path_with_filename; }
 	// Description:
 	// Function to get the saved frame file path.
-	std::string getFrameOutputLocation() const { return m_filelocation; }
+	auto getFrameOutputLocation() const { return m_filelocation; }
 
 	// Description:
 	// Function to set the camera device id.
@@ -98,7 +85,7 @@ public:
 	void setDeviceIndex(int _index) { m_device_index = _index; }
 	// Description:
 	// Function to get the camera device id.
-	int getDeviceIndex() const { return m_device_index; }
+	auto getDeviceIndex() const { return m_device_index; }
 
 	// Description:
 	// Set emit function to display the captured frame.
@@ -113,40 +100,36 @@ public:
 
 	// Description:
 	// Function to get a reference to video writer.
-	fvkVideoWriter& writer() { return m_vr; }
+	auto& writer() { return m_vr; }
 
 	// Description:
 	// Function to get a reference to image processing.
-	fvkImageProcessing& imageProcessing() { return m_ip; }
+	auto& imageProcessing() { return m_ip; }
 
 	// Description:
 	// Function to set a pointer to semaphore buffer which does synchronization between capturing and processing threads.
 	void setSemaphoreBuffer(fvkSemaphoreBuffer<cv::Mat>* _p) { p_buffer = _p; }
 	// Description:
 	// Function to get a pointer to semaphore buffer which does synchronization between capturing and processing threads.
-	fvkSemaphoreBuffer<cv::Mat>* getSemaphoreBuffer() const { return p_buffer; }
+	auto getSemaphoreBuffer() const { return p_buffer; }
 
 protected:
 	// Description:
 	// Function that saves the current frame to disk (file path must be specified by setSavedFile("")).
-	virtual bool saveFrameToDisk(const cv::Mat& _frame);
+	auto saveFrameToDisk(const cv::Mat& _frame) -> bool;
 
 	std::mutex m_savemutex;
-	std::mutex m_stopmutex;
 	std::mutex m_processing_mutex;
 	fvkSemaphoreBuffer<cv::Mat> *p_buffer;
 	fvkCameraAbstract* p_frameobserver;
 	std::function<void(const cv::Mat&)> emit_display_frame;
 
 	std::function<void(const fvkAverageFpsStats&)> emit_stats;
-	fvkAverageFps m_avgfps;
-	std::mutex m_statsmutex;
 
 	fvkImageProcessing m_ip;
 	fvkVideoWriter m_vr;
 
 	int m_device_index;
-	bool m_isstop;
 	cv::Mat m_frame;
 	cv::Rect m_rect;
 	std::string m_filelocation;

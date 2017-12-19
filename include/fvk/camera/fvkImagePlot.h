@@ -68,7 +68,7 @@ public:
 
 	// Description:
 	// Function to get the plotted image.
-	IplImage* getPlottedImage(const std::string& _name);
+	auto getPlottedImage(const std::string& _name) -> IplImage*;
 
 private:
 	fvkPlotFigure* findFigure(const std::string& _name);
@@ -100,70 +100,70 @@ public:
 	void setPlotSize(const cv::Size& val) { m_plotsize = val; }
 	// Description:
 	// Function to get the plotted image size.
-	cv::Size getPlotSize() const { return m_plotsize; }
+	auto getPlotSize() const { return m_plotsize; }
 
 	// Description:
 	// Function to set the row number of the pixels to be plotted.
 	void setRowNum(int val) { m_row_num = val; }
 	// Description:
 	// Function to get the row number of the pixels to be plotted.
-	int getRowNum() const { return m_row_num; }
+	auto getRowNum() const { return m_row_num; }
 
 	// Description:
 	// Function to set the border size.
 	void setBorderSize(int val) { m_border_size = val; }
 	// Description:
 	// Function to get the border size.
-	int getBorderSize() const { return m_border_size; }
+	auto getBorderSize() const { return m_border_size; }
 
 	// Description:
 	// If it's true only red curve will be plotted.
 	void setRedCurveEnable(bool val) { m_isRedCurve = val; }
 	// Description:
 	// Function that returns true if only red curve is being plotted.
-	bool isRedCurveEnable() const { return m_isRedCurve; }
+	auto isRedCurveEnable() const { return m_isRedCurve; }
 
 	// Description:
 	// If it's true only green curve will be plotted.
 	void setGreenCurveEnabled(bool val) { m_isGreenCurve = val; }
 	// Description:
 	// Function that returns true if only green curve is being plotted.
-	bool isGreenCurveEnabled() const { return m_isGreenCurve; }
+	auto isGreenCurveEnabled() const { return m_isGreenCurve; }
 
 	// Description:
 	// If it's true only blue curve will be plotted.
 	void setBlueCurveEnabled(bool val) { m_isBlueCurve = val; }
 	// Description:
 	// Function that returns true if only blue curve is being plotted.
-	bool isBlueCurveEnabled() const { return m_isBlueCurve; }
+	auto isBlueCurveEnabled() const { return m_isBlueCurve; }
 
 	// Description:
 	// If it's true the background and the curves color will be inverted.
 	void invert(bool val) { m_isInverted = val; }
 	// Description:
 	// Function that returns true if the inversion is enabled.
-	bool isInverted() const { return m_isInverted; }
+	auto isInverted() const { return m_isInverted; }
 
 	// Description:
 	// If it's true X and Y axes are visible.
 	void setAxisEnabled(bool val) { m_isAxis = val; }
 	// Description:
 	// Function that returns true if axes are visible.
-	bool isAxisEnabled() const { return m_isAxis; }
+	auto isAxisEnabled() const { return m_isAxis; }
 
 	// Description:
 	// If it's true labels are visible.
 	void setLabelEnabled(bool val) { m_isLabel = val; }
 	// Description:
 	// Function that returns true if labels are visible.
-	bool isLabelEnabled() const { return m_isLabel; }
+	auto isLabelEnabled() const { return m_isLabel; }
 
 	// Description:
 	// Function to set the curve color.
 	void setCurveColor(cv::Scalar val) { m_curve_color = val; }
 	// Description:
 	// Function to get the curve color.
-	cv::Scalar getCurveColor() const { return m_curve_color; }
+	auto getCurveColor() const { return m_curve_color; }
 
 	// Description:
 	// Function to get the plotted image of the input image. 

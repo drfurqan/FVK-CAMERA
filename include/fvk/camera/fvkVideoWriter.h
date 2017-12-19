@@ -71,11 +71,11 @@ public:
 	//	 vr.addFrame(I1);
 	//	 vr.done();
 	// }
-	int open();
+	auto open() -> int;
 
 	// Description:
 	// Function that returns true if the video writer has been successfully initialized.
-	bool isOpened();
+	auto isOpened() -> bool;
 
 	// Description:
 	// Function to add a new image frame to the video file.
@@ -94,27 +94,27 @@ public:
 	void setOutputLocation(const std::string& val) { m_file = val; }
 	// Description:
 	// Function to get the saved video file path.
-	std::string getOutputLocation() const { return m_file; }
+	auto getOutputLocation() const { return m_file; }
 
 	// Description:
 	// Function to set the recorded video resolution i.e, width and height.
 	void setSize(const cv::Size& _s) { m_size = _s; }
 	// Description:
 	// Function to get the recorded video resolution i.e, width and height.
-	cv::Size getSize() const { return m_size; }
+	auto getSize() const { return m_size; }
 	// Description:
 	// Function to set the desired frames per second.
 	void setFps(double _fps) { m_fps = _fps; }
 	// Description:
 	// Function to get the specified frames per second.
-	double getFps() const { return m_fps; }
+	auto getFps() const { return m_fps; }
 	// Description:
 	// If it's true, video will be recored with RGB colors.
 	// Default value is true.
 	void setColored(bool _b) { m_iscolor = _b; }
 	// Description:
 	// It returns true, if the video is recorded with RGB colors.
-	bool isColored() const { return m_iscolor; }
+	auto isColored() const { return m_iscolor; }
 	// Description:
 	// If it's true, then a window will pop up at runtime that contains all the 
 	// codec installed on your system and ask you to select the one to use.
@@ -122,7 +122,7 @@ public:
 	void autoCodecSelection(bool _b) { m_autocodec = _b; }
 	// Description:
 	// It returns true, auto-codec selection is ON.
-	bool autoCodecSelection() const { return m_autocodec; }
+	auto autoCodecSelection() const { return m_autocodec; }
 	// Description:
 	// Function to set four character codec with which the video stream will be compressed.
 	// Example. 
@@ -139,7 +139,7 @@ public:
 	void setCodec(const std::string& _codec) { m_codec = _codec; }
 	// Description:
 	// Function to get four character codec with which the video stream will be compressed.
-	std::string getCodec() const { return m_codec; }
+	auto getCodec() const { return m_codec; }
 
 private:
 	cv::VideoWriter m_writer;

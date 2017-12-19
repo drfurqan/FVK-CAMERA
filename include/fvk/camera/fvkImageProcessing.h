@@ -40,7 +40,9 @@ public:
 	//  In case of multiple cameras, try to pass 1 or 2 or 3, so on...
 	// If _width and _height is specified, then this will become the camera frame resolution.
 	fvkImageProcessing();
-	virtual ~fvkImageProcessing();
+	// Description:
+	// Destructor that destroys the data.
+	~fvkImageProcessing();
 
 	// Description:
 	// Function to reset all the parameters of this object.
@@ -64,7 +66,7 @@ public:
 	// Description:
 	// Function to get denoising/smoothing method.
 	// Default value is DenoisingMethod::Gaussian.
-	fvkImageProcessing::DenoisingMethod getDenoisingMethod();
+	auto getDenoisingMethod() -> fvkImageProcessing::DenoisingMethod;
 	// Description:
 	// Function to set denoising/smoothing level/kernel.
 	// Default value is 0.
@@ -72,7 +74,7 @@ public:
 	void setDenoisingLevel(int _value);
 	// Description:
 	// Function to get denoising/smoothing level/kernel.
-	int getDenoisingLevel();
+	auto getDenoisingLevel() -> int;
 
 	// Description:
 	// Function to set sharpness to the image.
@@ -81,7 +83,7 @@ public:
 	// Description:
 	// Function to get sharpness.
 	// Default value is 0.
-	int getSharpeningLevel();
+	auto getSharpeningLevel() -> int;
 
 	// Description:
 	// Function to enhance the detail of the image.
@@ -91,7 +93,7 @@ public:
 	// Description:
 	// Function to get the detail value.
 	// Default value is 0.
-	int getDetailLevel();
+	auto getDetailLevel() -> int;
 
 	// Description:
 	// Function to adjust the smoothness of the image.
@@ -101,7 +103,7 @@ public:
 	// Description:
 	// Function to get the smoothness value.
 	// Default value is 0.
-	int getSmoothness();
+	auto getSmoothness() -> int;
 
 	// Description:
 	// Function to adjust the pencil sketch of the image.
@@ -111,7 +113,7 @@ public:
 	// Description:
 	// Function to get the pencil sketch value.
 	// Default value is 0.
-	int getPencilSketchLevel();
+	auto getPencilSketchLevel() -> int;
 
 	// Description:
 	// Function to adjust the stylization of the image.
@@ -121,7 +123,7 @@ public:
 	// Description:
 	// Function to get the stylization value.
 	// Default value is 0.
-	int getStylizationLevel();
+	auto getStylizationLevel() -> int;
 
 	// Description:
 	// Function to adjust the brightness of the image.
@@ -131,7 +133,7 @@ public:
 	// Description:
 	// Function to get the brightness value.
 	// Default value is 0.
-	int getBrightness();
+	auto getBrightness() -> int;
 
 	// Description:
 	// Function to adjust the overall contrast of the image.
@@ -141,7 +143,7 @@ public:
 	// Description:
 	// Function to get contrast value.
 	// Default value is 0.
-	int getContrast();
+	auto getContrast() -> int;
 
 	// Description:
 	// Function to adjust the color contrast of the image.
@@ -151,7 +153,7 @@ public:
 	// Description:
 	// Function to get the color contrast value.
 	// Default value is 0.
-	int getColorContrast();
+	auto getColorContrast() -> int;
 
 	// Description:
 	// Function to adjust the color saturation of the image.
@@ -161,7 +163,7 @@ public:
 	// Description:
 	// Function to get the color saturation value.
 	// Default value is 0.
-	int getSaturation();
+	auto getSaturation() -> int;
 
 	// Description:
 	// Function to adjust the vibrancy of the image.
@@ -172,7 +174,7 @@ public:
 	// Description:
 	// Function to adjust the vibrancy value.
 	// Default value is 0.
-	int getVibrance();
+	auto getVibrance() -> int;
 
 	// Description:
 	// Function to adjust the hue of the image.
@@ -182,7 +184,7 @@ public:
 	// Description:
 	// Function to get the hue value.
 	// Default value is 0.
-	int getHue();
+	auto getHue() -> int;
 
 	// Description:
 	// Function to adjust the gamma of the image.
@@ -192,7 +194,7 @@ public:
 	// Description:
 	// Function to get the gamma value.
 	// Default value is 0.
-	int getGamma();
+	auto getGamma() -> int;
 
 	// Description:
 	// Function to adjust the sepia filter to the image.
@@ -202,7 +204,7 @@ public:
 	// Description:
 	// Function to get the sepia filter value.
 	// Default value is 0.
-	int getSepia();
+	auto getSepia() -> int;
 
 	// Description:
 	// Function to specify clip value that clips a color to max values 
@@ -213,7 +215,7 @@ public:
 	// Description:
 	// Function to get the clip value.
 	// Default value is 0.
-	int getClip();
+	auto getClip() -> int;
 
 	// Description:
 	// Function to enable the negative mode.
@@ -221,7 +223,7 @@ public:
 	void setNegativeModeEnabled(bool _value);
 	// Description:
 	// Function that returns true if the negative mode is enabled.
-	bool isNegativeModeEnabled();
+	auto isNegativeModeEnabled() -> bool;
 
 	// Description:
 	// Function to enable light emboss.
@@ -229,7 +231,7 @@ public:
 	void setLightEmbossEnabled(bool _value);
 	// Description:
 	// Function that returns true if light emboss is enabled.
-	bool isLightEmbossEnabled();
+	auto isLightEmbossEnabled() -> bool;
 
 	// Description:
 	// Function to set dot pattern level to draw dots.
@@ -238,7 +240,7 @@ public:
 	void setDotPatternLevel(int _value);
 	// Description:
 	// Function to get dot pattern level.
-	int getDotPatternLevel();
+	auto getDotPatternLevel() -> int;
 
 	// Description:
 	// Flip directions.
@@ -255,7 +257,7 @@ public:
 	void setFlipDirection(FlipDirection _d);
 	// Description:
 	// Function to get the flip direction.
-	FlipDirection getFlipDirection();
+	auto getFlipDirection() -> FlipDirection;
 
 	// Description:
 	// Function to set zoom in percentage.
@@ -264,7 +266,7 @@ public:
 	void setZoomLevel(int _percentage);
 	// Description:
 	// Function to get zoom in percentage.
-	int getZoomLevel();
+	auto getZoomLevel() -> int;
 
 	// Description:
 	// Function to set rotation angle in degrees.
@@ -272,7 +274,7 @@ public:
 	void setRotationAngle(double _angle);
 	// Description:
 	// Function to get rotation angle in degrees.
-	double getRotationAngle();
+	auto getRotationAngle() -> double;
 
 	// Description:
 	// Function to set the conversion code in order to convert the captured
@@ -289,14 +291,14 @@ public:
 	void setConvertColor(int _value);
 	// Description:
 	// Function to get color conversion code.
-	int getConvertColor();
+	auto getConvertColor() -> int;
 
 	// Description:
 	// Function to turn gray-scale or black-and-white mode ON/OFF.
 	void setGrayScaleEnabled(bool _value);
 	// Description:
 	// Function that returns true if the gray-scale or black-and-white mode is ON.
-	bool isGrayScaleEnabled();
+	auto isGrayScaleEnabled() -> bool;
 
 	// Description:
 	// Function to specify the binary threshold value.
@@ -305,7 +307,7 @@ public:
 	void setThresholdValue(int _value);
 	// Description:
 	// Function to get the binary threshold value.
-	int getThresholdValue();
+	auto getThresholdValue() -> int;
 
 	// Description:
 	// Function to specify the equalize clip limit value.
@@ -314,7 +316,7 @@ public:
 	void setEqualizeClipLimit(double _value);
 	// Description:
 	// Function to get the equalize clip limit value.
-	double getEqualizeClipLimit();
+	auto getEqualizeClipLimit() -> double;
 
 	/************************************************************************/
 	/*                                                                      */
@@ -323,17 +325,17 @@ public:
 	// Function to load a classifier from a file.
 	// filename Name of the file from which the classifier is loaded.
 	// It returns true on success.
-	bool loadCascadeClassifier(const std::string& _filename);
+	auto loadCascadeClassifier(const std::string& _filename) -> bool;
 	// Description:
 	// Function to turn ON/OFF face tracking.
 	// Default value is false.
 	void setFaceDetectionEnabled(bool _value);
 	// Description:
 	// Function that returns true if face tracking is enabled.
-	bool isFaceDetectionEnabled();
+	auto isFaceDetectionEnabled() -> bool;
 	// Description:
 	// Function to get a reference to face detector.
-	fvkSimpleFaceDetector& getSimpleFaceDetector() { return m_ft; }
+	auto& getSimpleFaceDetector() { return m_ft; }
 
 	// Description:
 	// Function to clips a color to max values when it falls outside of the specified range.
