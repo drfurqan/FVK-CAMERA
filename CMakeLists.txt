@@ -13,8 +13,8 @@ project (fvk_camera)
 # file(READ VERSION FVK_CAMERA_VERSION)
 
 set(VERSION_MAJOR 1)
-set(VERSION_MINOR_0 1)
-set(VERSION_MINOR_1 3)
+set(VERSION_MINOR_0 2)
+set(VERSION_MINOR_1 0)
 set(VERSION_PLAIN ${VERSION_MAJOR}.${VERSION_MINOR_0}.${VERSION_MINOR_1})
 
 # ------------------------------------------------------------------------------
@@ -44,6 +44,7 @@ ${CMAKE_SOURCE_DIR}/src/fvk/camera/fvkImagePlot.cpp
 ${CMAKE_SOURCE_DIR}/src/fvk/camera/fvkQSemaphore.cpp
 ${CMAKE_SOURCE_DIR}/src/fvk/camera/fvkSemaphore.cpp
 ${CMAKE_SOURCE_DIR}/src/fvk/camera/fvkSemaphoreBuffer.cpp
+${CMAKE_SOURCE_DIR}/src/fvk/camera/fvkThread.cpp
 ${CMAKE_SOURCE_DIR}/src/fvk/camera/fvkVideoWriter.cpp
 )
 
@@ -65,6 +66,7 @@ ${CMAKE_SOURCE_DIR}/include/fvk/camera/fvkImagePlot.h
 ${CMAKE_SOURCE_DIR}/include/fvk/camera/fvkQSemaphore.h
 ${CMAKE_SOURCE_DIR}/include/fvk/camera/fvkSemaphore.h
 ${CMAKE_SOURCE_DIR}/include/fvk/camera/fvkSemaphoreBuffer.h
+${CMAKE_SOURCE_DIR}/include/fvk/camera/fvkThread.h
 ${CMAKE_SOURCE_DIR}/include/fvk/camera/fvkVideoWriter.h
 )
 
