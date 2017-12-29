@@ -49,8 +49,6 @@ fvkCameraProcessingThread::~fvkCameraProcessingThread()
 
 void fvkCameraProcessingThread::run()
 {
-	//m_vr.stop();
-
 	// get a frame from the camera thread.
 	m_frame = p_buffer->get();
 
