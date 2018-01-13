@@ -47,6 +47,7 @@ protected:
 		cv::Mat m = _frame.clone();			// always create a clone to process the frame.
 		// cv::cvtColor(m, m, CV_BGR2GRAY);	// just doing the simple image processing that converts to gray-scale image.
 		cv::imshow("FVK Camera", m);		// show the given frame in OpenCV window.
+		//_frame = m;
 	}
 };
 

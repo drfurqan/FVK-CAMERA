@@ -27,11 +27,12 @@ using namespace R3D;
 
 // creating a function that will be calling in the continuous running camera thread.
 // _frame is the grabbed frame.
-static void show(const cv::Mat& _frame)
+static void show(cv::Mat& _frame)
 {
 	cv::Mat m = _frame.clone();			// always create a clone to process the frame.
 	cv::cvtColor(m, m, CV_BGR2GRAY);	// just doing the simple image processing that converts to gray-scale image.
 	cv::imshow("FVK Camera", m);
+	_frame = m;
 }
 
 int main()
