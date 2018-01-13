@@ -217,7 +217,7 @@ auto fvkCamera::isSyncEnabled() -> bool
 }
 
 
-void fvkCamera::setFrameViewerSlot(const std::function<void(const cv::Mat&)>& _f)
+void fvkCamera::setFrameViewerSlot(const std::function<void(cv::Mat&)>& _f)
 { 
 	if (p_pt) p_pt->setFrameViewerSlot(_f); 
 }

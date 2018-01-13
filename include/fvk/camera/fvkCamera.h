@@ -119,7 +119,7 @@ public:
 	// Description:
 	// Function to set the emit function to display the captured frames.
 	// The display GUI function should be capable of handling multi-threading updatings.
-	void setFrameViewerSlot(const std::function<void(const cv::Mat&)>& _f);
+	void setFrameViewerSlot(const std::function<void(cv::Mat&)>& _f);
 	// Description:
 	// Function to set the emit function to get the average frames per second of this thread
 	// as well as the total number of frames that has been processed/passed.

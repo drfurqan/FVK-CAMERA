@@ -90,7 +90,7 @@ public:
 	// Description:
 	// Set emit function to display the captured frame.
 	// The display function should be capable of handling multi-threading updating.
-	void setFrameViewerSlot(const std::function<void(const cv::Mat&)>& _f) { emit_display_frame = _f; }
+	void setFrameViewerSlot(const std::function<void(cv::Mat&)>& _f) { emit_display_frame = _f; }
 
 	// Description:
 	// Set emit function to get the average frames per second of this thread
@@ -122,7 +122,7 @@ protected:
 	std::mutex m_processing_mutex;
 	fvkSemaphoreBuffer<cv::Mat> *p_buffer;
 	fvkCameraAbstract* p_frameobserver;
-	std::function<void(const cv::Mat&)> emit_display_frame;
+	std::function<void(cv::Mat&)> emit_display_frame;
 
 	std::function<void(const fvkAverageFpsStats&)> emit_stats;
 
