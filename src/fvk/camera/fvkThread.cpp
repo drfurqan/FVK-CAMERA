@@ -11,8 +11,8 @@ CopyRight:	All Rights Reserved
 purpose:	class for a standard thread with thread safe operations such as pause,
 stop, delay, getting average FPS, and total number of processed frames, etc. This
 class can be used in two ways, either you derive a new class from this class and
-override the run() function, or you just specify the function you want to call in
-the thread in the start() function.
+override the run() function, or you just specify a function you want to call in
+the start() function.
 
 usage example # 1:
 class MyTask : public fvkThread

@@ -556,6 +556,35 @@ void fvkImageProcessing::imageProcessing(cv::Mat& _frame)
 {
 	m_mutex.lock();
 
+	if (m_flip != FlipDirection::None)
+	{
+		cv::Mat m;
+		if (m_flip == FlipDirection::Horizontal)
+			cv::flip(_frame, m, 0);
+		else if (m_flip == FlipDirection::Vertical)
+			cv::flip(_frame, m, 1);
+		else if (m_flip == FlipDirection::Both)
+			cv::flip(_frame, m, -1);
+		_frame = m;
+	}
+
+	if (m_zoomperc > 0 && m_zoomperc != 100)
+	{
+		auto s = __resizeKeepAspectRatio(_frame.cols, _frame.rows, static_cast<int>(static_cast<float>(_frame.cols * (m_zoomperc / 100.f))), static_cast<int>(static_cast<float>(_frame.rows * (m_zoomperc / 100.f))));
+		auto m = cv::Mat(cv::Mat::zeros(s, _frame.type()));
+		cv::resize(_frame, m, s, 0, 0, cv::InterpolationFlags::INTER_LINEAR);
+		_frame = m;
+	}
+
+	if (m_rotangle != 0)
+	{
+		auto cen = cv::Point2d(static_cast<double>(_frame.cols) / 2.0, static_cast<double>(_frame.rows) / 2.0);
+		auto rot_mat = cv::getRotationMatrix2D(cen, m_rotangle, 1.0);
+		cv::Mat m;
+		cv::warpAffine(_frame, m, rot_mat, _frame.size(), cv::InterpolationFlags::INTER_LINEAR);
+		_frame = m;
+	}
+
 	if (m_isfacetrack)
 		m_ft.detect(_frame, 5);
 
@@ -663,35 +692,6 @@ void fvkImageProcessing::imageProcessing(cv::Mat& _frame)
 		dst_32f.convertTo(dst, CV_8U);
 
 		_frame = dst;
-	}
-
-	if (m_flip != FlipDirection::None)
-	{
-		cv::Mat m;
-		if (m_flip == FlipDirection::Horizontal)
-			cv::flip(_frame, m, 0);
-		else if (m_flip == FlipDirection::Vertical)
-			cv::flip(_frame, m, 1);
-		else if (m_flip == FlipDirection::Both)
-			cv::flip(_frame, m, -1);
-		_frame = m;
-	}
-
-	if (m_zoomperc > 0 && m_zoomperc != 100)
-	{
-		auto s = __resizeKeepAspectRatio(_frame.cols, _frame.rows, static_cast<int>(static_cast<float>(_frame.cols * (m_zoomperc / 100.f))), static_cast<int>(static_cast<float>(_frame.rows * (m_zoomperc / 100.f))));
-		auto m = cv::Mat(cv::Mat::zeros(s, _frame.type()));
-		cv::resize(_frame, m, s, 0, 0, cv::InterpolationFlags::INTER_LINEAR);
-		_frame = m;
-	}
-
-	if (m_rotangle != 0)
-	{
-		auto cen = cv::Point2d(static_cast<double>(_frame.cols) / 2.0, static_cast<double>(_frame.rows) / 2.0);
-		auto rot_mat = cv::getRotationMatrix2D(cen, m_rotangle, 1.0);
-		cv::Mat m;
-		cv::warpAffine(_frame, m, rot_mat, _frame.size(), cv::InterpolationFlags::INTER_LINEAR);
-		_frame = m;
 	}
 
 	if (m_convertcolor >= 0)
