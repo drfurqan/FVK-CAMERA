@@ -27,14 +27,10 @@ Both thread are synchronized with semaphore methodology.
 
 #include "fvkCameraThread.h"
 #include "fvkCameraProcessingThread.h"
-#include "fvkVideoWriter.h"
 #include <thread>
 
 namespace R3D
 {
-
-class fvkImageProcessing;
-class fvkCameraProcessingThread;
 
 class FVK_EXPORT fvkCameraAbstract
 {
@@ -62,6 +58,10 @@ public:
 	// resolution Size(-1, -1) will do the auto-selection for the frame's width and height.
 	fvkCamera(const std::string& _video_file, cv::Size _resolution = cv::Size(-1, -1), int _api = cv::VideoCaptureAPIs::CAP_ANY);
 	// Description:
+	// Constructor to create a camera object by specifying the camera thread.
+	// This constructor is created for the derived classes of fvkCameraThread.
+	fvkCamera(fvkCameraThread* _ct);
+	// Description:
 	// Constructor to create a camera object by specifying the camera and processing threads.
 	// This constructor is created for the derived classes of both fvkCameraThread and fvkCameraProcessingThread.
 	fvkCamera(fvkCameraThread* _ct, fvkCameraProcessingThread* _pt);
@@ -78,7 +78,7 @@ public:
 	// Description:
 	// Function that returns true if the camera device is connected, otherwise,
 	// it always returns false.
-	auto isConnected() -> bool;
+	auto isConnected() const -> bool;
 	// Description:
 	// Function that starts the camera or if the video file is specified,
 	// then play the video file.
@@ -93,17 +93,17 @@ public:
 
 	// Description:
 	// Function to pause the camera capturing thread.
-	void pause(bool _b);
+	void pause(bool _b) const;
 	// Description:
 	// Function that returns true if the camera capturing thread is at pause status.
-	auto pause() -> bool;
+	auto pause() const -> bool;
 	// Description:
 	// Set true if you want to restart or repeat the video when it finishes. (only for videos)
 	// Default in true.
-	void repeat(bool _b);
+	void repeat(bool _b) const;
 	// It returns true if the repeat flag for the video is ON. (only for videos)
 	// Default in true.
-	auto repeat() -> bool;
+	auto repeat() const -> bool;
 
 	// Description:
 	// Function to get the current grabbed frame.
@@ -119,12 +119,12 @@ public:
 	// Description:
 	// Function to set the emit function to display the captured frames.
 	// The display GUI function should be capable of handling multi-threading updatings.
-	void setFrameViewerSlot(const std::function<void(cv::Mat&)>& _f);
+	void setFrameViewerSlot(const std::function<void(cv::Mat&)>& _f) const;
 	// Description:
 	// Function to set the emit function to get the average frames per second of this thread
 	// as well as the total number of frames that has been processed/passed.
 	// The input GUI function should be capable of handling multi-threading updatings.
-	void setFrameStatisticsSlot(const std::function<void(const fvkAverageFpsStats&)>& _f);
+	void setFrameStatisticsSlot(const std::function<void(const fvkAverageFpsStats&)>& _f) const;
 	
 	// Description:
 	// Function to get a reference to video writer.
@@ -141,13 +141,13 @@ public:
 	// Example:
 	// p->setFrameOutputLocation("D:\\frame.jpg");
 	// p->saveFrameOnClick();
-	void saveFrameOnClick();
+	void saveFrameOnClick() const;
 	// Description:
 	// Function to set the output location for the frame to be saved.
 	// The path folder should have writable permission, such as Pictures/Videos/Documents folder.
 	// Example:
 	// p->setFrameOutputLocation("D:\\frame.jpg");
-	void setFrameOutputLocation(const std::string& _filename);
+	void setFrameOutputLocation(const std::string& _filename) const;
 	// Description:
 	// Function to get the output location for the frame to be saved.
 	auto getFrameOutputLocation() const -> std::string;
@@ -156,7 +156,7 @@ public:
 	// Function to set the video file path like "D:\\face\\video.avi". (only for videos)
 	// If the video file is specified before the calling connect() function, then the specified video
 	// will be played, rather than camera device.
-	void setVideoFile(const std::string& _filename);
+	void setVideoFile(const std::string& _filename) const;
 	// Description:
 	// Function to get the video file path. (only for videos)
 	auto getVideoFile() const -> std::string;
@@ -166,7 +166,7 @@ public:
 	// _id is the index of the opened video capturing device (i.e. a camera index).
 	// If there is a single camera connected, just pass 0.
 	// In case of multiple cameras, try to pass 1 or 2 or 3, so on...
-	void setDeviceIndex(int _index);
+	void setDeviceIndex(int _index) const;
 	// Description:
 	// Function to get the camera device index.
 	auto getDeviceIndex() const -> int;
@@ -174,7 +174,7 @@ public:
 	// Description:
 	// Function to set the frame delay which makes specified delay in the camera thread.
 	// Default delay is 33 milliseconds which is for the camera having 3DFPS capturing speed.
-	void setDelay(int _delay_msec);
+	void setDelay(int _delay_msec) const;
 	// Description:
 	// Function to get the frame delay.
 	// Default delay for video files is computed by (1000.0 / getFps()). (only for videos)
@@ -183,165 +183,165 @@ public:
 	// Description:
 	// Function to enable the perfect synchronization between the processing thread and the camera thread.
 	// If it's true, this thread will remain be blocked until the processing thread notify this thread.
-	void setSyncEnabled(bool _b);
+	void setSyncEnabled(bool _b) const;
 	// Description:
 	// Function that returns true if the perfect synchronization is enabled.
-	auto isSyncEnabled() -> bool;
+	auto isSyncEnabled() const -> bool;
 
 	/************************************************************************/
 	/* Camera properties                                                    */
 	/************************************************************************/
 	// Description:
 	// Call this function in order to open the camera driver config dialog.
-	void openDriverConfigDialog();
+	void openDriverConfigDialog() const;
 	// Description:
 	// Function to set the width of the captured frame.
 	// Width should be specified before calling the open() function.
-	void setWidth(int _w);
+	void setWidth(int _w) const;
 	// Description:
 	// Function to get the width of the captured frame.
 	auto getWidth() const -> int;
 	// Description:
 	// Function to set the height of the captured frame.
 	// Height should be specified before calling the open() function.
-	void setHeight(int _h);
+	void setHeight(int _h) const;
 	// Description:
 	// Function to get the height of the captured frame.
 	auto getHeight() const -> int;
 	// Description:
 	// Function to set the camera resolution (columns and rows).
 	// Resolution should be specified before calling the open() function.
-	void setResolution(cv::Size _res);
+	void setResolution(cv::Size _res) const;
 	// Description:
 	// Function to get the current camera resolution.
 	auto getResolution() const -> cv::Size;
 	// Description:
 	// Current position of the video file in milliseconds or video capture time-stamp.
-	void setMsec(double _v);
+	void setMsec(double _v) const;
 	auto getMsec() const -> double;
 	// Description:
 	// 0-based index of the frame to be decoded/captured next.
-	void setPosFrames(double _v);
+	void setPosFrames(double _v) const;
 	auto getPosFrames() const -> double;
 	// Description:
 	// Relative position of the video file: 0 - start of the film, 1 - end of the film.
-	void setAviRatio(double _v);
+	void setAviRatio(double _v) const;
 	auto getAviRatio() const -> double;
 	// Description:
 	// desired camera frame rate.
-	void setFps(double _v);
+	void setFps(double _v) const;
 	auto getFps() const -> double;
 	// Description:
 	// Function to set a 4-character code of codec.
-	void setFourCC(double _v);
+	void setFourCC(double _v) const;
 	// Description:
 	// Function that returns the 4-character code that identify a video codec.
 	auto getFourCC() const -> std::string;
 	// Description:
 	// Number of frames in the video file.
-	void setFrameCount(double _v);
+	void setFrameCount(double _v) const;
 	auto getFrameCount() const -> double;
 	// Description:
 	// Format of the Mat objects returned by retrieve().
-	void setFormat(double _v);
+	void setFormat(double _v) const;
 	auto getFormat() const -> double;
 	// Description:
 	// Backend-specific value indicating the current capture mode.
-	void setMode(double _v);
+	void setMode(double _v) const;
 	auto getMode() const -> double;
 
 	// Description:
 	// Brightness of the image (only for cameras)..
-	void setBrightness(double val);
+	void setBrightness(double val) const;
 	auto getBrightness() const -> double;
 	// Description:
 	// Contrast of the image (only for cameras).
-	void setContrast(double val);
+	void setContrast(double val) const;
 	auto getContrast() const -> double;
 	// Description:
 	// Saturation of the image (only for cameras).
-	void setSaturation(double val);
+	void setSaturation(double val) const;
 	auto getSaturation() const -> double;
 	// Description:
 	//  Hue of the image (only for cameras).
-	void setHue(double val);
+	void setHue(double val) const;
 	auto getHue() const -> double;
 	// Description:
 	// Gain of the image (only for cameras).
-	void setGain(double val);
+	void setGain(double val) const;
 	auto getGain() const -> double;
 	// Description:
 	// Exposure (only for cameras).
-	void setExposure(double val);
+	void setExposure(double val) const;
 	auto getExposure() const -> double;
 	// Description:
 	// Temperature.
-	void setTemperature(double val);
+	void setTemperature(double val) const;
 	auto getTemperature() const -> double;
 	// Description:
 	// Rectification flag for stereo cameras (note: only supported by DC1394 v 2.x backend currently)
-	void setRectification(double val);
+	void setRectification(double val) const;
 	auto getRectification() const -> double;
 	// Description:
 	// Gamma.
-	void setGamma(double val);
+	void setGamma(double val) const;
 	auto getGamma() const -> double;
 	// Description:
 	// Set the value for camera sharpness. Specify zero in order to disable sharpness.
-	void setSharpness(double val);
+	void setSharpness(double val) const;
 	auto getSharpness() const -> double;
 	// Description:
 	// Set 1 for auto-exposure and 0 for disabling it.
-	void setAutoExposure(double val);
+	void setAutoExposure(double val) const;
 	auto getAutoExposure() const -> double;
 	// Description:
 	// Set 0 for disabling auto-white balance
-	void setWhiteBalanceBlueU(double val);
+	void setWhiteBalanceBlueU(double val) const;
 	auto getWhiteBalanceBlueU() const -> double;
 	// Description:
 	// Set 0 for disabling auto-white balance
-	void setWhiteBalanceRedV(double val);
+	void setWhiteBalanceRedV(double val) const;
 	auto getWhiteBalanceRedV() const -> double;
 	// Description:
 	// Boolean flags indicating whether images should be converted to RGB.
-	void setConvertToRGB(double val);
+	void setConvertToRGB(double val) const;
 	auto getConvertToRGB() const -> double;
 
 	// Description:
 	// Set zoom.
-	void setZoom(double val);
+	void setZoom(double val) const;
 	auto getZoom() const -> double;
 	// Description:
 	// Set focus.
-	void setFocus(double val);
+	void setFocus(double val) const;
 	auto getFocus() const -> double;
 	// Description:
 	// Set pan.
-	void setPan(double val);
+	void setPan(double val) const;
 	auto getPan() const -> double;
 	// Description:
 	// Set tilt.
-	void setTilt(double val);
+	void setTilt(double val) const;
 	auto getTilt() const -> double;
 	// Description:
 	// Set roll.
-	void setRoll(double val);
+	void setRoll(double val) const;
 	auto getRoll() const -> double;
 	// Description:
 	// The ISO speed of the camera (note: only supported by DC1394 v 2.x backend currently)
-	void setIsoSpeed(double val);
+	void setIsoSpeed(double val) const;
 	auto getIsoSpeed() const -> double;
 	// Description:
 	// Set back light.
-	void setBackLight(double val);
+	void setBackLight(double val) const;
 	auto getBackLight() const -> double;
 	// Description:
 	// Set trigger.
-	void setTrigger(double val);
+	void setTrigger(double val) const;
 	auto getTrigger() const -> double;
 	// Description:
 	// Set trigger delay.
-	void setTriggerDelay(double val);
+	void setTriggerDelay(double val) const;
 	auto getTriggerDelay() const -> double;
 
 protected:

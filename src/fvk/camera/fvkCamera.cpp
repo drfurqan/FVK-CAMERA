@@ -46,6 +46,17 @@ p_stdpt(nullptr)
 	p_pt = new fvkCameraProcessingThread(b, this, 0);
 }
 
+fvkCamera::fvkCamera(fvkCameraThread* _ct) :
+	fvkCameraAbstract(),
+	p_stdct(nullptr),
+	p_stdpt(nullptr),
+	p_ct(_ct)
+{
+	fvkSemaphoreBuffer<cv::Mat>* b = new fvkSemaphoreBuffer<cv::Mat>;
+	_ct->setSemaphoreBuffer(b);
+	p_pt = new fvkCameraProcessingThread(b, this, _ct->getDeviceIndex());
+}
+
 fvkCamera::fvkCamera(fvkCameraThread* _ct, fvkCameraProcessingThread* _pt) :
 fvkCameraAbstract(),
 p_stdct(nullptr),
@@ -152,23 +163,23 @@ auto fvkCamera::start() -> bool
 	}
 	return false;
 }
-auto fvkCamera::isConnected() -> bool
+auto fvkCamera::isConnected() const -> bool
 {
 	if (p_ct)
 		return p_ct->isOpened();
 	return false;
 }
-void fvkCamera::pause(bool _b) { if (p_ct) p_ct->pause(_b); }
-auto fvkCamera::pause()  -> bool { if (p_ct) return p_ct->pause(); return false; }
-void fvkCamera::repeat(bool _b) { if (p_ct) p_ct->repeat(_b); }
-auto fvkCamera::repeat()  -> bool { if (p_ct) return p_ct->repeat(); return true; }
+void fvkCamera::pause(bool _b) const { if (p_ct) p_ct->pause(_b); }
+auto fvkCamera::pause() const -> bool { if (p_ct) return p_ct->pause(); return false; }
+void fvkCamera::repeat(bool _b) const { if (p_ct) p_ct->repeat(_b); }
+auto fvkCamera::repeat() const -> bool { if (p_ct) return p_ct->repeat(); return true; }
 auto fvkCamera::getFrame() const  -> cv::Mat { if (p_pt) return p_pt->getFrame(); return cv::Mat(); }
 
-void fvkCamera::saveFrameOnClick()
+void fvkCamera::saveFrameOnClick() const
 {
 	if (p_pt) p_pt->saveFrameOnClick();
 }
-void fvkCamera::setFrameOutputLocation(const std::string& _filename)
+void fvkCamera::setFrameOutputLocation(const std::string& _filename) const
 {
 	if (p_pt) p_pt->setFrameOutputLocation(_filename);
 }
@@ -177,7 +188,7 @@ auto fvkCamera::getFrameOutputLocation() const -> std::string
 	if (p_pt) return p_pt->getFrameOutputLocation();
 	return "";
 }
-void fvkCamera::setVideoFile(const std::string& _filename)
+void fvkCamera::setVideoFile(const std::string& _filename) const
 {
 	if (p_ct) p_ct->setVideoFile(_filename);
 }
@@ -187,7 +198,7 @@ auto fvkCamera::getVideoFile() const -> std::string
 	return "";
 }
 
-void fvkCamera::setDeviceIndex(int _index)
+void fvkCamera::setDeviceIndex(int _index) const
 {
 	if (p_ct) p_ct->setDeviceIndex(_index);
 }
@@ -197,7 +208,7 @@ auto fvkCamera::getDeviceIndex() const -> int
 	return 0;
 }
 
-void fvkCamera::setDelay(int _delay_msec)
+void fvkCamera::setDelay(int _delay_msec) const
 {
 	if (p_ct) p_ct->setDelay(_delay_msec);
 }
@@ -206,22 +217,22 @@ auto fvkCamera::getDelay() const -> int
 	if (p_ct) return p_ct->getDelay();
 	return 0;
 }
-void fvkCamera::setSyncEnabled(bool _b)
+void fvkCamera::setSyncEnabled(bool _b) const
 {
 	if (p_ct) p_ct->setSyncEnabled(_b);
 }
-auto fvkCamera::isSyncEnabled() -> bool
+auto fvkCamera::isSyncEnabled() const -> bool
 {
 	if (p_ct) return p_ct->isSyncEnabled();
 	return false;
 }
 
 
-void fvkCamera::setFrameViewerSlot(const std::function<void(cv::Mat&)>& _f)
+void fvkCamera::setFrameViewerSlot(const std::function<void(cv::Mat&)>& _f) const
 { 
 	if (p_pt) p_pt->setFrameViewerSlot(_f); 
 }
-void fvkCamera::setFrameStatisticsSlot(const std::function<void(const fvkAverageFpsStats&)>& _f)
+void fvkCamera::setFrameStatisticsSlot(const std::function<void(const fvkAverageFpsStats&)>& _f) const
 { 
 	if (p_pt) p_pt->setFrameStatisticsSlot(_f);
 }
@@ -253,138 +264,138 @@ void fvkCamera::processFrame(cv::Mat& _frame)
 /************************************************************************/
 /* Set Camera Settings                                                  */
 /************************************************************************/
-void fvkCamera::openDriverConfigDialog()
+void fvkCamera::openDriverConfigDialog() const
 {
 	if (p_ct) if (p_ct->isOpened()) p_ct->openDriverConfigDialog();
 }
-void fvkCamera::setMsec(double val)
+void fvkCamera::setMsec(double val) const
 {
 	if (p_ct) if (p_ct->isOpened()) p_ct->setMsec(val);
 }
-void fvkCamera::setPosFrames(double val)
+void fvkCamera::setPosFrames(double val) const
 {
 	if (p_ct) if (p_ct->isOpened()) p_ct->setPosFrames(val);
 }
 
-void fvkCamera::setSharpness(double val)
+void fvkCamera::setSharpness(double val) const
 {
 	if (p_ct) if (p_ct->isOpened()) p_ct->setSharpness(val);
 }
-void fvkCamera::setAutoExposure(double val)
+void fvkCamera::setAutoExposure(double val) const
 {
 	if (p_ct) if (p_ct->isOpened()) p_ct->setAutoExposure(val);
 }
-void fvkCamera::setFps(double val)
+void fvkCamera::setFps(double val) const
 {
 	if (p_ct) if (p_ct->isOpened()) p_ct->setFps(val);
 }
-void fvkCamera::setFrameCount(double val)
+void fvkCamera::setFrameCount(double val) const
 {
 	if (p_ct) if (p_ct->isOpened()) p_ct->setFrameCount(val);
 }
 
-void fvkCamera::setWhiteBalanceBlueU(double val)
+void fvkCamera::setWhiteBalanceBlueU(double val) const
 {
 	if (p_ct) if (p_ct->isOpened()) p_ct->setWhiteBalanceBlueU(val);
 }
-void fvkCamera::setWhiteBalanceRedV(double val)
+void fvkCamera::setWhiteBalanceRedV(double val) const
 {
 	if (p_ct) if (p_ct->isOpened()) p_ct->setWhiteBalanceRedV(val);
 }
-void fvkCamera::setFourCC(double val)
+void fvkCamera::setFourCC(double val) const
 {
 	if (p_ct) if (p_ct->isOpened()) p_ct->setFourCC(val);
 }
-void fvkCamera::setConvertToRGB(double val)
+void fvkCamera::setConvertToRGB(double val) const
 {
 	if (p_ct) if (p_ct->isOpened()) p_ct->setConvertToRGB(val);
 }
-void fvkCamera::setBrightness(double val)
+void fvkCamera::setBrightness(double val) const
 {
 	if (p_ct) if (p_ct->isOpened()) p_ct->setBrightness(val);
 }
-void fvkCamera::setContrast(double val)
+void fvkCamera::setContrast(double val) const
 {
 	if (p_ct) if (p_ct->isOpened()) p_ct->setContrast(val);
 }
-void fvkCamera::setSaturation(double val)
+void fvkCamera::setSaturation(double val) const
 {
 	if (p_ct) if (p_ct->isOpened()) p_ct->setSaturation(val);
 }
-void fvkCamera::setHue(double val)
+void fvkCamera::setHue(double val) const
 {
 	if (p_ct) if (p_ct->isOpened()) p_ct->setHue(val);
 }
-void fvkCamera::setGain(double val)
+void fvkCamera::setGain(double val) const
 {
 	if (p_ct) if (p_ct->isOpened()) p_ct->setGain(val);
 }
-void fvkCamera::setExposure(double val)
+void fvkCamera::setExposure(double val) const
 {
 	if (p_ct) if (p_ct->isOpened()) p_ct->setExposure(val);
 }
-void fvkCamera::setRectification(double val)
+void fvkCamera::setRectification(double val) const
 {
 	if (p_ct) if (p_ct->isOpened()) p_ct->setRectification(val);
 }
-void fvkCamera::setFormat(double val)
+void fvkCamera::setFormat(double val) const
 {
 	if (p_ct) if (p_ct->isOpened()) p_ct->setFormat(val);
 }
-void fvkCamera::setMode(double val)
+void fvkCamera::setMode(double val) const
 {
 	if (p_ct) if (p_ct->isOpened()) p_ct->setMode(val);
 }
 
-void fvkCamera::setGamma(double val)
+void fvkCamera::setGamma(double val) const
 {
 	if (p_ct) if (p_ct->isOpened()) p_ct->setGamma(val);
 }
-void fvkCamera::setTemperature(double val)
+void fvkCamera::setTemperature(double val) const
 {
 	if (p_ct) if (p_ct->isOpened()) p_ct->setTemperature(val);
 }
-void fvkCamera::setZoom(double val)
+void fvkCamera::setZoom(double val) const
 {
 	if (p_ct) if (p_ct->isOpened()) p_ct->setZoom(val);
 }
-void fvkCamera::setFocus(double val)
+void fvkCamera::setFocus(double val) const
 {
 	if (p_ct) if (p_ct->isOpened()) p_ct->setFocus(val);
 }
-void fvkCamera::setIsoSpeed(double val)
+void fvkCamera::setIsoSpeed(double val) const
 {
 	if (p_ct) if (p_ct->isOpened()) p_ct->setIsoSpeed(val);
 }
-void fvkCamera::setBackLight(double val)
+void fvkCamera::setBackLight(double val) const
 {
 	if (p_ct) if (p_ct->isOpened()) p_ct->setBackLight(val);
 }
-void fvkCamera::setPan(double val)
+void fvkCamera::setPan(double val) const
 {
 	if (p_ct) if (p_ct->isOpened()) p_ct->setPan(val);
 }
-void fvkCamera::setTilt(double val)
+void fvkCamera::setTilt(double val) const
 {
 	if (p_ct) if (p_ct->isOpened()) p_ct->setTilt(val);
 }
-void fvkCamera::setRoll(double val)
+void fvkCamera::setRoll(double val) const
 {
 	if (p_ct) if (p_ct->isOpened()) p_ct->setRoll(val);
 }
-void fvkCamera::setTrigger(double val)
+void fvkCamera::setTrigger(double val) const
 {
 	if (p_ct) if (p_ct->isOpened()) p_ct->setTrigger(val);
 }
-void fvkCamera::setTriggerDelay(double val)
+void fvkCamera::setTriggerDelay(double val) const
 {
 	if (p_ct) if (p_ct->isOpened()) p_ct->setTriggerDelay(val);
 }
-void fvkCamera::setAviRatio(double val)
+void fvkCamera::setAviRatio(double val) const
 {
 	if (p_ct) if (p_ct->isOpened()) p_ct->setAviRatio(val);
 }
-void fvkCamera::setResolution(cv::Size _res)
+void fvkCamera::setResolution(cv::Size _res) const
 {
 	if (p_ct) p_ct->setResolution(_res);
 }
@@ -396,7 +407,7 @@ auto fvkCamera::getResolution() const -> cv::Size
 	if (p_ct) return p_ct->getResolution();
 	return cv::Size(0, 0);
 }
-void fvkCamera::setWidth(int _w)
+void fvkCamera::setWidth(int _w) const
 {
 	if (p_ct) p_ct->setWidth(_w);
 }
@@ -405,7 +416,7 @@ auto fvkCamera::getWidth() const -> int
 	if (p_ct) return p_ct->getWidth();
 	return 0;
 }
-void fvkCamera::setHeight(int _h)
+void fvkCamera::setHeight(int _h) const
 {
 	if (p_ct) p_ct->setHeight(_h);
 }

@@ -52,11 +52,11 @@ public:
 	fvkCameraThread(fvkSemaphoreBuffer<cv::Mat>* _buffer, const std::string& _video_file, cv::Size _resolution = cv::Size(-1, -1), int _api = cv::VideoCaptureAPIs::CAP_ANY);
 	// Description:
 	// Default destructor to stop the thread and releases the camera device or video file.
-	~fvkCameraThread();
+	virtual ~fvkCameraThread();
 
 	// Description:
 	// Overridden function to process the camera frame.
-	void run();
+	void run() override;
 
 	// Description:
 	// Set true if you want to restart or repeat the video when it finishes. (only for videos)
@@ -100,7 +100,7 @@ protected:
 	// otherwise capturing from camera device will be ON. 
 	// In order to grab from the camera device, the video file path
 	// should be empty, like setVideoFile("");
-	bool grab(cv::Mat& _m_frame) override;
+	virtual bool grab(cv::Mat& _m_frame) override;
 	
 	fvkSemaphoreBuffer<cv::Mat>* p_buffer;
 	std::function<void(const fvkAverageFpsStats&)> emit_stats;

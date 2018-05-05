@@ -52,7 +52,7 @@ public:
 
 	// Description:
 	// Overridden function to process the camera frame.
-	void run();
+	void run() override;
 
 	// Description:
 	// Overridden function to get the current grabbed frame.

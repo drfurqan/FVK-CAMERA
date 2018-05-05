@@ -56,7 +56,6 @@ class FVK_EXPORT fvkPlotFigure
 
 public:
 	fvkPlotFigure(const std::string& _name);
-	~fvkPlotFigure();
 	void clear();
 
 	fvkPlotSeries* add(const fvkPlotSeries& _s);
@@ -181,10 +180,6 @@ fvkPlotFigure::fvkPlotFigure(const std::string& _name)
 	this->isAxis = true;
 	this->isLabls = true;
 }
-fvkPlotFigure::~fvkPlotFigure()
-{
-}
-
 void fvkPlotFigure::setAxisEnabled(bool _b)
 {
 	this->isAxis = _b;

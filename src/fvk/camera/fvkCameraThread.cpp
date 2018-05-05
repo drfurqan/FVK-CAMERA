@@ -60,7 +60,7 @@ bool fvkCameraThread::grab(cv::Mat& _m_frame)
 	// grab from the video file.
 	if (!m_filepath.empty())					// if there is a *.avi video file, then grab from it.
 	{
-		if (!p_cam.grab())						// capture frame (if available).
+		if (!m_cam.grab())						// capture frame (if available).
 		{
 			m_repeatmutex.lock();
 			if (m_isrepeat)
@@ -75,11 +75,11 @@ bool fvkCameraThread::grab(cv::Mat& _m_frame)
 	}
 	else										// otherwise, grab from the camera device.
 	{
-		if (!p_cam.grab())						// capture frame (if available).
+		if (!m_cam.grab())						// capture frame (if available).
 			return false;
 	}
 	
-	return p_cam.retrieve(_m_frame);
+	return m_cam.retrieve(_m_frame);
 }
 
 void fvkCameraThread::run()
