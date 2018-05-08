@@ -75,7 +75,7 @@ public:
 
 	// Description:
 	// Function that returns true if the video writer has been successfully initialized.
-	auto isOpened() -> bool;
+	auto isOpened() const -> bool;
 
 	// Description:
 	// Function to add a new image frame to the video file.

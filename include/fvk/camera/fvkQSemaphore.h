@@ -11,7 +11,7 @@ author:		Furqan Ullah (Post-doc, Ph.D.)
 website:    http://real3d.pk
 CopyRight:	All Rights Reserved
 
-purpose:	Basic semaphore like QSemaphore functionalities.
+purpose:	basic semaphore like QSemaphore functionalities.
 
 /**********************************************************************************
 *	Fast Visualization Kit (FVK)
@@ -35,7 +35,7 @@ class FVK_EXPORT fvkQSemaphore
 public:
 	// Description:
 	// Construct a counting semaphore with an initial value.
-	explicit fvkQSemaphore(int _n = 0);
+	explicit fvkQSemaphore(const int _n = 0);
 	~fvkQSemaphore();
 
 	// Description:

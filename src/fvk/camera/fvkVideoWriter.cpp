@@ -40,7 +40,8 @@ fvkVideoWriter::~fvkVideoWriter()
 
 auto fvkVideoWriter::open() -> int
 {
-	if (m_writer.isOpened()) return -1;
+	if (m_writer.isOpened())
+		return -1;
 
 	if (m_autocodec)
 	{
@@ -48,17 +49,19 @@ auto fvkVideoWriter::open() -> int
 	}
 	else
 	{
-		if (m_codec.length() != 4) return -2;
+		if (m_codec.length() != 4) 
+			return -2;
 
 		m_writer.open(m_file, cv::VideoWriter::fourcc(m_codec[0], m_codec[1], m_codec[2], m_codec[3]), m_fps, m_size, m_iscolor);
 	}
 
-	if (!m_writer.isOpened()) return 0;
+	if (!m_writer.isOpened())
+		return 0;
 
 	return 1;
 }
 
-auto fvkVideoWriter::isOpened() -> bool
+auto fvkVideoWriter::isOpened() const -> bool
 {
 	return m_writer.isOpened();
 }

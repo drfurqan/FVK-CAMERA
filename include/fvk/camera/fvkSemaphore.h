@@ -11,7 +11,7 @@ author:		Furqan Ullah (Post-doc, Ph.D.)
 website:    http://real3d.pk
 CopyRight:	All Rights Reserved
 
-purpose:	Basic semaphore like QSemaphore functionalities.
+purpose:	basic semaphore like QSemaphore functionalities.
 
 /**********************************************************************************
 *	Fast Visualization Kit (FVK)
@@ -35,7 +35,7 @@ class FVK_EXPORT fvkSemaphore
 public:
 	// Description:
 	// Default constructor that takes count and constructs the object.
-	explicit fvkSemaphore(int _count = 0);
+	explicit fvkSemaphore(const int _count = 0);
 	
 	// Description:
 	// Non-implemented.
@@ -75,9 +75,9 @@ public:
 		return finished;
 	}
 
-	std::condition_variable::native_handle_type native_handle();
+	auto native_handle() { return m_cv.native_handle(); }
 
-private:
+protected:
 	std::mutex m_mutex;
 	std::condition_variable m_cv;
 	int m_count;

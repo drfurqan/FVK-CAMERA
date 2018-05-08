@@ -63,8 +63,8 @@ int main()
 
 	// fvkCamera class also gives some basic image processing filters.
 	// Bilateral filter denoises the grabbed image with the kernel size 9.
-	cam.imageProcessing()->setDenoisingMethod(fvkImageProcessing::DenoisingMethod::Bilateral);
-	cam.imageProcessing()->setDenoisingLevel(9);
+	cam.imageProcessing().setDenoisingMethod(fvkImageProcessing::DenoisingMethod::Bilateral);
+	cam.imageProcessing().setDenoisingLevel(9);
 
 	// OpenCV event loop that will prevent to exit the main loop.
 	cv::waitKey(0);

@@ -55,13 +55,17 @@ std::thread th(std::ref(task), any_function);
 using namespace R3D;
 
 fvkThread::fvkThread() :
-	m_ispause(false),
 	m_isstop(false),
-	m_delay(33)
+	m_delay(1000 / 33),	// delay between frames (30 fps).
+	m_ispause(false)
 {
 }
+fvkThread::~fvkThread()
+{
+	stop();
+}
 
-void fvkThread::operator()(std::function<void()> _func)
+void fvkThread::operator()(const std::function<void()> _func)
 {
 	start(_func);
 }
@@ -70,14 +74,14 @@ void fvkThread::run()
 {
 }
 
-void fvkThread::start(std::function<void()> _func)
+void fvkThread::start(const std::function<void()> _func)
 {
 	// make stats to zero for the new run.
 	m_avgfps.getStats().nfps = 0;
 	m_avgfps.getStats().nframes = 0;
 
 	// start the main thread.
-	while (1)
+	while (true)
 	{
 		// stop this thread.
 		if (m_isstop)
@@ -115,7 +119,7 @@ void fvkThread::stop()
 {
 	m_isstop = true;
 }
-auto fvkThread::active() -> bool
+auto fvkThread::active() const -> bool
 {
 	return m_isstop;
 }
@@ -155,7 +159,7 @@ void fvkThread::resetStats()
 	m_avgfps.getStats().nframes = 0;
 }
 
-void fvkThread::setDelay(int _delay_msec)
+void fvkThread::setDelay(const int _delay_msec)
 {
 	std::lock_guard<std::mutex> lk(m_statsmutex);
 	m_delay = _delay_msec;

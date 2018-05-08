@@ -1,13 +1,13 @@
 /*********************************************************************************
 created:	2017/02/02   10:22AM
-filename: 	fvkCameraImageProcessing.cpp
-file base:	fvkCameraImageProcessing
+filename: 	fvkImageProcessing.cpp
+file base:	fvkImageProcessing
 file ext:	cpp
 author:		Furqan Ullah (Post-doc, Ph.D.)
 website:    http://real3d.pk
 CopyRight:	All Rights Reserved
 
-purpose:	Class to do some basic image processing.
+purpose:	class to do some basic image processing.
 
 /**********************************************************************************
 *	Fast Visualization Kit (FVK)

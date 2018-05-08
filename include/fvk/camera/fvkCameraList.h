@@ -53,18 +53,6 @@ public:
 		for (auto& it : m_cameras)
 			delete it;
 		m_cameras.clear();
-
-		//std::vector<CAMERA*>::size_type i = 0;
-		//while (i < m_cameras.size())
-		//{
-		//	CAMERA* p = m_cameras[i];
-		//	if (p)
-		//	{
-		//		if (!remove(p->getDeviceId()))
-		//			++i; // you should not increment the index for every element, but only for those which didn't get removed:
-		//	}
-		//}
-		//m_cameras.clear();
 	}
 	// Description:
 	// Function to add a new camera to the list. 
@@ -76,8 +64,8 @@ public:
 	// resolution Size(-1, -1) will do the auto-selection for the frame's width and height.
 	auto add(int _device_id, cv::Size _resolution = cv::Size(-1, -1))
 	{
-		if (getBy(_device_id) != nullptr)
-			return nullptr;
+		if (getBy(_device_id))
+			return static_cast<CAMERA*>(nullptr);
 
 		CAMERA* p = new CAMERA(_device_id, _resolution);
 		m_cameras.push_back(p);
@@ -105,8 +93,8 @@ public:
 	{
 		if (!_p) return nullptr;
 
-		if (getBy(_p->getDeviceIndex()) != nullptr)
-			return nullptr;
+		if (getBy(_p->getDeviceIndex()))
+			return static_cast<CAMERA*>(nullptr);
 
 		m_cameras.push_back(_p);
 		return _p;
@@ -114,15 +102,15 @@ public:
 
 	// Description:
 	// Function to get a pointer to camera by index of the camera list.
-	auto get(unsigned int _index) const
+	auto get(const  std::size_t _index) const
 	{
-		if (_index >= m_cameras.size()) 
+		if (_index < 0 || _index >= m_cameras.size())
 			return nullptr;
 		return m_cameras[_index]; 
 	}
 	// Description:
 	// Function to get a pointer to camera device by it's id.
-	auto getBy(int _device_index) const
+	auto getBy(const int _device_index) const
 	{
 		auto it = std::find_if(m_cameras.begin(), m_cameras.end(),
 			[&_device_index](const CAMERA* _p)
@@ -131,13 +119,13 @@ public:
 		});
 		if (it != m_cameras.end())
 			return (*it);
-		return nullptr;
+		return static_cast<CAMERA*>(nullptr);
 	}
 
 	// Description:
 	// Function to remove a camera from the list.
 	// It returns true on success.
-	auto remove(int _device_index)
+	auto remove(const int _device_index)
 	{
 		auto p = getBy(_device_index);
 		if (p)

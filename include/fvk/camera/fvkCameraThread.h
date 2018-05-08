@@ -34,47 +34,27 @@ class FVK_EXPORT fvkCameraThread : public fvkThread, public fvkCameraThreadAbstr
 {
 public:
 	// Description:
-	// Default constructor for start the camera device.
-	//  _device_id is the index number of the opened video capturing device (i.e. a camera index).
-	//  If there is a single camera connected, just pass 0.
-	//  In case of multiple cameras, try to pass 1 or 2 or 3, so on...
-	// If _width and _height is specified, then this will become the camera frame resolution.
-	// _buffer is the semaphore to synchronizer the processing thread with this thread.
-	// cv::Size(-1, -1) will do the auto-selection of the resolution, normally it enables the 640x480 resolution.
-	fvkCameraThread(fvkSemaphoreBuffer<cv::Mat>* _buffer, int _device_id, cv::Size _resolution = cv::Size(-1, -1));
+	// Default constructor that creates a camera thread for continuous streaming.
+	// _device_index is the index of the opened video capturing device (i.e. a camera index).
+	// If there is a single camera connected, just pass 0.
+	// In case of multiple cameras, try to pass 1 or 2 or 3, so on...
+	// _frame_size is the desired width and height of camera frame.
+	// Specifying Size(-1, -1) will do the auto-selection for the captured frame size,
+	// normally it enables the 640x480 resolution on most of web cams.
+	fvkCameraThread(const int _device_index, const cv::Size& _frame_size, fvkSemaphoreBuffer<cv::Mat>* _buffer = nullptr);
 	// Description:
-	// Default constructor to start the given video file.
-	// _buffer is the semaphore to synchronizer the processing thread with this thread.
-	// _video_file is the absolute path of the video file.
-	// If _width and _height is specified, then this will become the video frame resolution.
-	// cv::Size(-1, -1) will do the auto-selection of the resolution, normally it enable the 640x480 resolution.
-	// _api is the preferred API for a capture object. for more info see (cv::VideoCaptureAPIs).
-	fvkCameraThread(fvkSemaphoreBuffer<cv::Mat>* _buffer, const std::string& _video_file, cv::Size _resolution = cv::Size(-1, -1), int _api = cv::VideoCaptureAPIs::CAP_ANY);
-	// Description:
-	// Default destructor to stop the thread and releases the camera device or video file.
+	// Default destructor to stop the thread.
 	virtual ~fvkCameraThread();
 
 	// Description:
-	// Overridden function to process the camera frame.
-	void run() override;
-
-	// Description:
-	// Set true if you want to restart or repeat the video when it finishes. (only for videos)
-	// Default in true.
-	void repeat(bool _b);
-	// It returns true if the repeat flag for the video is on. (only for videos)
-	// Default in true.
-	auto repeat() -> bool;
-
-	// Description:
 	// Function to get the current grabbed frame.
-	cv::Mat getFrame() override;
+	auto getFrame() const -> cv::Mat override;
 
 	// Description:
 	// Set the emit function to get the average frames per second of this thread
 	// as well as the total number of frames that has been processed/passed.
 	// The input function should be capable of handling multi-threading updating.
-	void setFrameStatisticsSlot(std::function<void(const fvkAverageFpsStats&)> _f) { emit_stats = _f; }
+	void setFrameStatisticsSlot(const std::function<void(const fvkAverageFpsStats&)> _f) { m_emit_stats = _f; }
 
 	// Description:
 	// Function to set a pointer to semaphore buffer which does synchronization between capturing and processing threads.
@@ -87,27 +67,29 @@ public:
 	// Function to enable the perfect synchronization between the processing thread and the camera thread.
 	// If it's true, this thread will remain be blocked until the processing thread notify this thread.
 	// Default value is false. So, in that case, camera thread will keep running/grabbing and just wait to get notify from
-	// the processing thread to add the grabbed frame in thq queue.
+	// the processing thread to add the grabbed frame in the queue.
 	void setSyncEnabled(bool _b);
 	// Description:
 	// Function that returns true if the perfect synchronization is enabled.
-	auto isSyncEnabled() -> bool;
+	auto isSyncEnabled() const -> bool;
 
-protected:
+protected:	
 	// Description:
-	// Overridden function to grab frames from the camera device or the video file.
-	// If the video file path is specified, then this function will try to grab frames from the video file,
-	// otherwise capturing from camera device will be ON. 
-	// In order to grab from the camera device, the video file path
-	// should be empty, like setVideoFile("");
-	virtual bool grab(cv::Mat& _m_frame) override;
-	
+	// Overridden function to grab and process the camera frame.
+	void run() override;
+
+	// Description:
+	// Pure virtual function to be overridden to grab/capture the frame. 
+	auto grab(cv::Mat& _frame) -> bool override = 0;
+
+	// Description:
+	// protected member variables.
 	fvkSemaphoreBuffer<cv::Mat>* p_buffer;
-	std::function<void(const fvkAverageFpsStats&)> emit_stats;
+	std::function<void(const fvkAverageFpsStats&)> m_emit_stats;
 	std::mutex m_syncmutex;
 	std::mutex m_repeatmutex;
-	bool m_sync_proc_thread;
-	bool m_isrepeat;
+	std::atomic<bool> m_sync_proc_thread;
+	cv::Mat m_frame;
 };
 
 }

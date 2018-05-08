@@ -12,7 +12,7 @@ author:		Furqan Ullah (Post-doc, Ph.D.)
 website:    http://real3d.pk
 CopyRight:	All Rights Reserved
 
-purpose:	Class to compute the average frames per second.
+purpose:	class to compute the average frames per second.
 
 /**********************************************************************************
 *	Fast Visualization Kit (FVK)
@@ -48,7 +48,7 @@ public:
 	// Description:
 	// Default constructor that takes a number which is the total
 	// number to frames to be used for the average calculation.
-	fvkAverageFps(int _avg_size = 16);
+	explicit fvkAverageFps(const int _avg_size = 16);
 
 	// Description:
 	// Function that capture the elapsed time between each frame and
@@ -59,7 +59,7 @@ public:
 	// Function to set number of frames to be used for the average calculation.
 	// This should not be called when a thread is executed.
 	// Call it before executing the thread.
-	void setAverageSize(int _avg_size) { m_avgsize = _avg_size; }
+	void setAverageSize(const int _avg_size) { m_avgsize = _avg_size; }
 	// Description:
 	// Function to get number of frames to be used for the average calculation.
 	// This should not be called when a thread is executed.

@@ -35,6 +35,8 @@ namespace R3D
 class FVK_EXPORT fvkPlotManager
 {
 public:
+	// Description:
+	// Default constructor to initiate the object.
 	fvkPlotManager();
 	// Description:
 	// Function to clear the data.
@@ -83,7 +85,7 @@ class FVK_EXPORT fvkImagePlot
 {
 public:
 	// Description:
-	// Default constructor.
+	// Default constructor to initiate the object.
 	fvkImagePlot();
 
 	// Description:

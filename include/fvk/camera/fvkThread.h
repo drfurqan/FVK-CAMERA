@@ -19,6 +19,8 @@ override the run() function, or you just specify the function you want to call i
 the thread in the start() function.
 
 usage example # 1:
+------------------
+
 class MyTask : public fvkThread
 {
 public:
@@ -33,6 +35,8 @@ std::thread th([&]()			// creating a thread with lamda to execute our task
 std::thread th(std::ref(task));
 
 usage example # 2:
+------------------
+
 void any_function()
 {
 	std::cout << "running 2..." << std::endl;
@@ -54,11 +58,8 @@ std::thread th(std::ref(task), any_function);
 **********************************************************************************/
 
 #include "fvkExport.h"
-
 #include "fvkAverageFps.h"
 
-#include <future>
-#include <thread>
 #include <atomic>
 #include <mutex>
 #include <condition_variable>
@@ -75,6 +76,9 @@ public:
 	// Default constructor to create and initializes the data.
 	// Default thread delay is 33 milliseconds.
 	fvkThread();
+	// Description:
+	// Default destructor that will stop the thread.
+	virtual ~fvkThread();
 
 	// Description:
 	// A thread function (functor) to be executed by the thread.
@@ -105,13 +109,13 @@ public:
 	void stop();
 	// Description:
 	// Function that returns true if the thread is active or in running mode.
-	auto active() -> bool;
+	auto active() const -> bool;
 
 	// Description:
 	// Function to set the time delay in milliseconds which makes 
 	// delay this thread for the specified time.
 	// Default delay is 33 milliseconds.
-	void setDelay(int _delay_msec);
+	void setDelay(const int _delay_msec);
 	// Description:
 	// Function to get the frame delay.
 	// Default delay for *.avi video file is 1000.0 / getFps(). (only for videos)
@@ -136,8 +140,8 @@ private:
 	std::mutex m_pausemutex;
 	std::condition_variable m_pausecond;
 	std::atomic<bool> m_isstop;
-	int m_delay;
 	bool m_ispause;
+	int m_delay;
 };
 
 }

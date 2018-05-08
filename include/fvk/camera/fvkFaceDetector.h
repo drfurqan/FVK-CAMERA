@@ -25,7 +25,6 @@ purpose:	Class to detect face in the specified frame.
 #include "fvkExport.h"
 
 #include <opencv2/core.hpp>
-#include <opencv2/highgui/highgui.hpp>
 #include <opencv2/objdetect/objdetect.hpp>
 #include <string>
 
@@ -36,10 +35,10 @@ class FVK_EXPORT fvkFaceDetector
 {
 public:
 	// Description:
-	// Default constructor.
+	// Default constructor to initiate the object.
 	fvkFaceDetector();
 	// Description:
-	// Default destructor.
+	// Default destructor that deletes the cascade.
 	~fvkFaceDetector();
 
 	// Description:
@@ -81,10 +80,10 @@ public:
 	auto operator >> (cv::Mat& _frame) -> cv::Point;
 
 private:
-	auto doubleRectSize(const cv::Rect &inputRect, const cv::Rect &frameSize) const -> cv::Rect;
-	auto biggestFace(std::vector<cv::Rect> &faces) const -> cv::Rect;
-	auto centerOfRect(const cv::Rect &rect) const -> cv::Point;
-	auto getFaceTemplate(const cv::Mat &frame, cv::Rect face) -> cv::Mat;
+	static auto doubleRectSize(const cv::Rect &inputRect, const cv::Rect &frameSize) -> cv::Rect;
+	static auto biggestFace(std::vector<cv::Rect> &faces) -> cv::Rect;
+	static auto centerOfRect(const cv::Rect &rect) -> cv::Point;
+	static auto getFaceTemplate(const cv::Mat &frame, cv::Rect face) -> cv::Mat;
 	void detectFaceAroundRoi(const cv::Mat &frame);
 	void detectFacesTemplateMatching(const cv::Mat &frame);
 
@@ -96,20 +95,25 @@ private:
 	cv::Rect m_faceRoi;
 	cv::Mat m_faceTemplate;
 	cv::Mat m_matchingResult;
-	bool m_templateMatchingRunning = false;
-	int64 m_templateMatchingStartTime = 0;
-	int64 m_templateMatchingCurrentTime = 0;
-	bool m_foundFace = false;
-	double m_scale = 1;
-	int m_resizedWidth = 320;
+	bool m_templateMatchingRunning;
+	int64 m_templateMatchingStartTime;
+	int64 m_templateMatchingCurrentTime;
+	bool m_foundFace;
+	double m_scale;
+	int m_resizedWidth;
 	cv::Point m_facePosition;
-	double m_templateMatchingMaxDuration = 3;
+	double m_templateMatchingMaxDuration;
 };
 
 class FVK_EXPORT fvkSimpleFaceDetector
 {
 public:
+	// Description:
+	// Default constructor to initialize a face detector.
 	fvkSimpleFaceDetector();
+	// Description:
+	// Default destructor to destroy the data.
+	virtual ~fvkSimpleFaceDetector() = default;
 
 	// Description:
 	// Function to load a classifier from a file.

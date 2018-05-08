@@ -7,7 +7,7 @@ author:		Furqan Ullah (Post-doc, Ph.D.)
 website:    http://real3d.pk
 CopyRight:	All Rights Reserved
 
-purpose:	Basic semaphore like QSemaphore functionalities.
+purpose:	basic semaphore like QSemaphore functionalities.
 
 /**********************************************************************************
 *	Fast Visualization Kit (FVK)
@@ -22,7 +22,7 @@ purpose:	Basic semaphore like QSemaphore functionalities.
 
 using namespace R3D;
 
-fvkSemaphore::fvkSemaphore(int _count) : m_count{ _count }
+fvkSemaphore::fvkSemaphore(const int _count) : m_count{ _count }
 {
 }
 
@@ -49,9 +49,4 @@ auto fvkSemaphore::try_wait() -> bool
 		return true;
 	}
 	return false;
-}
-
-std::condition_variable::native_handle_type fvkSemaphore::native_handle()
-{
-	return m_cv.native_handle();
 }

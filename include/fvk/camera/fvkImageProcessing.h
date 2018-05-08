@@ -1,17 +1,17 @@
 #pragma once
-#ifndef fvkCameraImageProcessing_h__
-#define fvkCameraImageProcessing_h__
+#ifndef fvkImageProcessing_h__
+#define fvkImageProcessing_h__
 
 /*********************************************************************************
 created:	2017/02/02   10:22AM
-filename: 	fvkCameraImageProcessing.h
-file base:	fvkCameraImageProcessing
+filename: 	fvkImageProcessing.h
+file base:	fvkImageProcessing
 file ext:	h
 author:		Furqan Ullah (Post-doc, Ph.D.)
 website:    http://real3d.pk
 CopyRight:	All Rights Reserved
 
-purpose:	Class to do some basic image processing.
+purpose:	class to do some basic image processing.
 
 /**********************************************************************************
 *	Fast Visualization Kit (FVK)
@@ -42,7 +42,7 @@ public:
 	fvkImageProcessing();
 	// Description:
 	// Destructor that destroys the data.
-	~fvkImageProcessing();
+	virtual ~fvkImageProcessing();
 
 	// Description:
 	// Function to reset all the parameters of this object.
@@ -445,4 +445,4 @@ private:
 
 }
 
-#endif // fvkCameraImageProcessing_h__
+#endif // fvkImageProcessing_h__

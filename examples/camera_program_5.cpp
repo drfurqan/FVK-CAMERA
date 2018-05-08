@@ -45,9 +45,9 @@ protected:
 	virtual void processFrame(cv::Mat& _frame) override
 	{
 		cv::Mat m = _frame.clone();			// always create a clone to process the frame.
-		// cv::cvtColor(m, m, CV_BGR2GRAY);	// just doing the simple image processing that converts to gray-scale image.
+		 cv::cvtColor(m, m, CV_BGR2GRAY);	// just doing the simple image processing that converts to gray-scale image.
 		cv::imshow("FVK Camera", m);		// show the given frame in OpenCV window.
-		//_frame = m;
+		_frame = m;
 	}
 };
 
@@ -69,7 +69,7 @@ int main()
 		}
 	}
 
-	cam->imageProcessing()->setNegativeModeEnabled(true);	// do some image processing on the captured frame.
+	cam->imageProcessing().setNegativeModeEnabled(true);	// do some image processing on the captured frame.
 
 	// create a window using OpenCV.
 	cv::namedWindow("FVK Camera");

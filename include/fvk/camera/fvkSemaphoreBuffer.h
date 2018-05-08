@@ -36,7 +36,6 @@ purpose:	creating a thread-safe synchronized queue and to achieve
 
 #include <queue>
 #include <mutex>
-#include <condition_variable>
 
 namespace R3D
 {
@@ -53,7 +52,8 @@ public:
 		std::lock_guard<std::mutex> lk(_other.m_mutex);
 		m_data = _other.m_data;
 	}
-	void put(const _T& _item, bool _sync_and_block_thread = false)
+
+	void put(const _T& _item, const bool _sync_and_block_thread = false)
 	{
 		// In this case, camera thread needs notify from the processing thread to 
 		// run as well as to put item in the data.
@@ -112,60 +112,5 @@ private:
 };
 
 }
-
-/*
-int n = 0;
-fvkSemaphoreBuffer<std::string> data_queue;
-
-void sender_thread()
-{
-	while (true)
-	{
-		if (n == 7) n = 0;
-		std::string data = "Pattern # " + std::to_string(n++);
-		std::cout << data << std::endl;
-		data_queue.put(data);
-		// very important note:
-		// frame delay or sleep of the sender's thread must be higher than the 
-		// receiver's thread frame delay for perfect synchronization.
-		// In general, there is no need to set frame delay or sleep in the 
-		// receiver's thread because of using fvkQThreadSafeQueue.
-		// In this example: sender thread is projection()
-		// and receiver thread is capture.
-		std::this_thread::sleep_for(std::chrono::milliseconds(40));
-	}
-}
-void receiver_thread()
-{
-	while (true)
-	{
-		std::string data = data_queue.get();
-		if (data == "Pattern # 0")
-			std::cout << "Received: " << data << std::endl;
-		else if (data == "Pattern # 1")
-			std::cout << "Received: " << data << std::endl;
-		else if (data == "Pattern # 2")
-			std::cout << "Received: " << data << std::endl;
-		else if (data == "Pattern # 3")
-			std::cout << "Received: " << data << std::endl;
-		else if (data == "Pattern # 4")
-			std::cout << "Received: " << data << std::endl;
-		else if (data == "Pattern # 5")
-			std::cout << "Received: " << data << std::endl;
-		else if (data == "Pattern # 6")
-			std::cout << "Received: " << data << std::endl;
-	}
-}
-
-int main()
-{
-	std::thread t(sender_thread);
-	std::thread t2(receiver_thread);
-	t.join();
-	t2.join();
-
-	return 0;
-}
-*/
 
 #endif // fvkSemaphoreBuffer_h__

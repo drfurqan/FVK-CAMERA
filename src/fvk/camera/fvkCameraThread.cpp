@@ -20,75 +20,29 @@ purpose:	Class to create a thread for capturing frames from OpenCV camera.
 **********************************************************************************/
 
 #include <fvk/camera/fvkCameraThread.h>
-#include <thread>
-#include <chrono>
 
 using namespace R3D;
 
-fvkCameraThread::fvkCameraThread(fvkSemaphoreBuffer<cv::Mat>* _buffer, int _device_index, cv::Size _resolution) :
-fvkCameraThreadAbstract(),
-p_buffer(_buffer),
-m_sync_proc_thread(false),
-m_isrepeat(true)
+fvkCameraThread::fvkCameraThread(const int _device_index, const cv::Size& _frame_size, fvkSemaphoreBuffer<cv::Mat>* _buffer) :
+	fvkThread(),
+	fvkCameraThreadAbstract(),
+	p_buffer(_buffer),
+	m_sync_proc_thread(false)
 {
 	setDeviceIndex(_device_index);
-	setResolution(_resolution);
-	setDelay(33);	// frame delay for the camera device.
-}
-fvkCameraThread::fvkCameraThread(fvkSemaphoreBuffer<cv::Mat>* _buffer, const std::string& _video_file, cv::Size _resolution, int _api) :
-fvkCameraThreadAbstract(),
-p_buffer(_buffer),
-m_sync_proc_thread(false),
-m_isrepeat(true)
-{
-	setVideoFile(_video_file);
-	setResolution(_resolution);
-	setAPI(_api);
-	setDelay(static_cast<int>(1000.0 / getFps()));	// frame delay of the opened video.
-}
-fvkCameraThread::~fvkCameraThread()
-{
-	stop();
-	close();
-#ifdef _DEBUG
-	std::cout << "Camera thread has been stopped.\n";
-#endif // _DEBUG
+	setFrameSize(_frame_size);
+	setDelay(1000 / 33);	// delay between frames (30 fps).
 }
 
-bool fvkCameraThread::grab(cv::Mat& _m_frame)
+fvkCameraThread::~fvkCameraThread()
 {
-	// grab from the video file.
-	if (!m_filepath.empty())					// if there is a *.avi video file, then grab from it.
-	{
-		if (!m_cam.grab())						// capture frame (if available).
-		{
-			m_repeatmutex.lock();
-			if (m_isrepeat)
-			{
-				setPosFrames(0);				// reset the camera frame to 0.
-				resetStats();					// reset frame counter as well.
-				m_repeatmutex.unlock();
-				return false;
-			}
-			m_repeatmutex.unlock();
-		}
-	}
-	else										// otherwise, grab from the camera device.
-	{
-		if (!m_cam.grab())						// capture frame (if available).
-			return false;
-	}
-	
-	return m_cam.retrieve(_m_frame);
 }
 
 void fvkCameraThread::run()
 {
 	if (grab(m_frame))
 	{
-		m_syncmutex.lock();
 		p_buffer->put(m_frame, m_sync_proc_thread);
-		m_syncmutex.unlock();
 	}
 	else
 	{
@@ -97,33 +51,20 @@ void fvkCameraThread::run()
 		#endif // _DEBUG
 	}
 
-	if (emit_stats)
-		emit_stats(m_avgfps.getStats());
+	if (m_emit_stats)
+		m_emit_stats(m_avgfps.getStats());
 }
 
-cv::Mat fvkCameraThread::getFrame()
+auto fvkCameraThread::getFrame() const -> cv::Mat
 {
 	return p_buffer->get().clone();
 }
 
-void fvkCameraThread::repeat(bool _b)
-{
-	std::lock_guard<std::mutex> lk(m_repeatmutex);
-	m_isrepeat = _b;
-}
-auto fvkCameraThread::repeat() -> bool
-{
-	std::lock_guard<std::mutex> lk(m_repeatmutex);
-	return m_isrepeat;
-}
-
 void fvkCameraThread::setSyncEnabled(bool _b)
 {
-	std::lock_guard<std::mutex> lk(m_syncmutex);
 	m_sync_proc_thread = _b;
 }
-auto fvkCameraThread::isSyncEnabled() -> bool
+auto fvkCameraThread::isSyncEnabled() const -> bool
 {
-	std::lock_guard<std::mutex> locker(m_syncmutex);
 	return m_sync_proc_thread;
 }
