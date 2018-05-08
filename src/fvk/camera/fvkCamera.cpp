@@ -106,55 +106,61 @@ auto fvkCamera::disconnect() -> bool
 		}
 		std::cout << "[" << p_ct->getDeviceIndex() << "] camera has been disconnected already.\n";
 	}
+
 	return false;
 }
 auto fvkCamera::connect() -> bool
 {
-	if (p_ct)
-	{
-		if (p_ct->isOpened())
-		{
-			std::cout << "[" << p_ct->getDeviceIndex() << "] camera has been connected already.\n";
-			return false;
-		}
+	if (!p_ct)
+		return false;
 
-		return p_ct->open();
+	if (p_ct->isOpened())
+	{
+		std::cout << "[" << p_ct->getDeviceIndex() << "] camera has been connected already.\n";
+		return false;
 	}
-	std::cout << "Could not open the camera or video device!\n";
-	return false;
+
+	const auto b = p_ct->open();
+
+	// reset the region of interest.
+	if (p_pt) 
+		p_pt->setRoi(cv::Rect(0, 0, p_ct->getFrameWidth(), p_ct->getFrameHeight()));
+
+	return b;
 }
 auto fvkCamera::start() -> bool
 {
 	if (!p_ct) 
 		return false;
 
-	if (p_ct->isOpened())
-	{
-		// Run some task on new thread. The launch policy std::launch::async
-		// makes sure that the task is run asynchronously on a new thread.
-		//auto future1 = std::async(std::launch::async, [&]
-		//{
-		//	p_ct->run();
-		//});
+	if (!p_ct->isOpened())
+		return false;
 
-		//future1.wait_for(std::chrono::milliseconds(1000)); // wait for camera thread to start, then start the processing thread.
-		//
-		//auto future2 = std::async(std::launch::async, [&]
-		//{
-		//	p_pt->run();
-		//});
+	// Run some task on new thread. The launch policy std::launch::async
+	// makes sure that the task is run asynchronously on a new thread.
+	//auto future1 = std::async(std::launch::async, [&]
+	//{
+	//	p_ct->run();
+	//});
 
-		if (p_stdct) delete p_stdct;
-		p_stdct = new std::thread([&]() { p_ct->start(); });
-		p_stdct->detach();
-		if (p_stdpt) delete p_stdpt;
-		p_stdpt = new std::thread([&]() { p_pt->start(); });
-		p_stdpt->detach();
+	//future1.wait_for(std::chrono::milliseconds(1000)); // wait for camera thread to start, then start the processing thread.
+	//
+	//auto future2 = std::async(std::launch::async, [&]
+	//{
+	//	p_pt->run();
+	//});
 
-		return true;
-	}
+	if (p_stdct)
+		delete p_stdct;
+	p_stdct = new std::thread([&]() { p_ct->start(); });
+	p_stdct->detach();
 
-	return false;
+	if (p_stdpt)
+		delete p_stdpt;
+	p_stdpt = new std::thread([&]() { p_pt->start(); });
+	p_stdpt->detach();
+
+	return true;
 }
 
 auto fvkCamera::isConnected() const -> bool
