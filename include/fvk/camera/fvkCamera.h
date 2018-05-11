@@ -35,6 +35,8 @@ namespace R3D
 class FVK_EXPORT fvkCameraAbstract
 {
 public:
+	virtual ~fvkCameraAbstract() = default;
+
 	// Description:
 	// Virtual function that is expected to be overridden in the derived class in order
 	// to process the captured frame.
@@ -184,11 +186,11 @@ public:
 	// It is a helper shortcut function to "cam->getCameraProcessingThread()->imageProcessing()".
 	auto& imageProcessing() { return p_pt->imageProcessing(); }
 	// Description:
-	// Function to get a pointer to camera thread.
-	auto getCameraThread() const { return p_ct; }
+	// Function to get a pointer to camera/capturing thread.
+	auto getCamThread() const { return p_ct; }
 	// Description:
-	// Function to get a pointer to camera processing thread.
-	auto getCameraProcessingThread() const { return p_pt; }
+	// Function to get a pointer to camera/frame processing thread.
+	auto getProcThread() const { return p_pt; }
 
 protected:
 	// Description:

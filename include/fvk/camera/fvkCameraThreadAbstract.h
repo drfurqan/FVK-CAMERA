@@ -25,7 +25,7 @@ purpose:	OpenCV camera class interface.
 
 #include "fvkExport.h"
 
-#include "opencv2/opencv.hpp"
+#include <opencv2/opencv.hpp>
 
 namespace R3D
 {
