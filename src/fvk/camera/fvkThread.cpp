@@ -111,7 +111,7 @@ void fvkThread::start(const std::function<void()> _func)
 	}
 
 #ifdef _DEBUG
-	std::cout << "The thread has stopped.\n";
+	std::cout << "The thread has been stopped successfully.\n";
 #endif // _DEBUG
 }
 

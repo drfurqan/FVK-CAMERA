@@ -40,9 +40,11 @@ fvkCameraThread::~fvkCameraThread()
 
 void fvkCameraThread::run()
 {
-	if (grab(m_frame))
+	cv::Mat frame;
+
+	if (grab(frame))
 	{
-		p_buffer->put(m_frame, m_sync_proc_thread);
+		p_buffer->put(frame, m_sync_proc_thread);
 	}
 	else
 	{

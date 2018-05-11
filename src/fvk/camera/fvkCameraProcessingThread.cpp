@@ -29,7 +29,6 @@ fvkCameraProcessingThread::fvkCameraProcessingThread(const int _device_index, fv
 	m_device_index(_device_index),
 	p_frameobserver(_frameobserver),
 	p_buffer(_buffer),
-	m_frame(cv::Mat()),
 	m_rect(cv::Rect(0, 0, 10, 10)),
 	m_filepath("D:\\saved_snapshot.jpg"),
 	m_save(false)
@@ -57,26 +56,26 @@ void fvkCameraProcessingThread::run()
 	const auto f = p_buffer->get();
 
 	m_rectmutex.lock();
-	m_frame = cv::Mat(f, m_rect);
+	cv::Mat frame = cv::Mat(f, m_rect);
 	m_rectmutex.unlock();
 
 	// do some basic image processing
-	m_ip.imageProcessing(m_frame);
+	m_ip.imageProcessing(frame);
 
 	// send frame to the observer to process it on another class.
 	if (p_frameobserver)
-		p_frameobserver->processFrame(m_frame);
+		p_frameobserver->processFrame(frame);
 
 	// emit signal to inform to image box for the new frame.
 	if (m_emit_display_frame)
-		m_emit_display_frame(m_frame);
+		m_emit_display_frame(frame);
 
 	// save current frame to disk.
-	saveFrameToDisk(m_frame);
+	saveFrameToDisk(frame);
 
 	// add frame for the video recording.
 	if (m_vr.isOpened())
-		m_vr.addFrame(m_frame);
+		m_vr.addFrame(frame);
 
 	if (m_emit_stats)
 		m_emit_stats(m_avgfps.getStats());

@@ -89,7 +89,7 @@ auto fvkCamera::disconnect() -> bool
 	{
 		p_pt->writer().stop();
 		p_pt->stop();
-		std::cout << "Camera processing thread has been successfully stopped.\n";
+		std::cout << "Camera processing thread has been stopped successfully.\n";
 	}
 
 	// then stop the camera thread and release/close the device.
@@ -100,7 +100,7 @@ auto fvkCamera::disconnect() -> bool
 			p_ct->stop();
 			if (p_ct->close())
 			{
-				std::cout << "[" << p_ct->getDeviceIndex() << "] camera has been successfully disconnected.\n";
+				std::cout << "[" << p_ct->getDeviceIndex() << "] camera has been disconnected successfully.\n";
 				return true;
 			}
 		}

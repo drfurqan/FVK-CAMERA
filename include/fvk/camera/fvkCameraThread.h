@@ -89,7 +89,6 @@ protected:
 	std::mutex m_syncmutex;
 	std::mutex m_repeatmutex;
 	std::atomic<bool> m_sync_proc_thread;
-	cv::Mat m_frame;
 };
 
 }

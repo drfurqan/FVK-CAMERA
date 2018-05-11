@@ -135,7 +135,6 @@ protected:
 	fvkVideoWriter m_vr;
 
 	int m_device_index;
-	cv::Mat m_frame;
 	std::string m_filepath;
 	std::mutex m_rectmutex;
 	cv::Rect m_rect;
