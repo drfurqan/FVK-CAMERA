@@ -36,6 +36,7 @@ fvkCameraThread::fvkCameraThread(const int _device_index, const cv::Size& _frame
 
 fvkCameraThread::~fvkCameraThread()
 {
+	stop();
 }
 
 void fvkCameraThread::run()

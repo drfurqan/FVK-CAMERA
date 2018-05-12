@@ -73,7 +73,6 @@ public:
 	IplImage* getPlottedImage() const { return p_plottedimg; }
 
 private:
-	fvkPlotFigure();
 	void drawAxis(IplImage* _outimg);
 	void drawPlots(IplImage* _outimg);
 	void initialize();
@@ -449,17 +448,19 @@ void fvkPlotFigure::calculatePlot()
 /************************************************************************/
 /* Start Plot Manager                                                   */
 /************************************************************************/
-fvkPlotManager::fvkPlotManager()
+fvkPlotManager::fvkPlotManager() : 
+	active_figure(nullptr),
+	active_series(nullptr)
 {
 }
 
 // search a named window, return null if not found.
 fvkPlotFigure* fvkPlotManager::findFigure(const std::string& _name)
 {
-	for (std::vector<fvkPlotFigure>::iterator iter = figure_list.begin(); iter != figure_list.end(); ++iter)
+	for (auto &i : figure_list)
 	{
-		if (iter->getFigureName() == _name)
-			return &(*iter);
+		if (i->getFigureName() == _name)
+			return i;
 	}
 	return nullptr;
 }
@@ -490,10 +491,10 @@ void fvkPlotManager::plotData(const std::string& fig_name, const float *p, int c
 	active_figure = findFigure(fig_name);
 	if (active_figure == nullptr)
 	{
-		fvkPlotFigure new_figure(fig_name);
-		figure_list.push_back(new_figure);
+		figure_list.push_back(new fvkPlotFigure(fig_name));
 		active_figure = findFigure(fig_name);
-		if (active_figure == nullptr) return;
+		if (active_figure == nullptr)
+			return;
 	}
 
 	active_series = active_figure->add(s);
@@ -506,20 +507,22 @@ void fvkPlotManager::plotData(const std::string& fig_name, const float *p, int c
 template <typename _T>
 void fvkPlotManager::plot(const std::string& fig_name, const _T* _data, int count, int step, int R, int G, int B)
 {
-	if (step <= 0) step = 1;
-	float  *data_copy = new float[count * step];
-	float   *dst = data_copy;
+	if (step <= 0) 
+		step = 1;
+
+	float* data_copy = new float[count * step];
+	float* dst = data_copy;
 	const _T* src = _data;
 	for (int i = 0; i < count * step; i++)
 	{
-		*dst = (float)(*src);
+		*dst = static_cast<float>(*src);
 		dst++;
 		src++;
 	}
 	this->plotData(fig_name, data_copy, count, step, R, G, B);
 	delete[] data_copy;
 }
-void fvkPlotManager::calculatePlot()
+void fvkPlotManager::calculatePlot() const
 {
 	active_figure->calculatePlot();
 }
@@ -538,9 +541,9 @@ void fvkPlotManager::clear(const std::string& _name)
 	fvkPlotFigure *fig = this->findFigure(_name);
 	if (fig) fig->clear();
 }
-void fvkPlotManager::setLabel(const std::string& _l)
+void fvkPlotManager::setLabel(const std::string& _l) const
 {
-	if ((active_series != nullptr) && (active_figure != nullptr))
+	if (active_series != nullptr && active_figure != nullptr)
 	{
 		active_series->m_label = _l;
 		active_figure->calculatePlot();

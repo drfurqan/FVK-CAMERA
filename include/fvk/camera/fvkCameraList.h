@@ -180,19 +180,30 @@ public:
 	// Description:
 	// Function to remove a camera from the list.
 	// It returns true on success.
-	auto remove(const int _device_index)
+	auto remove(CAMERA* _p)
 	{
-		auto p = getBy(_device_index);
-		if (!p) return false;
+		if (!_p) 
+			return false;
 
-		m_list.erase(std::remove(m_list.begin(), m_list.end(), p), m_list.end());
-		delete p;
-		p = nullptr;
+		m_list.erase(std::remove(m_list.begin(), m_list.end(), _p), m_list.end());
+		delete _p;
+		_p = nullptr;
 		return true;
 	}
 	// Description:
+	// Function to remove a camera from the list.
+	// It returns true on success.
+	auto remove(const int _device_index)
+	{
+		return remove(getBy(_device_index));
+	}
+
+	// Description:
 	// Function to get the total number of cameras in the list.
 	auto getSize() const { return m_list.size(); }
+	// Description:
+	// Function to a reference to this list.
+	auto& getList() { return m_list; }
 
 private:
 	std::vector<CAMERA*> m_list;

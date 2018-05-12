@@ -41,6 +41,7 @@ fvkCameraThreadOpenCV::fvkCameraThreadOpenCV(const std::string& _video_file, con
 
 fvkCameraThreadOpenCV::~fvkCameraThreadOpenCV()
 {
+	stop();
 	fvkCameraThreadOpenCV::close();
 }
 
@@ -59,24 +60,26 @@ auto fvkCameraThreadOpenCV::open(const int _device_index) -> bool
 	m_frame_size.width = static_cast<int>(m_cam.get(cv::CAP_PROP_FRAME_WIDTH));
 	m_frame_size.height = static_cast<int>(m_cam.get(cv::CAP_PROP_FRAME_HEIGHT));
 
+	// on some camera devices, CAP_PROP_FRAME_WIDTH and CAP_PROP_FRAME_HEIGHT doesn't work,
+	// so just try to get the default frame size.
+	if(m_frame_size.width == 0 || m_frame_size.height == 0)
+	{
+		m_frame_size.width = 640;
+		m_frame_size.height = 480;
+		m_cam.set(cv::CAP_PROP_FRAME_WIDTH, m_frame_size.width);
+		m_cam.set(cv::CAP_PROP_FRAME_HEIGHT, m_frame_size.height);
+	}
+
 	m_device_index = _device_index;
 
 	return true;
-}
-auto fvkCameraThreadOpenCV::open() -> bool
-{
-	if (open(m_filepath))
-		return true;
-	
-	return open(m_device_index);
 }
 auto fvkCameraThreadOpenCV::open(const std::string& _file_name, const int _api) -> bool
 {
 	if (_file_name.empty())
 		return false;
 
-	const auto b = m_cam.open(_file_name, _api);
-	if (b)
+	if (m_cam.open(_file_name, _api))
 	{
 		if (m_frame_size.width != -1)
 			m_cam.set(cv::CAP_PROP_FRAME_WIDTH, m_frame_size.width);
@@ -90,20 +93,23 @@ auto fvkCameraThreadOpenCV::open(const std::string& _file_name, const int _api) 
 
 		m_filepath = _file_name;
 		m_videocapture_api = _api;
-	}
-	else
-	{
-		m_filepath = "";
+
+		return true;
 	}
 
-	return b;
+	return false;
 }
+auto fvkCameraThreadOpenCV::open() -> bool
+{
+	if (open(m_filepath, m_videocapture_api))
+		return true;
 
+	return open(m_device_index);
+}
 auto fvkCameraThreadOpenCV::isOpened() const -> bool
 {
 	return m_cam.isOpened();
 }
-
 auto fvkCameraThreadOpenCV::close() -> bool
 {
 	if (!isOpened())

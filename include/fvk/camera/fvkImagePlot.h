@@ -44,7 +44,7 @@ public:
 
 	// Description:
 	// Function to set label.
-	void setLabel(const std::string& _l);
+	void setLabel(const std::string& _l) const;
 	// Description:
 	// Function to set the plotted image size.
 	void setPlotSize(const std::string& _name, int _w, int _h);
@@ -66,7 +66,7 @@ public:
 	void plot(const std::string& _fig_name, const _T* _data, int _count, int _step, int _R, int _G, int _B);
 	// Description:
 	// Function to calculate the plot.
-	void calculatePlot();
+	void calculatePlot() const;
 
 	// Description:
 	// Function to get the plotted image.
@@ -77,7 +77,7 @@ private:
 	void plotData(const std::string& _fig_name, const float* _p, int _count, int _step, int _R, int _G, int _B);
 
 	fvkPlotFigure *active_figure;
-	std::vector<fvkPlotFigure> figure_list;
+	std::vector<fvkPlotFigure*> figure_list;
 	fvkPlotSeries *active_series;
 };
 

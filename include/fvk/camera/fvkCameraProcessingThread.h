@@ -45,10 +45,19 @@ public:
 	// If there is a single camera connected, just pass 0.
 	// In case of multiple cameras, try to pass 1 or 2 or 3, so on...
 	// If _width and _height is specified, then this will become the camera frame resolution.
-	fvkCameraProcessingThread(const int _device_index, fvkCameraAbstract* _frameobserver, fvkSemaphoreBuffer<cv::Mat>* _buffer);
+	explicit fvkCameraProcessingThread(const int _device_index, fvkSemaphoreBuffer<cv::Mat>* _buffer = nullptr);
+	// Description:
+	// Default constructor.
+	// _buffer is the semaphore to synchronizer the processing thread with this thread.
+	// _frameobserver is the parent class of Camera that will override the processFrame function.
+	// _device is the id of the opened video capturing device (i.e. a camera index).
+	// If there is a single camera connected, just pass 0.
+	// In case of multiple cameras, try to pass 1 or 2 or 3, so on...
+	// If _width and _height is specified, then this will become the camera frame resolution.
+	fvkCameraProcessingThread(const int _device_index, fvkCameraAbstract* _frameobserver, fvkSemaphoreBuffer<cv::Mat>* _buffer = nullptr);
 	// Description:
 	// Default destructor to stop the thread as well as recorder, and delete the data.
-	~fvkCameraProcessingThread();
+	virtual ~fvkCameraProcessingThread();
 
 	// Description:
 	// Overridden function to get the current grabbed frame.
@@ -118,6 +127,11 @@ protected:
 	// Description:
 	// Overridden function to process the camera frame.
 	void run() override;
+
+	// Description:
+	// Virtual function that is expected to be overridden in the derived class in order
+	// to process the captured frame.
+	virtual void processFrame(cv::Mat& _frame);
 
 	// Description:
 	// Function that saves the current frame to disk (file path must be specified by setSavedFile("")).

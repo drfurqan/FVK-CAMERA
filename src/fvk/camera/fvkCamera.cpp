@@ -31,7 +31,7 @@ fvkCamera::fvkCamera(const int _device_index, const cv::Size& _frame_size) :
 p_stdct(nullptr),
 p_stdpt(nullptr)
 {
-	fvkSemaphoreBuffer<cv::Mat>* b = new fvkSemaphoreBuffer<cv::Mat>;
+	const auto b = new fvkSemaphoreBuffer<cv::Mat>();
 	p_ct = new fvkCameraThreadOpenCV(_device_index, _frame_size, b);
 	p_pt = new fvkCameraProcessingThread(_device_index, this, b);
 }
@@ -39,7 +39,7 @@ fvkCamera::fvkCamera(const std::string& _video_file, const cv::Size& _frame_size
 p_stdct(nullptr),
 p_stdpt(nullptr)
 {
-	fvkSemaphoreBuffer<cv::Mat>* b = new fvkSemaphoreBuffer<cv::Mat>;
+	const auto b = new fvkSemaphoreBuffer<cv::Mat>();
 	p_ct = new fvkCameraThreadOpenCV(_video_file, _frame_size, _api, b);
 	p_pt = new fvkCameraProcessingThread(p_ct->getDeviceIndex(), this, b);
 }
@@ -48,7 +48,7 @@ fvkCamera::fvkCamera(fvkCameraThread* _ct) :
 	p_stdct(nullptr),
 	p_stdpt(nullptr)
 {
-	fvkSemaphoreBuffer<cv::Mat>* b = new fvkSemaphoreBuffer<cv::Mat>;
+	const auto b = new fvkSemaphoreBuffer<cv::Mat>();
 	p_ct = _ct;
 	p_ct->setSemaphoreBuffer(b);
 	p_pt = new fvkCameraProcessingThread(_ct->getDeviceIndex(), this, b);
@@ -60,25 +60,33 @@ fvkCamera::fvkCamera(fvkCameraThread* _ct, fvkCameraProcessingThread* _pt) :
 	p_ct(_ct),
 	p_pt(_pt)
 {
+	if(_ct->getSemaphoreBuffer() == nullptr && _pt->getSemaphoreBuffer() == nullptr)
+	{
+		const auto b = new fvkSemaphoreBuffer<cv::Mat>();
+		p_ct->setSemaphoreBuffer(b);
+		p_pt->setSemaphoreBuffer(b);
+	}
 }
 
 fvkCamera::~fvkCamera()
 {
 	if (disconnect())
 	{
-		if (p_pt)
-		{
-			delete p_pt;
-			p_pt = nullptr;
-		}
-		if (p_ct)
-		{
-			delete p_ct;
-			p_ct = nullptr;
-		}
+		if(p_stdct)
+			delete p_stdct;
+		if (p_stdpt)
+			delete p_stdpt;
 
 		if (p_ct->getSemaphoreBuffer())
 			delete p_ct->getSemaphoreBuffer();
+		if (p_pt)
+			p_pt->setSemaphoreBuffer(nullptr);
+		if (p_ct)
+			p_ct->setSemaphoreBuffer(nullptr);
+		if (p_pt)
+			delete p_pt;
+		if (p_ct)
+			delete p_ct;
 	}
 }
 

@@ -25,6 +25,22 @@ camera frame. This thread is synchronized with the camera thread using a semapho
 
 using namespace R3D;
 
+fvkCameraProcessingThread::fvkCameraProcessingThread(const int _device_index, fvkSemaphoreBuffer<cv::Mat>* _buffer) :
+	m_device_index(_device_index),
+	p_frameobserver(nullptr),
+	p_buffer(_buffer),
+	m_rect(cv::Rect(0, 0, 10, 10)),
+	m_filepath("D:\\saved_snapshot.jpg"),
+	m_save(false)
+{
+	// this thread is synchronized with the camera thread by semaphore buffer,
+	// which means it is fully dependent on the camera thread, if a frame is
+	// added to the buffer queue by the camera thread, only then it will run,
+	// otherwise it will keep waiting for the next frame,
+	// so, no need to make a thread delay manually.
+	setDelay(0);
+}
+
 fvkCameraProcessingThread::fvkCameraProcessingThread(const int _device_index, fvkCameraAbstract* _frameobserver, fvkSemaphoreBuffer<cv::Mat>* _buffer) :
 	m_device_index(_device_index),
 	p_frameobserver(_frameobserver),
@@ -43,11 +59,8 @@ fvkCameraProcessingThread::fvkCameraProcessingThread(const int _device_index, fv
 
 fvkCameraProcessingThread::~fvkCameraProcessingThread()
 {
-	stop();
 	m_vr.stop();
-#ifdef _DEBUG
-	std::cout << "Camera processing thread has been stopped.\n";
-#endif // _DEBUG
+	stop();
 }
 
 void fvkCameraProcessingThread::run()
@@ -66,6 +79,9 @@ void fvkCameraProcessingThread::run()
 	if (p_frameobserver)
 		p_frameobserver->processFrame(frame);
 
+	// expected to be overridden in the derived class.
+	processFrame(frame);
+
 	// emit signal to inform to image box for the new frame.
 	if (m_emit_display_frame)
 		m_emit_display_frame(frame);
@@ -79,6 +95,11 @@ void fvkCameraProcessingThread::run()
 
 	if (m_emit_stats)
 		m_emit_stats(m_avgfps.getStats());
+}
+
+void fvkCameraProcessingThread::processFrame(cv::Mat& _frame)
+{
+	// do nothing!
 }
 auto fvkCameraProcessingThread::getFrame() const -> cv::Mat
 {
