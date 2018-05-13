@@ -99,7 +99,7 @@ public:
 	void start(std::function<void()> _func = nullptr);
 	// Description:
 	// Function to pause (true) or resume (false) this thread.
-	void pause(bool _b);
+	void pause(const bool _b);
 	// Description:
 	//Function that returns true if this thread is on pause state.
 	auto pause() -> bool;

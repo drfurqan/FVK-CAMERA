@@ -70,52 +70,66 @@ fvkCamera::fvkCamera(fvkCameraThread* _ct, fvkCameraProcessingThread* _pt) :
 
 fvkCamera::~fvkCamera()
 {
-	if (disconnect())
-	{
-		if(p_stdct)
-			delete p_stdct;
-		if (p_stdpt)
-			delete p_stdpt;
+	disconnect();
 
-		if (p_ct->getSemaphoreBuffer())
-			delete p_ct->getSemaphoreBuffer();
-		if (p_pt)
-			p_pt->setSemaphoreBuffer(nullptr);
-		if (p_ct)
-			p_ct->setSemaphoreBuffer(nullptr);
-		if (p_pt)
-			delete p_pt;
-		if (p_ct)
-			delete p_ct;
-	}
+	if(p_stdct)
+		delete p_stdct;
+	p_stdct = nullptr;
+
+	if (p_stdpt)
+		delete p_stdpt;
+	p_stdpt = nullptr;
+
+	auto buffer = p_ct->getSemaphoreBuffer();
+	if (buffer)
+		delete buffer;
+	buffer = nullptr;
+
+	if (p_pt)
+		delete p_pt;
+	p_pt = nullptr;
+
+	if (p_ct)
+		delete p_ct;
+	p_ct = nullptr;
 }
 
 auto fvkCamera::disconnect() -> bool
 {
-	// first stop the processing thread.
-	if (p_pt)
-	{
-		p_pt->writer().stop();
-		p_pt->stop();
-		std::cout << "Camera processing thread has been stopped successfully.\n";
-	}
-
-	// then stop the camera thread and release/close the device.
 	if (p_ct)
 	{
-		if (p_ct->isOpened())
+		// stop the main thread.
+		if (p_ct->active())
 		{
 			p_ct->stop();
-			if (p_ct->close())
-			{
-				std::cout << "[" << p_ct->getDeviceIndex() << "] camera has been disconnected successfully.\n";
-				return true;
-			}
+			std::this_thread::sleep_for(std::chrono::milliseconds(100));
 		}
-		std::cout << "[" << p_ct->getDeviceIndex() << "] camera has been disconnected already.\n";
+
+		// release / close the device.
+		if (p_ct->close())
+			std::cout << "[" << p_ct->getDeviceIndex() << "] camera has been disconnected successfully.\n";
+		else
+			std::cout << "[" << p_ct->getDeviceIndex() << "] camera has been disconnected already.\n";
 	}
 
-	return false;
+	if (p_pt)
+	{
+		// stop the processing thread.
+		if (p_ct->active())
+		{
+			p_pt->stop();
+			p_pt->writer().stop();
+			std::cout << "[" << p_pt->getDeviceIndex() << "] camera processing thread has been stopped successfully.\n";
+		}
+	}
+
+	if (p_ct->isOpened())
+	{
+		std::cout << "[" << p_ct->getDeviceIndex() << "] camera is still running, couldn't disconnect!\n";
+		return false;
+	}
+
+	return true;
 }
 auto fvkCamera::connect() -> bool
 {
@@ -177,7 +191,7 @@ auto fvkCamera::isConnected() const -> bool
 	return p_ct->isOpened();
 }
 
-void fvkCamera::pause(bool _b) const
+void fvkCamera::pause(const bool _b) const
 {
 	if (!p_ct) return;
 	p_ct->pause(_b);
@@ -217,7 +231,7 @@ auto fvkCamera::getDelay() const -> int
 	if (!p_ct) return 0;
 	return p_ct->getDelay();
 }
-void fvkCamera::setSyncEnabled(bool _b) const
+void fvkCamera::setSyncEnabled(const bool _b) const
 {
 	if (!p_ct) return;
 	p_ct->setSyncEnabled(_b);

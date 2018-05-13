@@ -116,7 +116,7 @@ public:
 
 	// Description:
 	// Function to pause the camera capturing thread.
-	void pause(bool _b) const;
+	void pause(const bool _b) const;
 	// Description:
 	// Function that returns true if the camera capturing thread is at pause status.
 	auto pause() const -> bool;
@@ -133,7 +133,7 @@ public:
 	// Description:
 	// Function to enable the perfect synchronization between the processing thread and the camera thread.
 	// If it's true, this thread will remain be blocked until the processing thread notify this thread.
-	void setSyncEnabled(bool _b) const;
+	void setSyncEnabled(const bool _b) const;
 	// Description:
 	// Function that returns true if the perfect synchronization is enabled.
 	auto isSyncEnabled() const -> bool;

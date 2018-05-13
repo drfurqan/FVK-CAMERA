@@ -68,7 +68,7 @@ public:
 	// If it's true, this thread will remain be blocked until the processing thread notify this thread.
 	// Default value is false. So, in that case, camera thread will keep running/grabbing and just wait to get notify from
 	// the processing thread to add the grabbed frame in the queue.
-	void setSyncEnabled(bool _b);
+	void setSyncEnabled(const bool _b);
 	// Description:
 	// Function that returns true if the perfect synchronization is enabled.
 	auto isSyncEnabled() const -> bool;

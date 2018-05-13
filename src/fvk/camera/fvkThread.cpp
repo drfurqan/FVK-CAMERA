@@ -56,8 +56,8 @@ using namespace R3D;
 
 fvkThread::fvkThread() :
 	m_isstop(false),
-	m_delay(1000 / 33),	// delay between frames (30 fps).
-	m_ispause(false)
+	m_ispause(false),
+	m_delay(1000 / 33)	// delay between frames (30 fps).
 {
 }
 fvkThread::~fvkThread()
@@ -109,10 +109,9 @@ void fvkThread::start(const std::function<void()> _func)
 		std::this_thread::sleep_for(std::chrono::milliseconds(m_delay));
 		m_statsmutex.unlock();
 	}
-
-#ifdef _DEBUG
-	std::cout << "The thread has been stopped successfully.\n";
-#endif // _DEBUG
+//#ifdef _DEBUG
+//	std::cout << "The thread has been stopped successfully.\n";
+//#endif // _DEBUG
 }
 
 void fvkThread::stop()
@@ -121,10 +120,10 @@ void fvkThread::stop()
 }
 auto fvkThread::active() const -> bool
 {
-	return m_isstop;
+	return !m_isstop;
 }
 
-void fvkThread::pause(bool _b)
+void fvkThread::pause(const bool _b)
 {
 	std::lock_guard<std::mutex> lk(m_pausemutex);
 	if (_b)

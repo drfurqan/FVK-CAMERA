@@ -65,6 +65,9 @@ fvkCameraProcessingThread::~fvkCameraProcessingThread()
 
 void fvkCameraProcessingThread::run()
 {
+	if (!p_buffer)
+		return;
+
 	// get a frame from the camera thread.
 	const auto f = p_buffer->get();
 

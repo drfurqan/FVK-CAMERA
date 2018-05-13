@@ -41,18 +41,17 @@ fvkCameraThread::~fvkCameraThread()
 
 void fvkCameraThread::run()
 {
+	if (!p_buffer)
+		return;
+
 	cv::Mat frame;
 
 	if (grab(frame))
-	{
 		p_buffer->put(frame, m_sync_proc_thread);
-	}
 	else
-	{
 		#ifdef _DEBUG
 		std::cout << "Camera # " << m_device_index << " could not grab the frame.\n";
 		#endif // _DEBUG
-	}
 
 	if (m_emit_stats)
 		m_emit_stats(m_avgfps.getStats());
@@ -63,7 +62,7 @@ auto fvkCameraThread::getFrame() const -> cv::Mat
 	return p_buffer->get().clone();
 }
 
-void fvkCameraThread::setSyncEnabled(bool _b)
+void fvkCameraThread::setSyncEnabled(const bool _b)
 {
 	m_sync_proc_thread = _b;
 }
