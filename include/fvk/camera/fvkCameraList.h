@@ -54,23 +54,27 @@ public:
 	// It stops all the running threads and releases all the camera devices.
 	void clear()
 	{
-		for (auto& it : m_list)
-			delete it;
+		for (auto& cam : m_list)
+		{
+			if (cam)	
+				delete cam;
+			cam = nullptr;
+		}
 		m_list.clear();
 	}
 	// Description:
 	// Function to add a unique camera to the list. 
 	// If there is a camera with the same index already in the list, that will be not be added to the list.
-	auto addUnique(CAMERA* _w)
+	auto addUnique(CAMERA* _cam)
 	{
 		auto it = std::find_if(m_list.begin(), m_list.end(),
-			[&](const CAMERA* _p)
+			[&](const CAMERA* _c)
 		{
-			return _p->getDeviceIndex() == _w->getDeviceIndex();
+			return _c->getDeviceIndex() == _cam->getDeviceIndex();
 		});
 		if (it == m_list.end())
 		{
-			m_list.push_back(_w);
+			m_list.push_back(_cam);
 			return true;
 		}
 
@@ -87,7 +91,7 @@ public:
 	// normally it enables the 640x480 resolution on most of web cams.
 	auto add(const int _device_index = 0, const cv::Size& _frame_size = cv::Size(-1, -1))
 	{
-		CAMERA* p = new CAMERA(_device_index, _frame_size);
+		auto p = new CAMERA(_device_index, _frame_size);
 		if (!addUnique(p))
 		{
 			delete p;
@@ -104,7 +108,7 @@ public:
 	// Specifying Size(-1, -1) will do the auto-selection for the frame's width and height.
 	auto add(const std::string& _video_file, const cv::Size& _frame_size = cv::Size(-1, -1), const int _api = cv::VideoCaptureAPIs::CAP_ANY)
 	{
-		CAMERA* p = new CAMERA(_video_file, _frame_size, _api);
+		auto p = new CAMERA(_video_file, _frame_size, _api);
 		if (!addUnique(p))
 		{
 			delete p;
@@ -119,7 +123,7 @@ public:
 	template <typename CameraThread>
 	auto add(CameraThread* _ct)
 	{
-		CAMERA* p = new CAMERA(_ct);
+		auto p = new CAMERA(_ct);
 		if (!addUnique(p))
 		{
 			delete p;
@@ -134,7 +138,7 @@ public:
 	template <typename CameraThread, typename ProcessingThread>
 	auto add(CameraThread* _ct, ProcessingThread* _pt)
 	{
-		CAMERA* p = new CAMERA(_ct, _pt);
+		auto p = new CAMERA(_ct, _pt);
 		if (!addUnique(p))
 		{
 			delete p;
@@ -167,9 +171,9 @@ public:
 	auto getBy(const int _device_index) const
 	{
 		auto it = std::find_if(m_list.begin(), m_list.end(),
-			[&_device_index](const CAMERA* _p)
+			[&_device_index](const CAMERA* _c)
 		{
-			return _p->getDeviceIndex() == _device_index;
+			return _c->getDeviceIndex() == _device_index;
 		});
 		if (it != m_list.end())
 			return (*it);
