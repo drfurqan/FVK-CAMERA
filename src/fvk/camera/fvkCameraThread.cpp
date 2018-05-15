@@ -47,11 +47,15 @@ void fvkCameraThread::run()
 	cv::Mat frame;
 
 	if (grab(frame))
+	{
 		p_buffer->put(frame, m_sync_proc_thread);
+	}
 	else
+	{
 		#ifdef _DEBUG
 		std::cout << "Camera # " << m_device_index << " could not grab the frame.\n";
 		#endif // _DEBUG
+	}
 
 	if (m_emit_stats)
 		m_emit_stats(m_avgfps.getStats());

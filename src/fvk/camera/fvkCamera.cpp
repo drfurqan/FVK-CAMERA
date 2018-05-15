@@ -115,7 +115,7 @@ auto fvkCamera::disconnect() -> bool
 	if (p_pt)
 	{
 		// stop the processing thread.
-		if (p_ct->active())
+		if (p_pt->active())
 		{
 			p_pt->stop();
 			p_pt->writer().stop();
@@ -145,7 +145,7 @@ auto fvkCamera::connect() -> bool
 	const auto b = p_ct->open();
 
 	// reset the region of interest.
-	if (p_pt) 
+	if (b && p_pt) 
 		p_pt->setRoi(cv::Rect(0, 0, p_ct->getFrameWidth(), p_ct->getFrameHeight()));
 
 	return b;
@@ -277,10 +277,10 @@ auto fvkCamera::getAvgFps() const -> int
 	if (!p_pt) return 0;
 	return p_pt->getAvgFps();
 }
-auto fvkCamera::getNFrames() const -> int
+auto fvkCamera::getFrameNumber() const -> int
 {
 	if (!p_pt) return 0;
-	return p_pt->getNFrames();
+	return p_pt->getFrameNumber();
 }
 
 void fvkCamera::processFrame(cv::Mat& _frame)

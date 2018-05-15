@@ -147,7 +147,7 @@ public:
 	auto getAvgFps() const -> int;
 	// Description:
 	// Function that returns the total number of processed/passed frames in the processing.
-	auto getNFrames() const -> int;
+	auto getFrameNumber() const -> int;
 
 	// Description:
 	// Function to set the emit function to display the captured frames.

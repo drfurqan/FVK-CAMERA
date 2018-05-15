@@ -72,7 +72,12 @@ void fvkCameraProcessingThread::run()
 	const auto f = p_buffer->get();
 
 	m_rectmutex.lock();
-	cv::Mat frame = cv::Mat(f, m_rect);
+	if (f.cols != m_rect.width || f.rows != m_rect.height)
+	{
+		m_rectmutex.unlock();
+		return;
+	}
+	auto frame = cv::Mat(f, m_rect);
 	m_rectmutex.unlock();
 
 	// do some basic image processing

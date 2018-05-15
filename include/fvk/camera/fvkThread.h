@@ -124,9 +124,13 @@ public:
 	// Description:
 	// Function that returns the average frames per second of this thread.
 	auto getAvgFps() -> int;
+
 	// Description:
 	// Function that returns the total number of processed or passed frames.
-	auto getNFrames() -> int;
+	void setFrameNumber(const int _frame);
+	// Description:
+	// Function that returns the total number of processed or passed frames.
+	auto getFrameNumber() -> int;
 	// Description:
 	// Function that resets the average-frame-per-second and 
 	// total-number-of-processed-frames to zero(0).

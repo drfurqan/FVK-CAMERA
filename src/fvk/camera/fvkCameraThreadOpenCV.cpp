@@ -93,6 +93,7 @@ auto fvkCameraThreadOpenCV::open(const std::string& _file_name, const int _api) 
 
 		m_filepath = _file_name;
 		m_videocapture_api = _api;
+		setDelay(static_cast<int>(1000.0 / m_cam.get(cv::CAP_PROP_FPS)));	// delay between frames.
 
 		return true;
 	}
@@ -129,7 +130,7 @@ auto fvkCameraThreadOpenCV::grab(cv::Mat& _m_frame) -> bool
 			if (m_isrepeat)
 			{
 				setPosFrames(0);				// reset the camera frame to 0.
-				resetStats();					// reset frame counter as well.
+				setFrameNumber(0);				// reset the camera frame to 0.
 				return false;
 			}
 		}

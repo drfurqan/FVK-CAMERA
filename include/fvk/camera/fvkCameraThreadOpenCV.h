@@ -259,7 +259,6 @@ protected:
 	cv::VideoCapture m_cam;
 	int m_videocapture_api;
 	std::string m_filepath;
-	cv::Mat m_frame;
 	std::atomic<bool> m_isrepeat;
 };
 

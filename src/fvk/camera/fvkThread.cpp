@@ -72,6 +72,7 @@ void fvkThread::operator()(const std::function<void()> _func)
 
 void fvkThread::run()
 {
+	// expected to be overridden...
 }
 
 void fvkThread::start(const std::function<void()> _func)
@@ -79,6 +80,7 @@ void fvkThread::start(const std::function<void()> _func)
 	// make stats to zero for the new run.
 	m_avgfps.getStats().nfps = 0;
 	m_avgfps.getStats().nframes = 0;
+	m_isstop = false;
 
 	// start the main thread.
 	while (true)
@@ -109,9 +111,6 @@ void fvkThread::start(const std::function<void()> _func)
 		std::this_thread::sleep_for(std::chrono::milliseconds(m_delay));
 		m_statsmutex.unlock();
 	}
-//#ifdef _DEBUG
-//	std::cout << "The thread has been stopped successfully.\n";
-//#endif // _DEBUG
 }
 
 void fvkThread::stop()
@@ -147,7 +146,12 @@ auto fvkThread::getAvgFps() -> int
 	std::lock_guard<std::mutex> lk(m_statsmutex);
 	return m_avgfps.getStats().nfps;
 }
-auto fvkThread::getNFrames() -> int
+void fvkThread::setFrameNumber(const int _frame)
+{
+	std::lock_guard<std::mutex> lk(m_statsmutex);
+	m_avgfps.getStats().nframes = _frame;
+}
+auto fvkThread::getFrameNumber() -> int
 {
 	std::lock_guard<std::mutex> lk(m_statsmutex);
 	return m_avgfps.getStats().nframes;
