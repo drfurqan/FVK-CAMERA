@@ -1,6 +1,25 @@
 ================================================================================
-Camera module of Fast Visualization Kit (FVK) INSTALL v1.1.3
+Camera module of Fast Visualization Kit (FVK) INSTALL v1.1.4
 ================================================================================
+
+New features and changes in version 1.1.4:            (Release Date: 2018.05.15)
+--------------------------------------------------------------------------------
+
+1. Major release with C++11/14/17.
+2. Major changes in classes interface and logic.
+3. Added fvkThread class to create a thread with general features such as pause,
+   stop, average fps, and number of processes frames, etc.
+4. Any camera can be configured with fvkCamera class from now on. Just drive a
+   new class from fvkCameraThread and override the open() and close() functions.
+5. Perfect synchronised both camera and processing threads for multi-threading
+   applications.
+6. Added OpenCV camera handling class which is the default device handling
+   class. Camera device and videos can be played in parallel threads.
+7. Added many additional functionalities to make generic interface that should
+   be configuered with any camera.
+8. Added a generic fvkCameraList class to configure multiple cameras.
+9. Improved multithreaded code.
+10.Many other changes and improvements.
 
 New features and changes in version 1.1.3:            (Release Date: 2017.08.29)
 --------------------------------------------------------------------------------

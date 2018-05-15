@@ -13,8 +13,8 @@ project (fvk_camera)
 # file(READ VERSION FVK_CAMERA_VERSION)
 
 set(VERSION_MAJOR 1)
-set(VERSION_MINOR_0 2)
-set(VERSION_MINOR_1 0)
+set(VERSION_MINOR_0 1)
+set(VERSION_MINOR_1 4)
 set(VERSION_PLAIN ${VERSION_MAJOR}.${VERSION_MINOR_0}.${VERSION_MINOR_1})
 
 # ------------------------------------------------------------------------------
