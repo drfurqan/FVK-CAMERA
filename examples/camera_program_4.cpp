@@ -29,7 +29,7 @@ class MyCamera : public fvkCamera
 {
 public:
 	// default constructor that takes the camera device id.
-	MyCamera(int _device_id, cv::Size _resolution) : fvkCamera(_device_id, _resolution)
+	MyCamera(const int _device_index, const cv::Size& _frame_size) : fvkCamera(_device_index, _frame_size)
 	{
 	}
 
@@ -38,7 +38,7 @@ protected:
 	// _frame is the grabbed frame.
 	virtual void processFrame(cv::Mat& _frame) override
 	{
-		cv::Mat m = _frame.clone();			// always create a clone to process the frame.
+		auto m = _frame.clone();			// always create a clone to process the frame.
 		cv::cvtColor(m, m, CV_BGR2GRAY);	// just doing the simple image processing that converts to gray-scale image.
 		cv::imshow("FVK Camera", m);		// show the given frame in OpenCV window.
 		_frame = m;

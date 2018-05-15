@@ -35,7 +35,7 @@ public:
 	// In case of multiple cameras, try to pass 1 or 2 or 3, so on...
 	// second argument is the desired camera frame width and height.
 	// resolution Size(-1, -1) will do the auto-selection for the frame's width and height.
-	MyCamera(int _device_id, cv::Size _resolution) : fvkCamera(_device_id, _resolution)
+	MyCamera(const int _device_index, const cv::Size& _frame_size) : fvkCamera(_device_index, _frame_size)
 	{
 	}
 
@@ -44,7 +44,7 @@ protected:
 	// _frame is the grabbed frame.
 	virtual void processFrame(cv::Mat& _frame) override
 	{
-		cv::Mat m = _frame.clone();			// always create a clone to process the frame.
+		auto m = _frame.clone();			// always create a clone to process the frame.
 		 cv::cvtColor(m, m, CV_BGR2GRAY);	// just doing the simple image processing that converts to gray-scale image.
 		cv::imshow("FVK Camera", m);		// show the given frame in OpenCV window.
 		_frame = m;
@@ -57,7 +57,7 @@ int main()
 	fvkCameraList<MyCamera> clist;
 
 	// add a new camera in the list by specifying the camera id and it's desired resolution.
-	MyCamera* cam = clist.add(0, cv::Size(640, 480));
+	auto cam = clist.add(0, cv::Size(640, 480));
 
 	// try to connect the camera device and initialize it.
 	if (cam->connect())

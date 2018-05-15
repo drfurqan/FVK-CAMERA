@@ -52,7 +52,7 @@ int main()
 	// _frame is the grabbed frame.
 	std::function<void(cv::Mat&)> f = [&](cv::Mat& _frame)
 	{
-		cv::Mat m = _frame.clone();			// always create a clone to process the frame.
+		auto m = _frame.clone();			// always create a clone to process the frame.
 		cv::cvtColor(m, m, CV_BGR2GRAY);	// just doing the simple image processing that converts to gray-scale image.
 		cv::imshow("FVK Camera", m);		// show the grabbed _frame.
 		_frame = m;
@@ -62,7 +62,7 @@ int main()
 	cam.setFrameViewerSlot(f);
 
 	// fvkCamera class also gives some basic image processing filters.
-	// Bilateral filter denoises the grabbed image with the kernel size 9.
+	// Bilateral filter denoising the grabbed image with the kernel size 9.
 	cam.imageProcessing().setDenoisingMethod(fvkImageProcessing::DenoisingMethod::Bilateral);
 	cam.imageProcessing().setDenoisingLevel(9);
 
