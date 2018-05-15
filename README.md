@@ -12,7 +12,7 @@ C++ish interface). The directory structure is: <br/>
 
 -  /examples (Examples to illustrate possible use cases for FVK-CAMERA)
 -  /include/fvk/camera (Public header C and C++ header files) <br/>	
--  /lib (Weblinks for Static libraries for VS2010, VS2013, VS2015) <br/>	
+-  /lib (Prebuild static libraries for VS2017) <br/>	
 -  /src/fvk/camera	 (Source code) <br/>						
 <br/>
 
