@@ -155,14 +155,10 @@ public:
 
 	// Description:
 	// Function to set the emit function to display the captured frames.
-	// The display GUI function should be capable of handling multi-threading updatings.
-	void setFrameViewerSlot(const std::function<void(cv::Mat&)>& _f) const;
-	// Description:
-	// Function to set the emit function to get the average frames per second of this thread
-	// as well as the total number of frames that has been processed/passed.
-	// The input GUI function should be capable of handling multi-threading updatings.
-	void setFrameStatisticsSlot(const std::function<void(const fvkAverageFpsStats&)>& _f) const;
-	
+	// The display GUI widgets should handle multi-threading updatings.
+	// fvkThreadStats will give average frames per second and number of processed frames.
+	void setFrameViewerSlot(const std::function<void(cv::Mat&, const fvkThreadStats&)> _f) const;
+
 	// Description:
 	// Function that saves the current image frame
 	// to the specified output location setFrameOutputLocation("D:\\frame.jpg").

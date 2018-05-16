@@ -23,7 +23,7 @@ purpose:	Thread-safe multi-threaded camera class for any type of camera device.
 
 #include <fvk/camera/fvkCamera.h>
 #include <fvk/camera/fvkProcessingThread.h>
-//#include <future>
+#include <future>
 
 using namespace R3D;
 
@@ -72,6 +72,7 @@ fvkCamera::~fvkCamera()
 {
 	disconnect();
 
+
 	if(p_stdct)
 		delete p_stdct;
 	p_stdct = nullptr;
@@ -80,17 +81,19 @@ fvkCamera::~fvkCamera()
 		delete p_stdpt;
 	p_stdpt = nullptr;
 
-	auto buffer = p_ct->getSemaphoreBuffer();
-	if (buffer)
-		delete buffer;
-	buffer = nullptr;
-
 	if (p_pt)
 		delete p_pt;
 	p_pt = nullptr;
 
 	if (p_ct)
+	{
+		auto buffer = p_ct->getSemaphoreBuffer();
 		delete p_ct;
+
+		if (buffer)
+			delete buffer;
+		buffer = nullptr;
+	}
 	p_ct = nullptr;
 }
 
@@ -100,7 +103,7 @@ auto fvkCamera::disconnect() -> bool
 	{
 		if (!p_ct->isOpened())
 		{
-			std::cout << "[" << p_ct->getDeviceIndex() << "] camera is still running, couldn't disconnect!\n";
+			std::cout << "[" << p_ct->getDeviceIndex() << "] device needs to be connected first!\n";
 			return false;
 		}
 
@@ -164,17 +167,9 @@ auto fvkCamera::start() -> bool
 
 	// Run some task on new thread. The launch policy std::launch::async
 	// makes sure that the task is run asynchronously on a new thread.
-	//auto future1 = std::async(std::launch::async, [&]
-	//{
-	//	p_ct->run();
-	//});
-
-	//future1.wait_for(std::chrono::milliseconds(1000)); // wait for camera thread to start, then start the processing thread.
-	//
-	//auto future2 = std::async(std::launch::async, [&]
-	//{
-	//	p_pt->run();
-	//});
+	//auto future1 = std::async(std::launch::deferred, [&]() { p_ct->start(); });
+	//future1.wait_for(std::chrono::milliseconds(400)); // wait for camera thread to start, then start the processing thread.
+	//auto future2 = std::async(std::launch::deferred, [&]() { p_pt->start(); });
 
 	if (p_stdct)
 		delete p_stdct;
@@ -266,15 +261,10 @@ auto fvkCamera::getFrameOutputLocation() const -> std::string
 	if (!p_pt) return std::string();
 	return p_pt->getFrameOutputLocation();
 }
-void fvkCamera::setFrameViewerSlot(const std::function<void(cv::Mat&)>& _f) const
+void fvkCamera::setFrameViewerSlot(const std::function<void(cv::Mat&, const fvkThreadStats&)> _f) const
 { 
 	if (!p_pt) return;
 	p_pt->setFrameViewerSlot(_f);
-}
-void fvkCamera::setFrameStatisticsSlot(const std::function<void(const fvkAverageFpsStats&)>& _f) const
-{ 
-	if (!p_pt) return;
-	p_pt->setFrameStatisticsSlot(_f);
 }
 auto fvkCamera::getAvgFps() const -> int
 {

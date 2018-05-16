@@ -55,7 +55,7 @@ public:
 	// Set the emit function to get the average frames per second of this thread
 	// as well as the total number of frames that has been processed/passed.
 	// The input function should be capable of handling multi-threading updating.
-	void setFrameStatisticsSlot(const std::function<void(const fvkAverageFpsStats&)> _f) { m_emit_stats = _f; }
+	void setFrameStatisticsSlot(const std::function<void(const fvkThreadStats&)> _f) { m_emit_stats = _f; }
 
 	// Description:
 	// Function to set a pointer to semaphore buffer which does synchronization between capturing and processing threads.
@@ -93,7 +93,7 @@ protected:
 	// Description:
 	// protected member variables.
 	fvkSemaphoreBuffer<cv::Mat> *p_buffer;
-	std::function<void(const fvkAverageFpsStats&)> m_emit_stats;
+	std::function<void(const fvkThreadStats&)> m_emit_stats;
 	std::mutex m_syncmutex;
 	std::mutex m_repeatmutex;
 	std::atomic<bool> m_sync_proc_thread;

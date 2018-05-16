@@ -83,8 +83,8 @@ void fvkProcessingThread::run()
 	present(frame);
 
 	// emit signal to inform to image box for the new frame.
-	if (m_emit_display_frame)
-		m_emit_display_frame(frame);
+	if (m_emit_func)
+		m_emit_func(frame, m_avgfps.getStats());
 
 	// save current frame to disk.
 	saveFrameToDisk(frame);
@@ -92,9 +92,11 @@ void fvkProcessingThread::run()
 	// add frame for the video recording.
 	if (m_vr.isOpened())
 		m_vr.addFrame(frame);
+}
 
-	if (m_emit_stats)
-		m_emit_stats(m_avgfps.getStats());
+void fvkProcessingThread::setFrameViewerSlot(const std::function<void(cv::Mat&, const fvkThreadStats&)> _f)
+{
+	m_emit_func = std::move(_f);
 }
 
 void fvkProcessingThread::present(cv::Mat& _frame)
@@ -119,12 +121,12 @@ auto fvkProcessingThread::getFrame() -> cv::Mat
 }
 void fvkProcessingThread::setRoi(const cv::Rect& _roi)
 {
-	std::lock_guard<std::mutex> locker(m_rectmutex);
+	std::lock_guard<std::mutex> lock(m_rectmutex);
 	m_rect = _roi;
 }
 auto fvkProcessingThread::getRoi() -> cv::Rect
 {
-	std::lock_guard<std::mutex> locker(m_rectmutex);
+	std::lock_guard<std::mutex> lock(m_rectmutex);
 	return m_rect;
 }
 

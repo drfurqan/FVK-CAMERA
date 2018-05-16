@@ -29,16 +29,16 @@ purpose:	class to compute the average frames per second.
 namespace R3D
 {
 
-class FVK_EXPORT fvkAverageFpsStats
+class FVK_EXPORT fvkThreadStats
 {
 public:
-	fvkAverageFpsStats() : 
+	fvkThreadStats() : 
 		nfps(0), 
 		nframes(0) 
 	{ 
 	}
-	int nfps;		// frame per seconds
-	int nframes;	// total number of processed frames
+	int nfps;		// average frames per second.
+	int nframes;	// total number of processed frames.
 };
 
 class FVK_EXPORT fvkAverageFps
@@ -73,7 +73,7 @@ public:
 private:
 	std::queue<int> m_fps;
 	fvkClockTime m_time;
-	fvkAverageFpsStats stats;
+	fvkThreadStats stats;
 	int m_avgsize;
 	int m_capture_time;
 	int m_fpssum;
