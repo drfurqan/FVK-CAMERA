@@ -31,12 +31,14 @@ class MyClass
 public:
 	// creating a function that will be calling in the continuous running camera thread.
 	// _frame is the grabbed frame.
-	void setImage(cv::Mat& _frame)
+	void setImage(cv::Mat& _frame, const fvkThreadStats& _stats)
 	{
 		auto m = _frame.clone();			// always create a clone to process the frame.
 		cv::cvtColor(m, m, CV_BGR2GRAY);	// just doing the simple image processing that converts to gray-scale image.
 		cv::imshow("FVK Camera", m);
 		_frame = m;
+	
+		std::cout << "average FPS: " << _stats.nfps << ", Frames count: " << _stats.nframes << "\n";
 	}
 };
 
@@ -66,7 +68,7 @@ int main()
 	MyClass obj;	// create an object of MyClass.
 
 	// using std::bing to bind the obj's setImage() function to show the grabbed frames.
-	const auto f = std::bind(&MyClass::setImage, &obj, std::placeholders::_1);
+	const auto f = std::bind(&MyClass::setImage, &obj, std::placeholders::_1, std::placeholders::_2);
 	cam.setFrameViewerSlot(f);
 
 	// OpenCV event loop that will prevent to exit the main loop.

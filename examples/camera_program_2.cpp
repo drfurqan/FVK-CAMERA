@@ -27,12 +27,14 @@ using namespace R3D;
 
 // creating a function that will be calling in the continuous running camera thread.
 // _frame is the grabbed frame.
-static void show(cv::Mat& _frame)
+static void show(cv::Mat& _frame, const fvkThreadStats& _stats)
 {
 	auto m = _frame.clone();			// always create a clone to process the frame.
 	cv::cvtColor(m, m, CV_BGR2GRAY);	// just doing the simple image processing that converts to gray-scale image.
 	cv::imshow("FVK Camera", m);
 	_frame = m;
+
+	std::cout << "average FPS: " << _stats.nfps << ", Frames count: " << _stats.nframes << "\n";
 }
 
 int main()
@@ -59,7 +61,7 @@ int main()
 	cv::namedWindow("FVK Camera");
 
 	// using std::bing to bind the given show() function with the camera thread.
-	const auto f = std::bind(show, std::placeholders::_1);
+	const auto f = std::bind(show, std::placeholders::_1, std::placeholders::_2);
 	cam.setFrameViewerSlot(f);
 
 	// OpenCV event loop that will prevent to exit the main loop.

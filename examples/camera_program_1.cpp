@@ -50,12 +50,14 @@ int main()
 
 	// create a function that will be calling in the continuous running camera thread.
 	// _frame is the grabbed frame.
-	const auto f = [&](cv::Mat& _frame)
+	const auto f = [&](cv::Mat& _frame, const fvkThreadStats& _stats)
 	{
 		auto m = _frame.clone();			// always create a clone to process the frame.
 		cv::cvtColor(m, m, CV_BGR2GRAY);	// just doing the simple image processing that converts to gray-scale image.
 		cv::imshow("FVK Camera", m);		// show the grabbed _frame.
 		_frame = m;
+
+		std::cout << "average FPS: " << _stats.nfps << ", Frames count: " << _stats.nframes << "\n";
 	};
 
 	// set the above create function in the camera.

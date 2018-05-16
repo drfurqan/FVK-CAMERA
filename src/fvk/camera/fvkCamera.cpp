@@ -23,7 +23,7 @@ purpose:	Thread-safe multi-threaded camera class for any type of camera device.
 
 #include <fvk/camera/fvkCamera.h>
 #include <fvk/camera/fvkProcessingThread.h>
-#include <future>
+//#include <future>
 
 using namespace R3D;
 
