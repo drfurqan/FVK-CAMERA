@@ -50,7 +50,7 @@ int main()
 
 	// create a function that will be calling in the continuous running camera thread.
 	// _frame is the grabbed frame.
-	std::function<void(cv::Mat&)> f = [&](cv::Mat& _frame)
+	const auto f = [&](cv::Mat& _frame)
 	{
 		auto m = _frame.clone();			// always create a clone to process the frame.
 		cv::cvtColor(m, m, CV_BGR2GRAY);	// just doing the simple image processing that converts to gray-scale image.
@@ -68,6 +68,9 @@ int main()
 
 	// OpenCV event loop that will prevent to exit the main loop.
 	cv::waitKey(0);
+
+	// stop all threads and disconnect the device.
+	cam.disconnect();
 
 	return 1;
 }

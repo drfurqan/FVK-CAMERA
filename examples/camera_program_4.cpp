@@ -29,14 +29,15 @@ class MyCamera : public fvkCamera
 {
 public:
 	// default constructor that takes the camera device id.
-	MyCamera(const int _device_index, const cv::Size& _frame_size) : fvkCamera(_device_index, _frame_size)
+	MyCamera(const int _device_index, const cv::Size& _frame_size, const int _api = static_cast<int>(cv::VideoCaptureAPIs::CAP_ANY)) : 
+		fvkCamera(_device_index, _frame_size, _api)
 	{
 	}
 
 protected:
 	// An overridden function that is being calling in the continuous running camera thread.
 	// _frame is the grabbed frame.
-	virtual void processFrame(cv::Mat& _frame) override
+	virtual void present(cv::Mat& _frame) override
 	{
 		auto m = _frame.clone();			// always create a clone to process the frame.
 		cv::cvtColor(m, m, CV_BGR2GRAY);	// just doing the simple image processing that converts to gray-scale image.
@@ -70,6 +71,9 @@ int main()
 
 	// OpenCV event loop that will prevent to exit the main loop.
 	cv::waitKey(0);
+
+	// stop all threads and disconnect the device.
+	cam.disconnect();
 
 	return 1;
 }

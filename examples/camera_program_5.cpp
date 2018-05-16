@@ -35,14 +35,15 @@ public:
 	// In case of multiple cameras, try to pass 1 or 2 or 3, so on...
 	// second argument is the desired camera frame width and height.
 	// resolution Size(-1, -1) will do the auto-selection for the frame's width and height.
-	MyCamera(const int _device_index, const cv::Size& _frame_size) : fvkCamera(_device_index, _frame_size)
+	MyCamera(const int _device_index, const cv::Size& _frame_size, const int _api = static_cast<int>(cv::VideoCaptureAPIs::CAP_ANY)) : 
+		fvkCamera(_device_index, _frame_size, _api)
 	{
 	}
 
 protected:
 	// An overridden function that is being calling in the continuous running camera thread.
 	// _frame is the grabbed frame.
-	virtual void processFrame(cv::Mat& _frame) override
+	virtual void present(cv::Mat& _frame) override
 	{
 		auto m = _frame.clone();			// always create a clone to process the frame.
 		 cv::cvtColor(m, m, CV_BGR2GRAY);	// just doing the simple image processing that converts to gray-scale image.
@@ -76,6 +77,9 @@ int main()
 
 	// OpenCV event loop that will prevent to exit the main loop.
 	cv::waitKey(0);
+
+	// stop all threads and disconnect the device.
+	cam->disconnect();
 
 	return 1;
 }

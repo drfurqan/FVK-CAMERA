@@ -66,10 +66,14 @@ int main()
 	MyClass obj;	// create an object of MyClass.
 
 	// using std::bing to bind the obj's setImage() function to show the grabbed frames.
-	cam.setFrameViewerSlot(std::bind(&MyClass::setImage, &obj, std::placeholders::_1));
+	const auto f = std::bind(&MyClass::setImage, &obj, std::placeholders::_1);
+	cam.setFrameViewerSlot(f);
 
 	// OpenCV event loop that will prevent to exit the main loop.
 	cv::waitKey(0);
+
+	// stop all threads and disconnect the device.
+	cam.disconnect();
 
 	return 1;
 }

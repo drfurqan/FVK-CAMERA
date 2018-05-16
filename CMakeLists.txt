@@ -35,7 +35,7 @@ set(CPPFILES
 ${CMAKE_SOURCE_DIR}/src/fvk/camera/fvkAverageFps.cpp
 ${CMAKE_SOURCE_DIR}/src/fvk/camera/fvkCamera.cpp
 ${CMAKE_SOURCE_DIR}/src/fvk/camera/fvkImageProcessing.cpp
-${CMAKE_SOURCE_DIR}/src/fvk/camera/fvkCameraProcessingThread.cpp
+${CMAKE_SOURCE_DIR}/src/fvk/camera/fvkProcessingThread.cpp
 ${CMAKE_SOURCE_DIR}/src/fvk/camera/fvkCameraThread.cpp
 ${CMAKE_SOURCE_DIR}/src/fvk/camera/fvkCameraThreadAbstract.cpp
 ${CMAKE_SOURCE_DIR}/src/fvk/camera/fvkCameraThreadOpenCV.cpp
@@ -58,7 +58,7 @@ ${CMAKE_SOURCE_DIR}/include/fvk/camera/fvkAverageFps.h
 ${CMAKE_SOURCE_DIR}/include/fvk/camera/fvkCamera.h
 ${CMAKE_SOURCE_DIR}/include/fvk/camera/fvkCameraList.h
 ${CMAKE_SOURCE_DIR}/include/fvk/camera/fvkImageProcessing.h
-${CMAKE_SOURCE_DIR}/include/fvk/camera/fvkCameraProcessingThread.h
+${CMAKE_SOURCE_DIR}/include/fvk/camera/fvkProcessingThread.h
 ${CMAKE_SOURCE_DIR}/include/fvk/camera/fvkCameraThread.h
 ${CMAKE_SOURCE_DIR}/include/fvk/camera/fvkCameraThreadAbstract.h
 ${CMAKE_SOURCE_DIR}/include/fvk/camera/fvkCameraThreadOpenCV.h
