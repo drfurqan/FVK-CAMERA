@@ -61,7 +61,7 @@ public:
 
 	// Description:
 	//  Virtual function to be overridden to get the current grabbed frame.
-	virtual auto getFrame() const -> cv::Mat = 0;
+	virtual auto getFrame() -> cv::Mat = 0;
 
 	// Description:
 	// Function to set the camera device index.

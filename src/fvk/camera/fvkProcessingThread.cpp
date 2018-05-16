@@ -1,8 +1,8 @@
 /*********************************************************************************
 created:	2016/01/10   01:37AM
-modified:	2017/02/09   11:48PM
-filename: 	fvkCameraProcessingThread.cpp
-file base:	fvkCameraProcessingThread
+modified:	2018/05/16   11:48PM
+filename: 	fvkProcessingThread.cpp
+file base:	fvkProcessingThread
 file ext:	cpp
 author:		Furqan Ullah (Post-doc, Ph.D.)
 website:    http://real3d.pk
@@ -20,33 +20,17 @@ camera frame. This thread is synchronized with the camera thread using a semapho
 * If not, please contact Dr. Furqan Ullah immediately:
 **********************************************************************************/
 
-#include <fvk/camera/fvkCameraProcessingThread.h>
+#include <fvk/camera/fvkProcessingThread.h>
 #include <fvk/camera/fvkCamera.h>
 
 using namespace R3D;
 
-fvkCameraProcessingThread::fvkCameraProcessingThread(const int _device_index, fvkSemaphoreBuffer<cv::Mat>* _buffer) :
-	m_device_index(_device_index),
-	p_frameobserver(nullptr),
-	p_buffer(_buffer),
-	m_rect(cv::Rect(0, 0, 10, 10)),
-	m_filepath("D:\\saved_snapshot.jpg"),
-	m_save(false)
-{
-	// this thread is synchronized with the camera thread by semaphore buffer,
-	// which means it is fully dependent on the camera thread, if a frame is
-	// added to the buffer queue by the camera thread, only then it will run,
-	// otherwise it will keep waiting for the next frame,
-	// so, no need to make a thread delay manually.
-	setDelay(0);
-}
-
-fvkCameraProcessingThread::fvkCameraProcessingThread(const int _device_index, fvkCameraAbstract* _frameobserver, fvkSemaphoreBuffer<cv::Mat>* _buffer) :
+fvkProcessingThread::fvkProcessingThread(const int _device_index, fvkCameraAbstract* _frameobserver, fvkSemaphoreBuffer<cv::Mat>* _buffer) :
 	m_device_index(_device_index),
 	p_frameobserver(_frameobserver),
 	p_buffer(_buffer),
-	m_rect(cv::Rect(0, 0, 10, 10)),
 	m_filepath("D:\\saved_snapshot.jpg"),
+	m_rect(cv::Rect(0, 0, 10, 10)),
 	m_save(false)
 {
 	// this thread is synchronized with the camera thread by semaphore buffer,
@@ -57,38 +41,46 @@ fvkCameraProcessingThread::fvkCameraProcessingThread(const int _device_index, fv
 	setDelay(0);
 }
 
-fvkCameraProcessingThread::~fvkCameraProcessingThread()
+fvkProcessingThread::fvkProcessingThread(const int _device_index, fvkSemaphoreBuffer<cv::Mat>* _buffer) : 
+	fvkProcessingThread(_device_index, nullptr, _buffer)
 {
-	m_vr.stop();
-	stop();
 }
 
-void fvkCameraProcessingThread::run()
+fvkProcessingThread::~fvkProcessingThread()
+{
+	if(active())
+	{
+		stop();
+		m_vr.stop();
+	}
+}
+
+void fvkProcessingThread::run()
 {
 	if (!p_buffer)
 		return;
 
-	// get a frame from the camera thread.
+	// get a frame from the camera buffer.
 	const auto f = p_buffer->get();
 
 	m_rectmutex.lock();
-	if (f.cols != m_rect.width || f.rows != m_rect.height)
-	{
-		m_rectmutex.unlock();
-		return;
-	}
-	auto frame = cv::Mat(f, m_rect);
+	const auto r = m_rect;
 	m_rectmutex.unlock();
+
+	if (r.width > f.cols || r.height > f.rows)
+		return;
+
+	auto frame = cv::Mat(f, r);
 
 	// do some basic image processing
 	m_ip.imageProcessing(frame);
 
 	// send frame to the observer to process it on another class.
 	if (p_frameobserver)
-		p_frameobserver->processFrame(frame);
+		p_frameobserver->present(frame);
 
 	// expected to be overridden in the derived class.
-	processFrame(frame);
+	present(frame);
 
 	// emit signal to inform to image box for the new frame.
 	if (m_emit_display_frame)
@@ -105,41 +97,50 @@ void fvkCameraProcessingThread::run()
 		m_emit_stats(m_avgfps.getStats());
 }
 
-void fvkCameraProcessingThread::processFrame(cv::Mat& _frame)
+void fvkProcessingThread::present(cv::Mat& _frame)
 {
 	// do nothing!
 }
-auto fvkCameraProcessingThread::getFrame() const -> cv::Mat
-{
-	return cv::Mat(p_buffer->get().clone(), m_rect);
-}
 
-void fvkCameraProcessingThread::saveFrameOnClick()
+auto fvkProcessingThread::getFrame() -> cv::Mat
 {
-	m_save = true;
-}
+	const auto f = p_buffer->get();
+	if (f.empty())
+		return cv::Mat();
 
-auto fvkCameraProcessingThread::saveFrameToDisk(const cv::Mat& _frame) -> bool
-{
-	auto b = false;
-	if (m_save)
-	{
-		std::vector<int> params;
-		params.push_back(cv::IMWRITE_JPEG_QUALITY);
-		params.push_back(98);   // that's percent, so 100 == no compression, 1 == full.
-		b = cv::imwrite(m_filepath, _frame, params);
-		m_save = false;
-	}
-	return b;
-}
+	m_rectmutex.lock();
+	const auto r = m_rect;
+	m_rectmutex.unlock();
 
-void fvkCameraProcessingThread::setRoi(const cv::Rect& _roi)
+	if (r.width > f.cols || r.height > f.rows)
+		return cv::Mat();
+
+	return cv::Mat(f.clone(), r);
+}
+void fvkProcessingThread::setRoi(const cv::Rect& _roi)
 {
 	std::lock_guard<std::mutex> locker(m_rectmutex);
 	m_rect = _roi;
 }
-auto fvkCameraProcessingThread::getRoi() -> cv::Rect
+auto fvkProcessingThread::getRoi() -> cv::Rect
 {
 	std::lock_guard<std::mutex> locker(m_rectmutex);
 	return m_rect;
-};
+}
+
+void fvkProcessingThread::saveFrameOnClick()
+{
+	m_save = true;
+}
+auto fvkProcessingThread::saveFrameToDisk(const cv::Mat& _frame) -> bool
+{
+	if (m_save)
+	{
+		m_save = false;
+		std::vector<int> params;
+		params.push_back(cv::IMWRITE_JPEG_QUALITY);
+		params.push_back(98);   // that's percent, so 100 == no compression, 1 == fully compressed.
+		return cv::imwrite(m_filepath, _frame, params);
+	}
+	return false;
+}

@@ -23,16 +23,16 @@ purpose:	class to create handle opencv video camera.
 
 using namespace R3D;
 
-fvkCameraThreadOpenCV::fvkCameraThreadOpenCV(const int _device_index, const cv::Size& _resolution, fvkSemaphoreBuffer<cv::Mat>* _buffer) : 
-	fvkCameraThread(_device_index, _resolution, _buffer),
-	m_videocapture_api(static_cast<int>(cv::VideoCaptureAPIs::CAP_ANY)),
+fvkCameraThreadOpenCV::fvkCameraThreadOpenCV(const int _device_index, const cv::Size& _frame_size, const int _api, fvkSemaphoreBuffer<cv::Mat>* _buffer) :
+	fvkCameraThread(_device_index, _frame_size, _buffer),
+	m_videocapture_api(_api),
 	m_filepath(""),
 	m_isrepeat(true)
 {
 }
 
-fvkCameraThreadOpenCV::fvkCameraThreadOpenCV(const std::string& _video_file, const cv::Size& _resolution, const int _api, fvkSemaphoreBuffer<cv::Mat>* _buffer) :
-	fvkCameraThread(0, _resolution, _buffer),
+fvkCameraThreadOpenCV::fvkCameraThreadOpenCV(const std::string& _video_file, const cv::Size& _frame_size, const int _api, fvkSemaphoreBuffer<cv::Mat>* _buffer) :
+	fvkCameraThread(0, _frame_size, _buffer),
 	m_videocapture_api(_api),
 	m_filepath(_video_file),
 	m_isrepeat(true)
@@ -156,7 +156,7 @@ auto fvkCameraThreadOpenCV::repeat() const -> bool
 /************************************************************************/
 /* Set Camera Settings                                                  */
 /************************************************************************/
-void fvkCameraThreadOpenCV::openDriverConfigDialog()
+void fvkCameraThreadOpenCV::openConfigurationDialog()
 {
 	if (isOpened()) m_cam.set(cv::CAP_PROP_SETTINGS, 1);
 }

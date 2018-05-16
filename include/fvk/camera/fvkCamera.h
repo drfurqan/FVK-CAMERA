@@ -26,7 +26,7 @@ Both threads are synchronized with semaphore methodology.
 **********************************************************************************/
 
 #include "fvkCameraThreadOpenCV.h"
-#include "fvkCameraProcessingThread.h"
+#include "fvkProcessingThread.h"
 #include <thread>
 
 namespace R3D
@@ -35,12 +35,14 @@ namespace R3D
 class FVK_EXPORT fvkCameraAbstract
 {
 public:
+	// Description:
+	// Default virtual destructor.
 	virtual ~fvkCameraAbstract() = default;
 
 	// Description:
 	// Virtual function that is expected to be overridden in the derived class in order
 	// to process the captured frame.
-	virtual void processFrame(cv::Mat& _frame) = 0;
+	virtual void present(cv::Mat& _frame) = 0;
 };
 
 class FVK_EXPORT fvkCamera : public fvkCameraAbstract
@@ -55,22 +57,24 @@ public:
 	// _frame_size is the desired width and height of camera frame.
 	// Specifying Size(-1, -1) will do the auto-selection for the captured frame size,
 	// normally it enables the 640x480 resolution on most of web cams.
-	explicit fvkCamera(const int _device_index = 0, const cv::Size& _frame_size = cv::Size(-1, -1));
+	// _api is the video capture API to enable various types of devices.
+	explicit fvkCamera(const int _device_index = 0, const cv::Size& _frame_size = cv::Size(-1, -1), const int _api = static_cast<int>(cv::VideoCaptureAPIs::CAP_ANY));
 	// Description:
 	// Default constructor that creates a camera object for continuous streaming.
 	// _video_file is the location of the video file (eg. video.avi) or image sequence 
 	// (eg. img_%02d.jpg, which will read samples like img_00.jpg, img_01.jpg, img_02.jpg, ...)
 	// _frame_size is the desired camera frame width and height.
 	// Specifying Size(-1, -1) will do the auto-selection for the frame's width and height.
-	explicit fvkCamera(const std::string& _video_file, const cv::Size& _frame_size = cv::Size(-1, -1), const int _api = cv::VideoCaptureAPIs::CAP_ANY);
+	// _api is the video capture API to enable various types of devices.
+	explicit fvkCamera(const std::string& _video_file, const cv::Size& _frame_size = cv::Size(-1, -1), const int _api = static_cast<int>(cv::VideoCaptureAPIs::CAP_ANY));
 	// Description:
 	// Constructor that creates a camera object by specifying the camera thread.
 	// This constructor is created for the derived classes of fvkCameraThread.
-	fvkCamera(fvkCameraThread* _ct);
+	explicit fvkCamera(fvkCameraThread* _ct);
 	// Description:
 	// Constructor to create a camera object by specifying the camera and processing threads.
 	// This constructor is created for the derived classes of both fvkCameraThread and fvkCameraProcessingThread.
-	fvkCamera(fvkCameraThread* _ct, fvkCameraProcessingThread* _pt);
+	fvkCamera(fvkCameraThread* _ct, fvkProcessingThread* _pt);
 	// Description:
 	// Default destructor that stops the threads and closes the camera device.
 	virtual ~fvkCamera();
@@ -178,6 +182,30 @@ public:
 	auto getFrameOutputLocation() const -> std::string;
 
 	// Description:
+	// Function to set the video file path like "D:\\face\\video.avi".
+	// If the video file is specified before the calling connect() function, then the specified video
+	// will be played, rather than camera device.
+	// This function is only for videos.
+	void setVideoFileLocation(const std::string& _filename) const;
+	// Description:
+	// Function to get the video file path.
+	// This function is only for videos.
+	auto getVideoFileLocation() const -> std::string;
+	// Description:
+	// Set true if you want to restart or repeat the video when it finishes.
+	// Default in true.
+	// This function is only for videos.
+	void repeat(const bool _b) const;
+	// It returns true if the repeat flag for the video is on.
+	// This function is only for videos.
+	// Default in true.
+	auto repeat() const -> bool;
+
+	// Description:
+	// Calling this function opens a camera configuration dialog, if supported by the camera driver.
+	virtual void openConfigurationDialog();
+
+	// Description:
 	// Function to get a reference to video writer.
 	// It is a helper shortcut function to "cam->getCameraProcessingThread()->writer()".
 	auto& writer() { return p_pt->writer(); }
@@ -185,6 +213,7 @@ public:
 	// Function to get a reference to image processing.
 	// It is a helper shortcut function to "cam->getCameraProcessingThread()->imageProcessing()".
 	auto& imageProcessing() { return p_pt->imageProcessing(); }
+
 	// Description:
 	// Function to get a pointer to camera/capturing thread.
 	auto getCamThread() const { return p_ct; }
@@ -194,12 +223,12 @@ public:
 
 protected:
 	// Description:
-	// Only virtual function that is expected to be overridden in the derived class
+	// Virtual function that is expected to be overridden in the derived class in order
 	// to process the captured frame.
-	void processFrame(cv::Mat& _frame) override;
+	void present(cv::Mat& _frame) override;
 
 	fvkCameraThread *p_ct;
-	fvkCameraProcessingThread *p_pt;
+	fvkProcessingThread *p_pt;
 	std::thread *p_stdct;
 	std::thread *p_stdpt;
 };

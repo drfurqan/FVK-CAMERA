@@ -27,16 +27,12 @@ fvkCameraThread::fvkCameraThread(const int _device_index, const cv::Size& _frame
 	fvkThread(),
 	fvkCameraThreadAbstract(),
 	p_buffer(_buffer),
-	m_sync_proc_thread(false)
+	m_sync_proc_thread(false),
+	m_rect(cv::Rect(0, 0, 10, 10))
 {
 	setDeviceIndex(_device_index);
 	setFrameSize(_frame_size);
 	setDelay(1000 / 33);	// delay between frames (30 fps).
-}
-
-fvkCameraThread::~fvkCameraThread()
-{
-	stop();
 }
 
 void fvkCameraThread::run()
@@ -44,11 +40,18 @@ void fvkCameraThread::run()
 	if (!p_buffer)
 		return;
 
-	cv::Mat frame;
+	cv::Mat f;
 
-	if (grab(frame))
+	if (grab(f))
 	{
-		p_buffer->put(frame, m_sync_proc_thread);
+		m_rectmutex.lock();
+		const auto r = m_rect;
+		m_rectmutex.unlock();
+
+		if (r.width > f.cols || r.height > f.rows)
+			return;
+
+		p_buffer->put(cv::Mat(f, r), m_sync_proc_thread);
 	}
 	else
 	{
@@ -61,11 +64,31 @@ void fvkCameraThread::run()
 		m_emit_stats(m_avgfps.getStats());
 }
 
-auto fvkCameraThread::getFrame() const -> cv::Mat
+auto fvkCameraThread::getFrame() -> cv::Mat
 {
-	return p_buffer->get().clone();
-}
+	const auto f = p_buffer->get();
+	if (f.empty())
+		return cv::Mat();
 
+	m_rectmutex.lock();
+	const auto r = m_rect;
+	m_rectmutex.unlock();
+
+	if (r.width > f.cols || r.height > f.rows)
+		return cv::Mat();
+
+	return cv::Mat(f.clone(), r);
+}
+void fvkCameraThread::setRoi(const cv::Rect& _roi)
+{
+	std::lock_guard<std::mutex> locker(m_rectmutex);
+	m_rect = _roi;
+}
+auto fvkCameraThread::getRoi() -> cv::Rect
+{
+	std::lock_guard<std::mutex> locker(m_rectmutex);
+	return m_rect;
+}
 void fvkCameraThread::setSyncEnabled(const bool _b)
 {
 	m_sync_proc_thread = _b;

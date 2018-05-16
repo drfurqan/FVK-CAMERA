@@ -12,7 +12,8 @@ author:		Furqan Ullah (Post-doc, Ph.D.)
 website:    http://real3d.pk
 CopyRight:	All Rights Reserved
 
-purpose:	Class to create a thread for capturing frames from OpenCV camera.
+purpose:	class that creates a thread for grabbing or capturing frames from the
+device.
 
 /**********************************************************************************
 *	Fast Visualization Kit (FVK)
@@ -43,12 +44,12 @@ public:
 	// normally it enables the 640x480 resolution on most of web cams.
 	fvkCameraThread(const int _device_index, const cv::Size& _frame_size, fvkSemaphoreBuffer<cv::Mat>* _buffer = nullptr);
 	// Description:
-	// Default destructor to stop the thread.
-	virtual ~fvkCameraThread();
+	// Default destructor that expected to be overridden.
+	virtual ~fvkCameraThread() = default;
 
 	// Description:
 	// Function to get the current grabbed frame.
-	auto getFrame() const -> cv::Mat override;
+	auto getFrame() -> cv::Mat override;
 
 	// Description:
 	// Set the emit function to get the average frames per second of this thread
@@ -64,19 +65,26 @@ public:
 	auto getSemaphoreBuffer() const { return p_buffer; }
 
 	// Description:
-	// Function to enable the perfect synchronization between the processing thread and the camera thread.
+	// Function to set the region-of-interest of the grabbed frame.
+	void setRoi(const cv::Rect& _roi);
+	// Description:
+	// Function to get the region-of-interest of the grabbed frame.
+	auto getRoi() -> cv::Rect;
+
+	// Description:
+	// Function to enable the buffer synchronization between the processing thread and the camera thread.
 	// If it's true, this thread will remain be blocked until the processing thread notify this thread.
 	// Default value is false. So, in that case, camera thread will keep running/grabbing and just wait to get notify from
 	// the processing thread to add the grabbed frame in the queue.
 	void setSyncEnabled(const bool _b);
 	// Description:
-	// Function that returns true if the perfect synchronization is enabled.
+	// Function that returns true if the buffer synchronization is enabled.
 	auto isSyncEnabled() const -> bool;
 
 protected:	
 	// Description:
 	// Overridden function to grab and process the camera frame.
-	void run() override;
+	void run() override final;
 
 	// Description:
 	// Pure virtual function to be overridden to grab/capture the frame. 
@@ -84,11 +92,13 @@ protected:
 
 	// Description:
 	// protected member variables.
-	fvkSemaphoreBuffer<cv::Mat>* p_buffer;
+	fvkSemaphoreBuffer<cv::Mat> *p_buffer;
 	std::function<void(const fvkAverageFpsStats&)> m_emit_stats;
 	std::mutex m_syncmutex;
 	std::mutex m_repeatmutex;
 	std::atomic<bool> m_sync_proc_thread;
+	std::mutex m_rectmutex;
+	cv::Rect m_rect;
 };
 
 }

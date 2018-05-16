@@ -22,18 +22,18 @@ purpose:	Thread-safe multi-threaded camera class for any type of camera device.
 **********************************************************************************/
 
 #include <fvk/camera/fvkCamera.h>
-#include <fvk/camera/fvkCameraProcessingThread.h>
+#include <fvk/camera/fvkProcessingThread.h>
 //#include <future>
 
 using namespace R3D;
 
-fvkCamera::fvkCamera(const int _device_index, const cv::Size& _frame_size) :
+fvkCamera::fvkCamera(const int _device_index, const cv::Size& _frame_size, const int _api) :
 p_stdct(nullptr),
 p_stdpt(nullptr)
 {
 	const auto b = new fvkSemaphoreBuffer<cv::Mat>();
-	p_ct = new fvkCameraThreadOpenCV(_device_index, _frame_size, b);
-	p_pt = new fvkCameraProcessingThread(_device_index, this, b);
+	p_ct = new fvkCameraThreadOpenCV(_device_index, _frame_size, _api, b);
+	p_pt = new fvkProcessingThread(_device_index, this, b);
 }
 fvkCamera::fvkCamera(const std::string& _video_file, const cv::Size& _frame_size, const int _api) :
 p_stdct(nullptr),
@@ -41,7 +41,7 @@ p_stdpt(nullptr)
 {
 	const auto b = new fvkSemaphoreBuffer<cv::Mat>();
 	p_ct = new fvkCameraThreadOpenCV(_video_file, _frame_size, _api, b);
-	p_pt = new fvkCameraProcessingThread(p_ct->getDeviceIndex(), this, b);
+	p_pt = new fvkProcessingThread(p_ct->getDeviceIndex(), this, b);
 }
 
 fvkCamera::fvkCamera(fvkCameraThread* _ct) :
@@ -51,10 +51,10 @@ fvkCamera::fvkCamera(fvkCameraThread* _ct) :
 	const auto b = new fvkSemaphoreBuffer<cv::Mat>();
 	p_ct = _ct;
 	p_ct->setSemaphoreBuffer(b);
-	p_pt = new fvkCameraProcessingThread(_ct->getDeviceIndex(), this, b);
+	p_pt = new fvkProcessingThread(_ct->getDeviceIndex(), this, b);
 }
 
-fvkCamera::fvkCamera(fvkCameraThread* _ct, fvkCameraProcessingThread* _pt) :
+fvkCamera::fvkCamera(fvkCameraThread* _ct, fvkProcessingThread* _pt) :
 	p_stdct(nullptr),
 	p_stdpt(nullptr),
 	p_ct(_ct),
@@ -98,12 +98,17 @@ auto fvkCamera::disconnect() -> bool
 {
 	if (p_ct)
 	{
+		if (!p_ct->isOpened())
+		{
+			std::cout << "[" << p_ct->getDeviceIndex() << "] camera is still running, couldn't disconnect!\n";
+			return false;
+		}
+
 		// stop the main thread.
 		if (p_ct->active())
-		{
 			p_ct->stop();
-			std::this_thread::sleep_for(std::chrono::milliseconds(100));
-		}
+
+		std::this_thread::sleep_for(std::chrono::milliseconds(200));
 
 		// release / close the device.
 		if (p_ct->close())
@@ -111,6 +116,7 @@ auto fvkCamera::disconnect() -> bool
 		else
 			std::cout << "[" << p_ct->getDeviceIndex() << "] camera has been disconnected already.\n";
 	}
+
 
 	if (p_pt)
 	{
@@ -121,12 +127,6 @@ auto fvkCamera::disconnect() -> bool
 			p_pt->writer().stop();
 			std::cout << "[" << p_pt->getDeviceIndex() << "] camera processing thread has been stopped successfully.\n";
 		}
-	}
-
-	if (p_ct->isOpened())
-	{
-		std::cout << "[" << p_ct->getDeviceIndex() << "] camera is still running, couldn't disconnect!\n";
-		return false;
 	}
 
 	return true;
@@ -142,11 +142,15 @@ auto fvkCamera::connect() -> bool
 		return false;
 	}
 
+	// connect the device.
 	const auto b = p_ct->open();
 
 	// reset the region of interest.
-	if (b && p_pt) 
-		p_pt->setRoi(cv::Rect(0, 0, p_ct->getFrameWidth(), p_ct->getFrameHeight()));
+	if (b)
+	{
+		p_ct->setRoi(cv::Rect(0, 0, p_ct->getFrameWidth(), p_ct->getFrameHeight()));
+		if(p_pt) p_pt->setRoi(cv::Rect(0, 0, p_ct->getFrameWidth(), p_ct->getFrameHeight()));
+	}
 
 	return b;
 }
@@ -282,8 +286,36 @@ auto fvkCamera::getFrameNumber() const -> int
 	if (!p_pt) return 0;
 	return p_pt->getFrameNumber();
 }
+void fvkCamera::setVideoFileLocation(const std::string& _filename) const
+{
+	auto ocv = dynamic_cast<fvkCameraThreadOpenCV*>(p_ct);
+	if (ocv) ocv->setVideoFileLocation(_filename);
+}
+auto fvkCamera::getVideoFileLocation() const -> std::string
+{
+	const auto ocv = dynamic_cast<fvkCameraThreadOpenCV*>(p_ct);
+	if (ocv) return ocv->getVideoFileLocation();
+	return "";
+}
+void fvkCamera::repeat(const bool _b) const
+{
+	auto ocv = dynamic_cast<fvkCameraThreadOpenCV*>(p_ct);
+	if (ocv) ocv->repeat(_b);
+}
+auto fvkCamera::repeat() const -> bool
+{
+	const auto ocv = dynamic_cast<fvkCameraThreadOpenCV*>(p_ct);
+	if (ocv) return ocv->repeat();
+	return false;
+}
 
-void fvkCamera::processFrame(cv::Mat& _frame)
+void fvkCamera::openConfigurationDialog()
+{
+	auto ocv = dynamic_cast<fvkCameraThreadOpenCV*>(p_ct);
+	if (ocv) ocv->openConfigurationDialog();
+}
+
+void fvkCamera::present(cv::Mat& _frame)
 {
 	// override this function to do image processing on the captured "_frame".
 }

@@ -60,10 +60,6 @@ fvkThread::fvkThread() :
 	m_delay(1000 / 33)	// delay between frames (30 fps).
 {
 }
-fvkThread::~fvkThread()
-{
-	stop();
-}
 
 void fvkThread::operator()(const std::function<void()> _func)
 {

@@ -89,9 +89,9 @@ public:
 	// _frame_size is the desired width and height of camera frame.
 	// Specifying Size(-1, -1) will do the auto-selection for the captured frame size,
 	// normally it enables the 640x480 resolution on most of web cams.
-	auto add(const int _device_index = 0, const cv::Size& _frame_size = cv::Size(-1, -1))
+	auto add(const int _device_index = 0, const cv::Size& _frame_size = cv::Size(-1, -1), const int _api = static_cast<int>(cv::VideoCaptureAPIs::CAP_ANY))
 	{
-		auto p = new CAMERA(_device_index, _frame_size);
+		auto p = new CAMERA(_device_index, _frame_size, _api);
 		if (!addUnique(p))
 		{
 			delete p;
@@ -106,7 +106,7 @@ public:
 	// (eg. img_%02d.jpg, which will read samples like img_00.jpg, img_01.jpg, img_02.jpg, ...)
 	// _frame_size is the desired camera frame width and height.
 	// Specifying Size(-1, -1) will do the auto-selection for the frame's width and height.
-	auto add(const std::string& _video_file, const cv::Size& _frame_size = cv::Size(-1, -1), const int _api = cv::VideoCaptureAPIs::CAP_ANY)
+	auto add(const std::string& _video_file, const cv::Size& _frame_size = cv::Size(-1, -1), const int _api = static_cast<int>(cv::VideoCaptureAPIs::CAP_ANY))
 	{
 		auto p = new CAMERA(_video_file, _frame_size, _api);
 		if (!addUnique(p))

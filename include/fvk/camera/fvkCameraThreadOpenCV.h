@@ -43,7 +43,7 @@ public:
 	// Specifying Size(-1, -1) will do the auto-selection for the captured frame size,
 	// normally it enables the 640x480 resolution on most of web cams.
 	// _buffer is the semaphore buffer to synchronizer the processing thread with this camera thread.
-	fvkCameraThreadOpenCV(const int _device_index, const cv::Size& _resolution, fvkSemaphoreBuffer<cv::Mat>* _buffer = nullptr);
+	fvkCameraThreadOpenCV(const int _device_index, const cv::Size& _frame_size, const int _api = static_cast<int>(cv::VideoCaptureAPIs::CAP_ANY), fvkSemaphoreBuffer<cv::Mat>* _buffer = nullptr);
 	// Description:
 	// Default constructor to start the given video file.
 	// _buffer is the semaphore to synchronizer the processing thread with this thread.
@@ -51,7 +51,7 @@ public:
 	// If _width and _height is specified, then this will become the video frame resolution.
 	// cv::Size(-1, -1) will do the auto-selection of the resolution, normally it enable the 640x480 resolution.
 	// _api = cv::VideoCaptureAPIs::CAP_ANY is the preferred API for a capture object. for more info see (cv::VideoCaptureAPIs).
-	fvkCameraThreadOpenCV(const std::string& _video_file, const cv::Size& _resolution, const int _api, fvkSemaphoreBuffer<cv::Mat>* _buffer = nullptr);
+	fvkCameraThreadOpenCV(const std::string& _video_file, const cv::Size& _frame_size, const int _api = static_cast<int>(cv::VideoCaptureAPIs::CAP_ANY), fvkSemaphoreBuffer<cv::Mat>* _buffer = nullptr);
 	// Description:
 	// Default destructor that stops the threads and closes the camera device.
 	virtual ~fvkCameraThreadOpenCV();
@@ -67,6 +67,8 @@ public:
 	// Function to connect the video file.
 	// _file_name is the name of the opened video file (eg. video.avi) or image sequence 
 	// (eg. img_%02d.jpg, which will read samples like img_00.jpg, img_01.jpg, img_02.jpg, ...)
+	// If the video file is specified before the calling open() function, then the specified video
+	// will be played, rather than camera device.
 	// _api is the preferred API for a capture object. for more info see (cv::VideoCaptureAPIs).
 	// It returns true on success.
 	virtual auto open(const std::string& _file_name, const int _api = cv::VideoCaptureAPIs::CAP_ANY) -> bool;
@@ -84,10 +86,12 @@ public:
 	auto close() -> bool override;;
 
 	// Description:
-	// Set true if you want to restart or repeat the video when it finishes. (only for videos)
+	// Set true if you want to restart or repeat the video when it finishes.
+	// This function is only for videos.
 	// Default in true.
 	void repeat(const bool _b);
-	// It returns true if the repeat flag for the video is on. (only for videos)
+	// It returns true if the repeat flag for the video is on.
+	// This function is only for videos.
 	// Default in true.
 	auto repeat() const -> bool;
 
@@ -99,20 +103,22 @@ public:
 	auto getAPI() const { return m_videocapture_api; }
 
 	// Description:
-	// Function to set the video file path like "D:\\face\\video.avi". (only for videos)
+	// Function to set the video file location like "D:\\face\\video.avi".
 	// If the video file is specified before the calling connect() function, then the specified video
 	// will be played, rather than camera device.
-	void setVideoFile(const std::string& _filename) { m_filepath = _filename; }
+	// This function is only for videos.
+	void setVideoFileLocation(const std::string& _filename) { m_filepath = _filename; }
 	// Description:
-	// Function to get the video file path. (only for videos)
-	auto getVideoFile() const { return m_filepath; }
+	// Function to get the video file path.
+	// This function is only for videos.
+	auto getVideoFileLocation() const { return m_filepath; }
 
 	/************************************************************************/
 	/* Camera properties                                                    */
 	/************************************************************************/
 	// Description:
-	// Call this function in order to open the camera driver config dialog.
-	void openDriverConfigDialog();
+	// Calling this function opens a camera configuration dialog, if supported by the camera driver.
+	void openConfigurationDialog();
 
 	// Description:
 	// Function to get the current camera resolution.

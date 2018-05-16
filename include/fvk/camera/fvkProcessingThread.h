@@ -1,12 +1,12 @@
 #pragma once
-#ifndef fvkCameraProcessingThread_h__
-#define fvkCameraProcessingThread_h__
+#ifndef fvkProcessingThread_h__
+#define fvkProcessingThread_h__
 
 /*********************************************************************************
 created:	2016/01/10   01:37AM
-modified:	2017/02/09   11:48PM
-filename: 	fvkCameraProcessingThread.h
-file base:	fvkCameraProcessingThread
+modified:	2018/05/16   11:48PM
+filename: 	fvkProcessingThread.h
+file base:	fvkProcessingThread
 file ext:	h
 author:		Furqan Ullah (Post-doc, Ph.D.)
 website:    http://real3d.pk
@@ -34,34 +34,27 @@ namespace R3D
 
 class fvkCameraAbstract;
 
-class FVK_EXPORT fvkCameraProcessingThread : public fvkThread
+class FVK_EXPORT fvkProcessingThread : public fvkThread
 {
 public:
 	// Description:
-	// Default constructor.
-	// _buffer is the semaphore to synchronizer the processing thread with this thread.
-	// _frameobserver is the parent class of Camera that will override the processFrame function.
-	// _device is the id of the opened video capturing device (i.e. a camera index).
-	// If there is a single camera connected, just pass 0.
-	// In case of multiple cameras, try to pass 1 or 2 or 3, so on...
-	// If _width and _height is specified, then this will become the camera frame resolution.
-	explicit fvkCameraProcessingThread(const int _device_index, fvkSemaphoreBuffer<cv::Mat>* _buffer = nullptr);
+	// Default constructor to creat a synchronized processing thread.
+	// _device_index is the id of the opened video capturing device (i.e. a camera index).
+	// _frameobserver is the parent class of Camera that will override the present function.
+	// _buffer is the semaphore to synchronize the camera thread with this thread.
+	fvkProcessingThread(const int _device_index, fvkCameraAbstract* _frameobserver, fvkSemaphoreBuffer<cv::Mat>* _buffer = nullptr);
 	// Description:
-	// Default constructor.
-	// _buffer is the semaphore to synchronizer the processing thread with this thread.
-	// _frameobserver is the parent class of Camera that will override the processFrame function.
-	// _device is the id of the opened video capturing device (i.e. a camera index).
-	// If there is a single camera connected, just pass 0.
-	// In case of multiple cameras, try to pass 1 or 2 or 3, so on...
-	// If _width and _height is specified, then this will become the camera frame resolution.
-	fvkCameraProcessingThread(const int _device_index, fvkCameraAbstract* _frameobserver, fvkSemaphoreBuffer<cv::Mat>* _buffer = nullptr);
+	// Default constructor to creat a synchronized processing thread.
+	// _device_index is the id of the opened video capturing device (i.e. a camera index).
+	// _buffer is the semaphore to synchronize the camera thread with this thread.
+	explicit fvkProcessingThread(const int _device_index, fvkSemaphoreBuffer<cv::Mat>* _buffer = nullptr);
 	// Description:
 	// Default destructor to stop the thread as well as recorder, and delete the data.
-	virtual ~fvkCameraProcessingThread();
+	virtual ~fvkProcessingThread();
 
 	// Description:
 	// Overridden function to get the current grabbed frame.
-	auto getFrame() const -> cv::Mat;
+	auto getFrame() -> cv::Mat;
 
 	// Description:
 	// Function to set the camera device id.
@@ -109,10 +102,10 @@ public:
 	auto getSemaphoreBuffer() const { return p_buffer; }
 
 	// Description:
-	// Function to set the region-of-interest for the captured frame.
+	// Function to set the region-of-interest of the grabbed frame.
 	void setRoi(const cv::Rect& _roi);
 	// Description:
-	// Function to get the region-of-interest.
+	// Function to get the region-of-interest of the grabbed frame.
 	auto getRoi() -> cv::Rect;
 
 	// Description:
@@ -131,7 +124,7 @@ protected:
 	// Description:
 	// Virtual function that is expected to be overridden in the derived class in order
 	// to process the captured frame.
-	virtual void processFrame(cv::Mat& _frame);
+	virtual void present(cv::Mat& _frame);
 
 	// Description:
 	// Function that saves the current frame to disk (file path must be specified by setSavedFile("")).
@@ -139,7 +132,7 @@ protected:
 
 	// Description:
 	// protected member variables.
-	fvkCameraAbstract* p_frameobserver;
+	fvkCameraAbstract *p_frameobserver;
 	std::mutex m_processing_mutex;
 	fvkSemaphoreBuffer<cv::Mat> *p_buffer;
 	std::function<void(cv::Mat&)> m_emit_display_frame;
@@ -150,11 +143,11 @@ protected:
 
 	int m_device_index;
 	std::string m_filepath;
+	std::atomic<bool> m_save;
 	std::mutex m_rectmutex;
 	cv::Rect m_rect;
-	std::atomic<bool> m_save;
 };
 
 }
 
-#endif // fvkCameraProcessingThread_h__
+#endif // fvkProcessingThread_h__

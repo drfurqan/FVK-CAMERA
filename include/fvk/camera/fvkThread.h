@@ -78,7 +78,7 @@ public:
 	fvkThread();
 	// Description:
 	// Default destructor that will stop the thread.
-	virtual ~fvkThread();
+	virtual ~fvkThread() = default;
 
 	// Description:
 	// A thread function (functor) to be executed by the thread.
