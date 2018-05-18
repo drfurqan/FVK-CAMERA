@@ -50,7 +50,7 @@ public:
 	auto setFaceCascade(const std::string& _cascade_file_path) -> bool;
 	// Description:
 	// Function to get a pointer to face cascade.
-	auto getFaceCascade() const { return m_faceCascade; }
+	auto getFaceCascade() const { return m_face_cascade; }
 	// Description:
 	// Function to get a rectangle around the detected face.
 	auto getRect() const -> cv::Rect;
@@ -80,29 +80,29 @@ public:
 	auto operator >> (cv::Mat& _frame) -> cv::Point;
 
 private:
-	static auto doubleRectSize(const cv::Rect &inputRect, const cv::Rect &frameSize) -> cv::Rect;
-	static auto biggestFace(std::vector<cv::Rect> &faces) -> cv::Rect;
-	static auto centerOfRect(const cv::Rect &rect) -> cv::Point;
-	static auto getFaceTemplate(const cv::Mat &frame, cv::Rect face) -> cv::Mat;
-	void detectFaceAroundRoi(const cv::Mat &frame);
-	void detectFacesTemplateMatching(const cv::Mat &frame);
+	static auto doubleRectSize(const cv::Rect& _input_rect, const cv::Rect& _frame_size) -> cv::Rect;
+	static auto biggestFace(std::vector<cv::Rect>& _faces) -> cv::Rect;
+	static auto centerOfRect(const cv::Rect& _rect) -> cv::Point;
+	static auto getFaceTemplate(const cv::Mat& _frame, cv::Rect _face) -> cv::Mat;
+	void detectFaceAroundRoi(const cv::Mat& _frame);
+	void detectFacesTemplateMatching(const cv::Mat& _frame);
 
 	static const double TICK_FREQUENCY;
 
-	cv::CascadeClassifier* m_faceCascade;
-	std::vector<cv::Rect> m_allFaces;
-	cv::Rect m_trackedFace;
-	cv::Rect m_faceRoi;
-	cv::Mat m_faceTemplate;
-	cv::Mat m_matchingResult;
-	bool m_templateMatchingRunning;
-	int64 m_templateMatchingStartTime;
-	int64 m_templateMatchingCurrentTime;
-	bool m_foundFace;
+	cv::CascadeClassifier* m_face_cascade;
+	std::vector<cv::Rect> m_all_faces;
+	cv::Rect m_tracked_face;
+	cv::Rect m_face_roi;
+	cv::Mat m_face_template;
+	cv::Mat m_matching_result;
+	bool m_template_matching_running;
+	int64 m_template_matching_start_time;
+	int64 m_template_matching_current_time;
+	bool m_found_face;
 	double m_scale;
-	int m_resizedWidth;
-	cv::Point m_facePosition;
-	double m_templateMatchingMaxDuration;
+	int m_resized_width;
+	cv::Point m_face_position;
+	double m_template_matching_max_duration;
 };
 
 class FVK_EXPORT fvkSimpleFaceDetector
@@ -131,12 +131,12 @@ public:
 	// Description:
 	// Function that detect all the faces in the given frame.
 	// It selects the biggest face for tracking.
-	virtual void detect(cv::Mat& _frame, int _frame_delay_in_detection = 5);
+	virtual void detect(cv::Mat& _frame, const int _frame_delay_in_detection = 5);
 
 protected:
 	std::string m_filepath;
 	fvkFaceDetector m_fd;
-	int nframes;
+	int m_nframes;
 };
 
 }
