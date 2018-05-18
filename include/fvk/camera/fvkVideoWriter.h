@@ -87,6 +87,16 @@ public:
 	void stop();
 
 	// Description:
+	// Function to set the api preference.
+	// The _api parameter allows to specify API backends to use.
+	// Can be used to enforce a specific reader implementation
+	// if multiple are available: e.g., cv::CAP_FFMPEG or cv::CAP_INTEL_MFX.
+	void setApi(int _api) { m_api = _api; }
+	// Description:
+	// Function to get the api preference.
+	auto getApi() const { return m_api; }
+
+	// Description:
 	// Function to set the saved video file path.
 	// The path folder should have writable permission, such as Pictures/Videos/Documents folder.
 	// Example:
@@ -143,7 +153,7 @@ public:
 
 private:
 	cv::VideoWriter m_writer;
-
+	int m_api;
 	std::string m_file;
 	cv::Size m_size;
 	double m_fps;

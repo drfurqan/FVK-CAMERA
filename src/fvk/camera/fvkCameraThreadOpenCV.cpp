@@ -156,136 +156,136 @@ auto fvkCameraThreadOpenCV::repeat() const -> bool
 /************************************************************************/
 /* Set Camera Settings                                                  */
 /************************************************************************/
-void fvkCameraThreadOpenCV::openConfigurationDialog()
+auto fvkCameraThreadOpenCV::openConfigurationDialog() -> bool
 {
-	if (isOpened()) m_cam.set(cv::CAP_PROP_SETTINGS, 1);
+	return m_cam.set(cv::CAP_PROP_SETTINGS, 1);
 }
-void fvkCameraThreadOpenCV::setMsec(double val)
+auto fvkCameraThreadOpenCV::setMsec(double val) -> bool
 {
-	if (isOpened()) m_cam.set(cv::CAP_PROP_POS_MSEC, val);
+	return m_cam.set(cv::CAP_PROP_POS_MSEC, val);
 }
-void fvkCameraThreadOpenCV::setPosFrames(double val)
+auto fvkCameraThreadOpenCV::setPosFrames(double val) -> bool
 {
-	if (isOpened()) m_cam.set(cv::CAP_PROP_POS_FRAMES, val);
-}
-
-void fvkCameraThreadOpenCV::setSharpness(double val)
-{
-	if (isOpened()) m_cam.set(cv::CAP_PROP_SHARPNESS, val);
-}
-void fvkCameraThreadOpenCV::setAutoExposure(double val)
-{
-	if (isOpened()) m_cam.set(cv::CAP_PROP_AUTO_EXPOSURE, val);
-}
-void fvkCameraThreadOpenCV::setFps(double val)
-{
-	if (isOpened()) m_cam.set(cv::CAP_PROP_FPS, val);
-}
-void fvkCameraThreadOpenCV::setFrameCount(double val)
-{
-	if (isOpened()) m_cam.set(cv::CAP_PROP_FRAME_COUNT, val);
+	return m_cam.set(cv::CAP_PROP_POS_FRAMES, val);
 }
 
-void fvkCameraThreadOpenCV::setWhiteBalanceBlueU(double val)
+auto fvkCameraThreadOpenCV::setSharpness(double val) -> bool
 {
-	if (isOpened()) m_cam.set(cv::CAP_PROP_WHITE_BALANCE_BLUE_U, val);
+	return m_cam.set(cv::CAP_PROP_SHARPNESS, val);
 }
-void fvkCameraThreadOpenCV::setWhiteBalanceRedV(double val)
+auto fvkCameraThreadOpenCV::setAutoExposure(double val) -> bool
 {
-	if (isOpened()) m_cam.set(cv::CAP_PROP_WHITE_BALANCE_RED_V, val);
+	return m_cam.set(cv::CAP_PROP_AUTO_EXPOSURE, val);
 }
-void fvkCameraThreadOpenCV::setFourCC(double val)
+auto fvkCameraThreadOpenCV::setFps(double val) -> bool
 {
-	if (isOpened()) m_cam.set(cv::CAP_PROP_FOURCC, val);
+	return m_cam.set(cv::CAP_PROP_FPS, val);
 }
-void fvkCameraThreadOpenCV::setConvertToRGB(double val)
+auto fvkCameraThreadOpenCV::setFrameCount(double val) -> bool
 {
-	if (isOpened()) m_cam.set(cv::CAP_PROP_CONVERT_RGB, val);
-}
-void fvkCameraThreadOpenCV::setBrightness(double val)
-{
-	if (isOpened()) m_cam.set(cv::CAP_PROP_BRIGHTNESS, val);
-}
-void fvkCameraThreadOpenCV::setContrast(double val)
-{
-	if (isOpened()) m_cam.set(cv::CAP_PROP_CONTRAST, val);
-}
-void fvkCameraThreadOpenCV::setSaturation(double val)
-{
-	if (isOpened()) m_cam.set(cv::CAP_PROP_SATURATION, val);
-}
-void fvkCameraThreadOpenCV::setHue(double val)
-{
-	if (isOpened()) m_cam.set(cv::CAP_PROP_HUE, val);
-}
-void fvkCameraThreadOpenCV::setGain(double val)
-{
-	if (isOpened()) m_cam.set(cv::CAP_PROP_GAIN, val);
-}
-void fvkCameraThreadOpenCV::setExposure(double val)
-{
-	if (isOpened()) m_cam.set(cv::CAP_PROP_EXPOSURE, val);
-}
-void fvkCameraThreadOpenCV::setRectification(double val)
-{
-	if (isOpened()) m_cam.set(cv::CAP_PROP_RECTIFICATION, val);
-}
-void fvkCameraThreadOpenCV::setFormat(double val)
-{
-	if (isOpened()) m_cam.set(cv::CAP_PROP_FORMAT, val);
-}
-void fvkCameraThreadOpenCV::setMode(double val)
-{
-	if (isOpened()) m_cam.set(cv::CAP_PROP_MODE, val);
+	return m_cam.set(cv::CAP_PROP_FRAME_COUNT, val);
 }
 
-void fvkCameraThreadOpenCV::setGamma(double val)
+auto fvkCameraThreadOpenCV::setWhiteBalanceBlueU(double val) -> bool
 {
-	if (isOpened()) m_cam.set(cv::CAP_PROP_GAMMA, val);
+	return m_cam.set(cv::CAP_PROP_WHITE_BALANCE_BLUE_U, val);
 }
-void fvkCameraThreadOpenCV::setTemperature(double val)
+auto fvkCameraThreadOpenCV::setWhiteBalanceRedV(double val) -> bool
 {
-	if (isOpened()) m_cam.set(cv::CAP_PROP_TEMPERATURE, val);
+	return m_cam.set(cv::CAP_PROP_WHITE_BALANCE_RED_V, val);
 }
-void fvkCameraThreadOpenCV::setZoom(double val)
+auto fvkCameraThreadOpenCV::setFourCC(double val) -> bool
 {
-	if (isOpened()) m_cam.set(cv::CAP_PROP_ZOOM, val);
+	return m_cam.set(cv::CAP_PROP_FOURCC, val);
 }
-void fvkCameraThreadOpenCV::setFocus(double val)
+auto fvkCameraThreadOpenCV::setConvertToRGB(double val) -> bool
 {
-	if (isOpened()) m_cam.set(cv::CAP_PROP_FOCUS, val);
+	return m_cam.set(cv::CAP_PROP_CONVERT_RGB, val);
 }
-void fvkCameraThreadOpenCV::setIsoSpeed(double val)
+auto fvkCameraThreadOpenCV::setBrightness(double val) -> bool
 {
-	if (isOpened()) m_cam.set(cv::CAP_PROP_ISO_SPEED, val);
+	return m_cam.set(cv::CAP_PROP_BRIGHTNESS, val);
 }
-void fvkCameraThreadOpenCV::setBackLight(double val)
+auto fvkCameraThreadOpenCV::setContrast(double val) -> bool
 {
-	if (isOpened()) m_cam.set(cv::CAP_PROP_BACKLIGHT, val);
+	return m_cam.set(cv::CAP_PROP_CONTRAST, val);
 }
-void fvkCameraThreadOpenCV::setPan(double val)
+auto fvkCameraThreadOpenCV::setSaturation(double val) -> bool
 {
-	if (isOpened()) m_cam.set(cv::CAP_PROP_PAN, val);
+	return m_cam.set(cv::CAP_PROP_SATURATION, val);
 }
-void fvkCameraThreadOpenCV::setTilt(double val)
+auto fvkCameraThreadOpenCV::setHue(double val) -> bool
 {
-	if (isOpened()) m_cam.set(cv::CAP_PROP_TILT, val);
+	return m_cam.set(cv::CAP_PROP_HUE, val);
 }
-void fvkCameraThreadOpenCV::setRoll(double val)
+auto fvkCameraThreadOpenCV::setGain(double val) -> bool
 {
-	if (isOpened()) m_cam.set(cv::CAP_PROP_ROLL, val);
+	return m_cam.set(cv::CAP_PROP_GAIN, val);
 }
-void fvkCameraThreadOpenCV::setTrigger(double val)
+auto fvkCameraThreadOpenCV::setExposure(double val) -> bool
 {
-	if (isOpened()) m_cam.set(cv::CAP_PROP_TRIGGER, val);
+	return m_cam.set(cv::CAP_PROP_EXPOSURE, val);
 }
-void fvkCameraThreadOpenCV::setTriggerDelay(double val)
+auto fvkCameraThreadOpenCV::setRectification(double val) -> bool
 {
-	if (isOpened()) m_cam.set(cv::CAP_PROP_TRIGGER_DELAY, val);
+	return m_cam.set(cv::CAP_PROP_RECTIFICATION, val);
 }
-void fvkCameraThreadOpenCV::setAviRatio(double val)
+auto fvkCameraThreadOpenCV::setFormat(double val) -> bool
 {
-	if (isOpened()) m_cam.set(cv::CAP_PROP_POS_AVI_RATIO, val);
+	return m_cam.set(cv::CAP_PROP_FORMAT, val);
+}
+auto fvkCameraThreadOpenCV::setMode(double val) -> bool
+{
+	return m_cam.set(cv::CAP_PROP_MODE, val);
+}
+
+auto fvkCameraThreadOpenCV::setGamma(double val) -> bool
+{
+	return m_cam.set(cv::CAP_PROP_GAMMA, val);
+}
+auto fvkCameraThreadOpenCV::setTemperature(double val) -> bool
+{
+	return m_cam.set(cv::CAP_PROP_TEMPERATURE, val);
+}
+auto fvkCameraThreadOpenCV::setZoom(double val) -> bool
+{
+	return m_cam.set(cv::CAP_PROP_ZOOM, val);
+}
+auto fvkCameraThreadOpenCV::setFocus(double val) -> bool
+{
+	return m_cam.set(cv::CAP_PROP_FOCUS, val);
+}
+auto fvkCameraThreadOpenCV::setIsoSpeed(double val) -> bool
+{
+	return m_cam.set(cv::CAP_PROP_ISO_SPEED, val);
+}
+auto fvkCameraThreadOpenCV::setBackLight(double val) -> bool
+{
+	return m_cam.set(cv::CAP_PROP_BACKLIGHT, val);
+}
+auto fvkCameraThreadOpenCV::setPan(double val) -> bool
+{
+	return m_cam.set(cv::CAP_PROP_PAN, val);
+}
+auto fvkCameraThreadOpenCV::setTilt(double val) -> bool
+{
+	return m_cam.set(cv::CAP_PROP_TILT, val);
+}
+auto fvkCameraThreadOpenCV::setRoll(double val) -> bool
+{
+	return m_cam.set(cv::CAP_PROP_ROLL, val);
+}
+auto fvkCameraThreadOpenCV::setTrigger(double val) -> bool
+{
+	return m_cam.set(cv::CAP_PROP_TRIGGER, val);
+}
+auto fvkCameraThreadOpenCV::setTriggerDelay(double val) -> bool
+{
+	return m_cam.set(cv::CAP_PROP_TRIGGER_DELAY, val);
+}
+auto fvkCameraThreadOpenCV::setAviRatio(double val) -> bool
+{
+	return m_cam.set(cv::CAP_PROP_POS_AVI_RATIO, val);
 }
 
 
@@ -335,7 +335,6 @@ auto fvkCameraThreadOpenCV::getFourCC() const -> std::string
 	};
 	return std::string(fourc);
 }
-
 auto fvkCameraThreadOpenCV::getConvertToRGB() const -> double
 {
 	return m_cam.get(cv::CAP_PROP_CONVERT_RGB);

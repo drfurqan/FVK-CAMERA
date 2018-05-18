@@ -118,139 +118,139 @@ public:
 	/************************************************************************/
 	// Description:
 	// Calling this function opens a camera configuration dialog, if supported by the camera driver.
-	void openConfigurationDialog();
+	auto openConfigurationDialog() -> bool;
 
 	// Description:
 	// Function to get the current camera resolution.
-	auto getActiveFrameSize() const -> cv::Size;
+	auto getActiveFrameSize() const-> cv::Size;
 
 	// Description:
 	// Current position of the video file in milliseconds or video capture timestamp.
-	void setMsec(double _v);
+	auto setMsec(double _v) -> bool;
 	auto getMsec() const -> double;
 	// Description:
 	// 0-based index of the frame to be decoded/captured next.
-	void setPosFrames(double _v);
+	auto setPosFrames(double _v) -> bool;
 	auto getPosFrames() const -> double;
 	// Description:
 	// Relative position of the video file: 0 - start of the film, 1 - end of the film.
-	void setAviRatio(double _v);
+	auto setAviRatio(double _v) -> bool;
 	auto getAviRatio() const -> double;
 	// Description:
 	// desired camera frame rate.
-	void setFps(double _v);
+	auto setFps(double _v) -> bool;
 	auto getFps() const -> double;
 	// Description:
 	// Function to set a 4-character code of codec.
-	void setFourCC(double _v);
+	auto setFourCC(double _v) -> bool;
 	// Description:
 	// Function that returns the 4-character code that identify a video codec.
 	auto getFourCC() const -> std::string;
 	// Description:
 	// Number of frames in the video file.
-	void setFrameCount(double _v);
+	auto setFrameCount(double _v) -> bool;
 	auto getFrameCount() const -> double;
 	// Description:
 	// Format of the Mat objects returned by retrieve().
-	void setFormat(double _v);
+	auto setFormat(double _v) -> bool;
 	auto getFormat() const -> double;
 	// Description:
 	// Backend-specific value indicating the current capture mode.
-	void setMode(double _v);
+	auto setMode(double _v) -> bool;
 	auto getMode() const -> double;
 
 	// Description:
 	// Brightness of the image (only for cameras)..
-	void setBrightness(double val);
+	auto setBrightness(double val) -> bool;
 	auto getBrightness() const -> double;
 	// Description:
 	// Contrast of the image (only for cameras).
-	void setContrast(double val);
+	auto setContrast(double val) -> bool;
 	auto getContrast() const -> double;
 	// Description:
 	// Saturation of the image (only for cameras).
-	void setSaturation(double val);
+	auto setSaturation(double val) -> bool;
 	auto getSaturation() const -> double;
 	// Description:
 	//  Hue of the image (only for cameras).
-	void setHue(double val);
+	auto setHue(double val) -> bool;
 	auto getHue() const -> double;
 	// Description:
 	// Gain of the image (only for cameras).
-	void setGain(double val);
+	auto setGain(double val) -> bool;
 	auto getGain() const -> double;
 	// Description:
 	// Exposure (only for cameras).
-	void setExposure(double val);
+	auto setExposure(double val) -> bool;
 	auto getExposure() const -> double;
 	// Description:
 	// Temperature.
-	void setTemperature(double val);
+	auto setTemperature(double val) -> bool;
 	auto getTemperature() const -> double;
 	// Description:
 	// Rectification flag for stereo cameras (note: only supported by DC1394 v 2.x backend currently)
-	void setRectification(double val);
+	auto setRectification(double val) -> bool;
 	auto getRectification() const -> double;
 	// Description:
 	// Gamma.
-	void setGamma(double val);
+	auto setGamma(double val) -> bool;
 	auto getGamma() const -> double;
 	// Description:
 	// Set the value for camera sharpness. Specify zero in order to disable sharpness.
-	void setSharpness(double val);
+	auto setSharpness(double val) -> bool;
 	auto getSharpness() const -> double;
 	// Description:
 	// Set 1 for auto-exposure and 0 for disabling it.
-	void setAutoExposure(double val);
+	auto setAutoExposure(double val) -> bool;
 	auto getAutoExposure() const -> double;
 	// Description:
 	// Set 0 for disabling auto-white balance
-	void setWhiteBalanceBlueU(double val);
+	auto setWhiteBalanceBlueU(double val) -> bool;
 	auto getWhiteBalanceBlueU() const -> double;
 	// Description:
 	// Set 0 for disabling auto-white balance
-	void setWhiteBalanceRedV(double val);
+	auto setWhiteBalanceRedV(double val) -> bool;
 	auto getWhiteBalanceRedV() const -> double;
 	// Description:
 	// Boolean flags indicating whether images should be converted to RGB.
-	void setConvertToRGB(double val);
+	auto setConvertToRGB(double val) -> bool;
 	auto getConvertToRGB() const -> double;
 
 	// Description:
 	// Set zoom.
-	void setZoom(double val);
+	auto setZoom(double val) -> bool;
 	auto getZoom() const -> double;
 	// Description:
 	// Set focus.
-	void setFocus(double val);
+	auto setFocus(double val) -> bool;
 	auto getFocus() const -> double;
 	// Description:
 	// Set pan.
-	void setPan(double val);
+	auto setPan(double val) -> bool;
 	auto getPan() const -> double;
 	// Description:
 	// Set tilt.
-	void setTilt(double val);
+	auto setTilt(double val) -> bool;
 	auto getTilt() const -> double;
 	// Description:
 	// Set roll.
-	void setRoll(double val);
+	auto setRoll(double val) -> bool;
 	auto getRoll() const -> double;
 	// Description:
 	// The ISO speed of the camera (note: only supported by DC1394 v 2.x backend currently)
-	void setIsoSpeed(double val);
+	auto setIsoSpeed(double val) -> bool;
 	auto getIsoSpeed() const -> double;
 	// Description:
 	// Set back light.
-	void setBackLight(double val);
+	auto setBackLight(double val) -> bool;
 	auto getBackLight() const -> double;
 	// Description:
 	// Set trigger.
-	void setTrigger(double val);
+	auto setTrigger(double val) -> bool;
 	auto getTrigger() const -> double;
 	// Description:
 	// Set trigger delay.
-	void setTriggerDelay(double val);
+	auto setTriggerDelay(double val) -> bool;
 	auto getTriggerDelay() const -> double;
 
 protected:

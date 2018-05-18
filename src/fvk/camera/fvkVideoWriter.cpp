@@ -24,12 +24,13 @@ purpose:	Thread safe class to create a video file using OpenCV video writer.
 using namespace R3D;
 
 fvkVideoWriter::fvkVideoWriter() :
-m_file(std::string("")),
-m_size(cv::Size(640, 480)),
-m_fps(25),
-m_iscolor(true),
-m_autocodec(false),
-m_codec(std::string("H264"))
+	m_api(static_cast<int>(cv::VideoCaptureAPIs::CAP_FFMPEG)),
+	m_file(std::string("")),
+	m_size(cv::Size(640, 480)),
+	m_fps(25),
+	m_iscolor(true),
+	m_autocodec(false),
+	m_codec(std::string("H264"))
 {
 	m_writer.set(cv::VideoWriterProperties::VIDEOWRITER_PROP_QUALITY, 100.0);
 }
@@ -45,14 +46,14 @@ auto fvkVideoWriter::open() -> int
 
 	if (m_autocodec)
 	{
-		m_writer.open(m_file, -1, m_fps, m_size, m_iscolor);
+		m_writer.open(m_file, m_api, -1, m_fps, m_size, m_iscolor);
 	}
 	else
 	{
 		if (m_codec.length() != 4) 
 			return -2;
 
-		m_writer.open(m_file, cv::VideoWriter::fourcc(m_codec[0], m_codec[1], m_codec[2], m_codec[3]), m_fps, m_size, m_iscolor);
+		m_writer.open(m_file, m_api, cv::VideoWriter::fourcc(m_codec[0], m_codec[1], m_codec[2], m_codec[3]), m_fps, m_size, m_iscolor);
 	}
 
 	if (!m_writer.isOpened())

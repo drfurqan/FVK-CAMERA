@@ -51,7 +51,6 @@ int findDevices(const bool _silent)
 			if (!_silent) std::cout << "Looking For Capture Devices...\n";
 
 			IMoniker *pMoniker = nullptr;
-
 			while (pEnum->Next(1, &pMoniker, nullptr) == S_OK) 
 			{
 				IPropertyBag *pPropBag;
