@@ -85,9 +85,11 @@ public:
 	void saveFrameOnClick();
 
 	// Description:
-	// Set emit function to display the grabbed frame.
+	// Set a GUI function to display the grabbed frame.
 	// The display function should be capable of handling multi-threading updating.
-	void setFrameViewerSlot(const std::function<void(cv::Mat&, const fvkThreadStats&)> _f);
+	// The second argument which is fvkThreadStats will give you statistics of the thread,
+	// such as Average frames per second (FPS) and number of processed frames.
+	void setVideoOutput(const std::function<void(cv::Mat&, const fvkThreadStats&)> _f);
 
 	// Description:
 	// Function to set a pointer to semaphore buffer which does synchronization between capturing and processing threads.
@@ -130,7 +132,7 @@ protected:
 	fvkCameraAbstract *p_frameobserver;
 	std::mutex m_processing_mutex;
 	fvkSemaphoreBuffer<cv::Mat> *p_buffer;
-	std::function<void(cv::Mat&, const fvkThreadStats&)> m_emit_func;
+	std::function<void(cv::Mat&, const fvkThreadStats&)> m_video_output_func;
 
 	fvkImageProcessing m_ip;
 	fvkVideoWriter m_vr;

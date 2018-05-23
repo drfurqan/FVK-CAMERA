@@ -12,8 +12,8 @@ author:		Furqan Ullah (Post-doc, Ph.D.)
 website:    http://real3d.pk
 CopyRight:	All Rights Reserved
 
-purpose:	class that creates a thread for grabbing or capturing frames from the
-device.
+purpose:	class to create a camera capturing thread. This class can be further
+extended in order to make any camera device compatible to this library.
 
 /**********************************************************************************
 *	Fast Visualization Kit (FVK)
@@ -52,10 +52,11 @@ public:
 	auto getFrame() -> cv::Mat override;
 
 	// Description:
-	// Set the emit function to get the average frames per second of this thread
-	// as well as the total number of frames that has been processed/passed.
-	// The input function should be capable of handling multi-threading updating.
-	void setFrameStatisticsSlot(const std::function<void(const fvkThreadStats&)> _f) { m_emit_stats = _f; }
+	// Set a GUI function to display the grabbed frame.
+	// The display function should be capable of handling multi-threading updating.
+	// The second argument which is fvkThreadStats will give you statistics of the thread,
+	// such as Average frames per second (FPS) and number of processed frames.
+	void setVideoOutput(const std::function<void(cv::Mat&, const fvkThreadStats&)> _f);
 
 	// Description:
 	// Function to set a pointer to semaphore buffer which does synchronization between capturing and processing threads.
@@ -93,7 +94,7 @@ protected:
 	// Description:
 	// protected member variables.
 	fvkSemaphoreBuffer<cv::Mat> *p_buffer;
-	std::function<void(const fvkThreadStats&)> m_emit_stats;
+	std::function<void(cv::Mat&, const fvkThreadStats&)> m_video_output_func;
 	std::mutex m_syncmutex;
 	std::mutex m_repeatmutex;
 	std::atomic<bool> m_sync_proc_thread;

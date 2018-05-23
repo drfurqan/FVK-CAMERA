@@ -8,7 +8,8 @@ author:		Furqan Ullah (Post-doc, Ph.D.)
 website:    http://real3d.pk
 CopyRight:	All Rights Reserved
 
-purpose:	Class to create a thread for capturing frames from OpenCV camera.
+purpose:	class to create a camera capturing thread. This class can be further
+extended in order to make any camera device compatible to this library.
 
 /**********************************************************************************
 *	Fast Visualization Kit (FVK)
@@ -27,6 +28,7 @@ fvkCameraThread::fvkCameraThread(const int _device_index, const cv::Size& _frame
 	fvkThread(),
 	fvkCameraThreadAbstract(),
 	p_buffer(_buffer),
+	m_video_output_func(nullptr),
 	m_sync_proc_thread(false),
 	m_rect(cv::Rect(0, 0, 10, 10))
 {
@@ -51,7 +53,13 @@ void fvkCameraThread::run()
 		if (r.width > f.cols || r.height > f.rows)
 			return;
 
-		p_buffer->put(cv::Mat(f, r), m_sync_proc_thread);
+		auto frame = cv::Mat(f, r);
+
+		p_buffer->put(frame, m_sync_proc_thread);
+
+		// emit signal to inform to image box for the new frame.
+		if (m_video_output_func)
+			m_video_output_func(frame, m_avgfps.getStats());
 	}
 	else
 	{
@@ -59,9 +67,11 @@ void fvkCameraThread::run()
 		std::cout << "Camera # " << m_device_index << " could not grab the frame.\n";
 		#endif // _DEBUG
 	}
+}
 
-	if (m_emit_stats)
-		m_emit_stats(m_avgfps.getStats());
+void fvkCameraThread::setVideoOutput(const std::function<void(cv::Mat&, const fvkThreadStats&)> _f)
+{
+	m_video_output_func = std::move(_f);
 }
 
 auto fvkCameraThread::getFrame() -> cv::Mat

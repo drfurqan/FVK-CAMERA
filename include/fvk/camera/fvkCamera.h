@@ -154,10 +154,11 @@ public:
 	auto getFrameNumber() const -> int;
 
 	// Description:
-	// Function to set the emit function to display the captured frames.
-	// The display GUI widgets should handle multi-threading updatings.
-	// fvkThreadStats will give average frames per second and number of processed frames.
-	void setFrameViewerSlot(const std::function<void(cv::Mat&, const fvkThreadStats&)> _f) const;
+	// Set a GUI function to display the grabbed frame.
+	// The display function should be capable of handling multi-threading updating.
+	// The second argument which is fvkThreadStats will give you statistics of the Processing thread,
+	// such as Average frames per second (FPS) and number of processed frames.
+	void setVideoOutput(const std::function<void(cv::Mat&, const fvkThreadStats&)> _f) const;
 
 	// Description:
 	// Function that saves the current image frame

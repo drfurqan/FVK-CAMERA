@@ -261,10 +261,10 @@ auto fvkCamera::getFrameOutputLocation() const -> std::string
 	if (!p_pt) return std::string();
 	return p_pt->getFrameOutputLocation();
 }
-void fvkCamera::setFrameViewerSlot(const std::function<void(cv::Mat&, const fvkThreadStats&)> _f) const
+void fvkCamera::setVideoOutput(const std::function<void(cv::Mat&, const fvkThreadStats&)> _f) const
 { 
 	if (!p_pt) return;
-	p_pt->setFrameViewerSlot(_f);
+	p_pt->setVideoOutput(_f);
 }
 auto fvkCamera::getAvgFps() const -> int
 {
@@ -278,7 +278,7 @@ auto fvkCamera::getFrameNumber() const -> int
 }
 void fvkCamera::setVideoFileLocation(const std::string& _filename) const
 {
-	auto ocv = dynamic_cast<fvkCameraThreadOpenCV*>(p_ct);
+	const auto ocv = dynamic_cast<fvkCameraThreadOpenCV*>(p_ct);
 	if (ocv) ocv->setVideoFileLocation(_filename);
 }
 auto fvkCamera::getVideoFileLocation() const -> std::string
@@ -289,7 +289,7 @@ auto fvkCamera::getVideoFileLocation() const -> std::string
 }
 void fvkCamera::repeat(const bool _b) const
 {
-	auto ocv = dynamic_cast<fvkCameraThreadOpenCV*>(p_ct);
+	const auto ocv = dynamic_cast<fvkCameraThreadOpenCV*>(p_ct);
 	if (ocv) ocv->repeat(_b);
 }
 auto fvkCamera::repeat() const -> bool
@@ -301,7 +301,7 @@ auto fvkCamera::repeat() const -> bool
 
 void fvkCamera::openConfigurationDialog()
 {
-	auto ocv = dynamic_cast<fvkCameraThreadOpenCV*>(p_ct);
+	const auto ocv = dynamic_cast<fvkCameraThreadOpenCV*>(p_ct);
 	if (ocv) ocv->openConfigurationDialog();
 }
 
