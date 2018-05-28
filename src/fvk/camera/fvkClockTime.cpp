@@ -24,6 +24,7 @@ purpose:	Class for elapsed time using std::chrono.
 #include <sstream>
 #include <ctime>
 #include <iomanip>
+#include <thread>
 
 using namespace R3D;
 

@@ -11,7 +11,7 @@ author:		Furqan Ullah (Post-doc, Ph.D.)
 website:    http://real3d.pk
 CopyRight:	All Rights Reserved
 
-purpose:	basic semaphore like QSemaphore functionalities.
+purpose:	class for a basic semaphore like functionalities.
 
 /**********************************************************************************
 *	Fast Visualization Kit (FVK)
@@ -45,37 +45,26 @@ public:
 	fvkSemaphore& operator=(fvkSemaphore&&) = delete;
 
 	// Description:
-	// It blocks the thread, until get notify by calling notify() method.
+	// Function that blocks the thread, until get notify by calling notify() method.
 	void wait();
 	// Description:
-	// It does not block the thread, but wait until get notify by calling notify() method and returns true.
+	// This function does not block the thread, but wait until get notify by calling notify() method and returns true.
 	auto try_wait() -> bool;
 	// Description:
-	// It notifies to wait() method to unblock the thread, and also
+	// Function that notifies to wait() method to unblock the thread, and also
 	// it notifies to try_wait() method to unblock as well and return true to proceed.
 	void notify();
 
-	template <typename _Rep, typename _Period>
-	auto wait_for(const std::chrono::duration<_Rep, _Period>& _d)
-	{
-		std::unique_lock<std::mutex> lock{ m_mutex };
-		auto finished = m_cv.wait_for(lock, _d, [&] { return m_count > 0; });
-		if (finished)
-			--m_count;
-		return finished;
-	}
+	// Description:
+	// Function that blocks the thread for the given milliseconds.
+	auto wait_for(const unsigned long _milliseconds) -> bool;
+	// Description:
+	// Function that blocks the thread from now to until the given milliseconds.
+	auto wait_until(const unsigned long _milliseconds) -> bool;
 
-	template <typename _Clock, typename _Duration>
-	auto wait_until(const std::chrono::time_point<_Clock, _Duration>& _t)
-	{
-		std::unique_lock<std::mutex> lock{ m_mutex };
-		auto finished = m_cv.wait_until(lock, _t, [&] { return m_count > 0; });
-		if (finished)
-			--m_count;
-		return finished;
-	}
-
-	auto native_handle() { return m_cv.native_handle(); }
+	// Description:
+	// Function that returns the condition variable native handle.
+	auto native_handle() -> std::condition_variable::native_handle_type;
 
 protected:
 	std::mutex m_mutex;

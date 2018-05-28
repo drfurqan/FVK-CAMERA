@@ -28,16 +28,20 @@ purpose:	Thread-safe multi-threaded camera class for any type of camera device.
 using namespace R3D;
 
 fvkCamera::fvkCamera(const int _device_index, const cv::Size& _frame_size, const int _api) :
-p_stdct(nullptr),
-p_stdpt(nullptr)
+	p_stdct(nullptr),
+	p_stdpt(nullptr),
+	m_ct_handle(nullptr),
+	m_pt_handle(nullptr)
 {
 	const auto b = new fvkSemaphoreBuffer<cv::Mat>();
 	p_ct = new fvkCameraThreadOpenCV(_device_index, _frame_size, _api, b);
 	p_pt = new fvkProcessingThread(_device_index, this, b);
 }
 fvkCamera::fvkCamera(const std::string& _video_file, const cv::Size& _frame_size, const int _api) :
-p_stdct(nullptr),
-p_stdpt(nullptr)
+	p_stdct(nullptr),
+	p_stdpt(nullptr),
+	m_ct_handle(nullptr),
+	m_pt_handle(nullptr)
 {
 	const auto b = new fvkSemaphoreBuffer<cv::Mat>();
 	p_ct = new fvkCameraThreadOpenCV(_video_file, _frame_size, _api, b);
@@ -46,7 +50,9 @@ p_stdpt(nullptr)
 
 fvkCamera::fvkCamera(fvkCameraThread* _ct) :
 	p_stdct(nullptr),
-	p_stdpt(nullptr)
+	p_stdpt(nullptr),
+	m_ct_handle(nullptr),
+	m_pt_handle(nullptr)
 {
 	const auto b = new fvkSemaphoreBuffer<cv::Mat>();
 	p_ct = _ct;
@@ -57,6 +63,8 @@ fvkCamera::fvkCamera(fvkCameraThread* _ct) :
 fvkCamera::fvkCamera(fvkCameraThread* _ct, fvkProcessingThread* _pt) :
 	p_stdct(nullptr),
 	p_stdpt(nullptr),
+	m_ct_handle(nullptr),
+	m_pt_handle(nullptr),
 	p_ct(_ct),
 	p_pt(_pt)
 {
@@ -174,11 +182,13 @@ auto fvkCamera::start() -> bool
 	if (p_stdct)
 		delete p_stdct;
 	p_stdct = new std::thread([&]() { p_ct->start(); });
+	m_ct_handle = p_stdct->native_handle();	// must save native handle before calling join() or detach().
 	p_stdct->detach();
 
 	if (p_stdpt)
 		delete p_stdpt;
 	p_stdpt = new std::thread([&]() { p_pt->start(); });
+	m_ct_handle = p_stdpt->native_handle();	// must save native handle before calling join() or detach().
 	p_stdpt->detach();
 
 	return true;

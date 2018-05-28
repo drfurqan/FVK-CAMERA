@@ -74,10 +74,10 @@ class FVK_EXPORT fvkThread
 public:
 	// Description:
 	// Default constructor to create and initializes the data.
-	// Default thread delay is 33 milliseconds.
+	// Default thread delay is 30 milliseconds.
 	fvkThread();
 	// Description:
-	// Default destructor that will stop the thread.
+	// Default destructor.
 	virtual ~fvkThread() = default;
 
 	// Description:
@@ -114,11 +114,10 @@ public:
 	// Description:
 	// Function to set the time delay in milliseconds which makes 
 	// delay this thread for the specified time.
-	// Default delay is 33 milliseconds.
+	// Default delay is 30 milliseconds.
 	void setDelay(const int _delay_msec);
 	// Description:
-	// Function to get the frame delay.
-	// Default delay for *.avi video file is 1000.0 / getFps(). (only for videos)
+	// Function to get the time delay in milliseconds.
 	auto getDelay() -> int;
 
 	// Description:
@@ -131,10 +130,13 @@ public:
 	// Description:
 	// Function that returns the total number of processed or passed frames.
 	auto getFrameNumber() -> int;
+
 	// Description:
-	// Function that resets the average-frame-per-second and 
-	// total-number-of-processed-frames to zero(0).
-	void resetStats();
+	// Function that sleeps a thread for specified time (a thread in which this function is called).
+	static void sleep(const unsigned long _milliseconds);
+	// Description:
+	// Function that sleeps a thread till specified time point (a thread in which this function is called).
+	static void sleep_until(const unsigned long _milliseconds);
 
 protected:
 	fvkAverageFps m_avgfps;

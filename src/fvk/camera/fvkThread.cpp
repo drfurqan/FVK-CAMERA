@@ -104,7 +104,7 @@ void fvkThread::start(const std::function<void()> _func)
 		// update stats.
 		m_statsmutex.lock();
 		m_avgfps.update();
-		std::this_thread::sleep_for(std::chrono::milliseconds(m_delay));
+		sleep(m_delay);
 		m_statsmutex.unlock();
 	}
 }
@@ -152,11 +152,6 @@ auto fvkThread::getFrameNumber() -> int
 	std::lock_guard<std::mutex> lk(m_statsmutex);
 	return m_avgfps.getStats().nframes;
 }
-void fvkThread::resetStats()
-{
-	std::lock_guard<std::mutex> lk(m_statsmutex);
-	m_avgfps.getStats().nframes = 0;
-}
 
 void fvkThread::setDelay(const int _delay_msec)
 {
@@ -167,4 +162,13 @@ auto fvkThread::getDelay() -> int
 {
 	std::lock_guard<std::mutex> lk(m_statsmutex);
 	return m_delay;
+}
+
+void fvkThread::sleep(const unsigned long _milliseconds)
+{
+	std::this_thread::sleep_for(std::chrono::milliseconds(_milliseconds));
+}
+void fvkThread::sleep_until(const unsigned long _milliseconds)
+{
+	std::this_thread::sleep_until(std::chrono::system_clock::now() + std::chrono::milliseconds(_milliseconds));
 }

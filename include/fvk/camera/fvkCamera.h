@@ -220,10 +220,10 @@ public:
 
 	// Description:
 	// Function to get a pointer to camera/capturing thread handle.
-	auto getCamThreadHandle() const { return p_stdct->native_handle(); }
+	auto getCamThreadHandle() const { return m_ct_handle; }
 	// Description:
 	// Function to get a pointer to camera/frame processing thread handle.
-	auto getProcThreadHandle() const { return p_stdpt->native_handle(); }
+	auto getProcThreadHandle() const { return m_pt_handle; }
 
 protected:
 	// Description:
@@ -231,10 +231,13 @@ protected:
 	// to process the captured frame.
 	void present(cv::Mat& _frame) override;
 
-	fvkCameraThread *p_ct;
-	fvkProcessingThread *p_pt;
-	std::thread *p_stdct;
-	std::thread *p_stdpt;
+	fvkCameraThread* p_ct;			// camera runs on capturing thread.
+	fvkProcessingThread* p_pt;		// captured frame processing runs on processing thread.
+
+	std::thread* p_stdct;			// thread for capturing device.
+	std::thread* p_stdpt;			// thread for captured frame processing.
+	void* m_ct_handle;				// native handle for capturing thread.
+	void* m_pt_handle;				// native handle for processing thread.
 };
 
 }

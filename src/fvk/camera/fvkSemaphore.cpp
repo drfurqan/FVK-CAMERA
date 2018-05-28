@@ -7,7 +7,7 @@ author:		Furqan Ullah (Post-doc, Ph.D.)
 website:    http://real3d.pk
 CopyRight:	All Rights Reserved
 
-purpose:	basic semaphore like QSemaphore functionalities.
+purpose:	class for a basic semaphore like functionalities.
 
 /**********************************************************************************
 *	Fast Visualization Kit (FVK)
@@ -26,13 +26,6 @@ fvkSemaphore::fvkSemaphore(const int _count) : m_count{ _count }
 {
 }
 
-void fvkSemaphore::notify()
-{
-	std::lock_guard<std::mutex> lock{ m_mutex };
-	++m_count;
-	m_cv.notify_one();
-}
-
 void fvkSemaphore::wait()
 {
 	std::unique_lock<std::mutex> lock{ m_mutex };
@@ -49,4 +42,34 @@ auto fvkSemaphore::try_wait() -> bool
 		return true;
 	}
 	return false;
+}
+
+void fvkSemaphore::notify()
+{
+	std::lock_guard<std::mutex> lock{ m_mutex };
+	++m_count;
+	m_cv.notify_one();
+}
+
+auto fvkSemaphore::wait_for(const unsigned long _milliseconds) -> bool
+{
+	std::unique_lock<std::mutex> lock{ m_mutex };
+	auto finished = m_cv.wait_for(lock, std::chrono::milliseconds(_milliseconds), [&] { return m_count > 0; });
+	if (finished)
+		--m_count;
+	return finished;
+}
+
+auto fvkSemaphore::wait_until(const unsigned long _milliseconds) -> bool
+{
+	std::unique_lock<std::mutex> lock{ m_mutex };
+	auto finished = m_cv.wait_until(lock, std::chrono::system_clock::now() + std::chrono::milliseconds(_milliseconds), [&] { return m_count > 0; });
+	if (finished)
+		--m_count;
+	return finished;
+}
+
+auto fvkSemaphore::native_handle() ->std::condition_variable::native_handle_type
+{
+	return m_cv.native_handle();
 }
