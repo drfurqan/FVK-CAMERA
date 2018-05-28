@@ -218,6 +218,13 @@ public:
 	// Function to get a pointer to camera/frame processing thread.
 	auto getProcThread() const { return p_pt; }
 
+	// Description:
+	// Function to get a pointer to camera/capturing thread handle.
+	auto getCamThreadHandle() const { return p_stdct->native_handle(); }
+	// Description:
+	// Function to get a pointer to camera/frame processing thread handle.
+	auto getProcThreadHandle() const { return p_stdpt->native_handle(); }
+
 protected:
 	// Description:
 	// Virtual function that is expected to be overridden in the derived class in order
