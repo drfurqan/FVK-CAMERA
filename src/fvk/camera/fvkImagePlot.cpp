@@ -454,6 +454,14 @@ fvkPlotManager::fvkPlotManager() :
 {
 }
 
+fvkPlotManager::~fvkPlotManager()
+{
+	for (auto &i : figure_list)
+	{
+		i->clear();
+		delete i;
+	}
+}
 // search a named window, return null if not found.
 fvkPlotFigure* fvkPlotManager::findFigure(const std::string& _name)
 {

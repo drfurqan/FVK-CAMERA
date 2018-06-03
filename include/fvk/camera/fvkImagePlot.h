@@ -39,6 +39,9 @@ public:
 	// Default constructor to initiate the object.
 	fvkPlotManager();
 	// Description:
+	// Destructor that destorys data.
+	~fvkPlotManager();
+	// Description:
 	// Function to clear the data.
 	void clear(const std::string& _fig_name);
 
