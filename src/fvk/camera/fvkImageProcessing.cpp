@@ -578,10 +578,30 @@ void fvkImageProcessing::imageProcessing(cv::Mat& _frame)
 
 	if (m_rotangle != 0)
 	{
-		auto cen = cv::Point2d(static_cast<double>(_frame.cols) / 2.0, static_cast<double>(_frame.rows) / 2.0);
-		auto rot_mat = cv::getRotationMatrix2D(cen, m_rotangle, 1.0);
 		cv::Mat m;
-		cv::warpAffine(_frame, m, rot_mat, _frame.size(), cv::InterpolationFlags::INTER_LINEAR);
+		if (m_rotangle == 90.)
+		{
+			cv::transpose(_frame, m);
+			cv::flip(m, m, 0);
+		}
+		else if (m_rotangle == 180.)
+		{
+			cv::flip(_frame, m, -1);
+		}
+		else if (m_rotangle == 270.)
+		{
+			cv::transpose(_frame, m);
+			cv::flip(m, m, 1);
+		}
+		else
+		{
+			const auto cen = cv::Point2d(static_cast<double>(_frame.cols) / 2.0, static_cast<double>(_frame.rows) / 2.0);
+			auto rot_mat = cv::getRotationMatrix2D(cen, m_rotangle, 1.0);
+			const auto bbox = cv::RotatedRect(cen, _frame.size(), m_rotangle).boundingRect();
+			rot_mat.at<double>(0, 2) += bbox.width / 2.0 - cen.x;
+			rot_mat.at<double>(1, 2) += bbox.height / 2.0 - cen.y;
+			cv::warpAffine(_frame, m, rot_mat, _frame.size(), cv::InterpolationFlags::INTER_LINEAR);
+		}
 		_frame = m;
 	}
 
