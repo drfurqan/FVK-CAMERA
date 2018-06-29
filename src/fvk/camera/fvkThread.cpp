@@ -120,16 +120,11 @@ auto fvkThread::active() const -> bool
 
 void fvkThread::pause(const bool _b)
 {
-	std::lock_guard<std::mutex> lk(m_pausemutex);
-	if (_b)
 	{
-		m_ispause = true;
+		std::lock_guard<std::mutex> lk(m_pausemutex);
+		m_ispause = _b;
 	}
-	else
-	{
-		m_ispause = false;
-		m_pausecond.notify_one();
-	}
+	m_pausecond.notify_one();
 }
 auto fvkThread::pause() -> bool
 {
