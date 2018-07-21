@@ -1,6 +1,6 @@
 #pragma once
-#ifndef fvkExport_h__
-#define fvkExport_h__
+#ifndef fvkCameraExport_h__
+#define fvkCameraExport_h__
 
 /*********************************************************************************
 created:	2017/03/20   02:12PM
@@ -22,15 +22,15 @@ purpose:	Export support for DLL and LIB files.
 * If not, please contact Dr. Furqan Ullah immediately:
 **********************************************************************************/
 
-#  if defined(FVK_DLL)
-#    ifdef FVK_LIBRARY
-#      define FVK_EXPORT	__declspec(dllexport)
+#  if defined(FVK_CAMERA_DLL)
+#    ifdef FVK_CAMERA_LIBRARY
+#      define FVK_CAMERA_EXPORT	__declspec(dllexport)
 #    else
-#      define FVK_EXPORT	__declspec(dllimport)
-#    endif /* FVK_LIBRARY */
+#      define FVK_CAMERA_EXPORT	__declspec(dllimport)
+#    endif /* FVK_CAMERA_LIBRARY */
 #  else
-#    define FVK_EXPORT
-#  endif /* FVK_DLL */
+#    define FVK_CAMERA_EXPORT
+#  endif /* FVK_CAMERA_DLL */
 
 
-#endif // fvkExport_h__
+#endif // fvkCameraExport_h__

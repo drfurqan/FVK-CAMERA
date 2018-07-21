@@ -23,14 +23,14 @@ purpose:	OpenCV camera class interface.
 * If not, please contact Dr. Furqan Ullah immediately:
 **********************************************************************************/
 
-#include "fvkExport.h"
+#include "fvkCameraExport.h"
 
 #include <opencv2/opencv.hpp>
 
 namespace R3D
 {
 
-class FVK_EXPORT fvkCameraThreadAbstract
+class FVK_CAMERA_EXPORT fvkCameraThreadAbstract
 {
 
 public:

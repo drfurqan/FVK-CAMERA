@@ -30,7 +30,7 @@ purpose:	class to do some basic image processing.
 namespace R3D
 {
 
-class FVK_EXPORT fvkImageProcessing
+class FVK_CAMERA_EXPORT fvkImageProcessing
 {
 public:
 	// Description:

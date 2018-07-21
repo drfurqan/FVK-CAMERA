@@ -22,7 +22,7 @@ purpose:	Class to detect face in the specified frame.
 * If not, please contact Dr. Furqan Ullah immediately:
 **********************************************************************************/
 
-#include "fvkExport.h"
+#include "fvkCameraExport.h"
 
 #include <opencv2/core.hpp>
 #include <opencv2/objdetect/objdetect.hpp>
@@ -31,7 +31,7 @@ purpose:	Class to detect face in the specified frame.
 namespace R3D
 {
 
-class FVK_EXPORT fvkFaceDetector
+class FVK_CAMERA_EXPORT fvkFaceDetector
 {
 public:
 	// Description:
@@ -105,7 +105,7 @@ private:
 	double m_template_matching_max_duration;
 };
 
-class FVK_EXPORT fvkSimpleFaceDetector
+class FVK_CAMERA_EXPORT fvkSimpleFaceDetector
 {
 public:
 	// Description:

@@ -22,7 +22,7 @@ purpose:	Class to draw RGB plot of an image using OpenCV.
 * If not, please contact Dr. Furqan Ullah immediately:
 **********************************************************************************/
 
-#include "fvkExport.h"
+#include "fvkCameraExport.h"
 
 #include <opencv2/opencv.hpp>
 
@@ -32,7 +32,7 @@ class fvkPlotSeries;
 namespace R3D
 {
 
-class FVK_EXPORT fvkPlotManager
+class FVK_CAMERA_EXPORT fvkPlotManager
 {
 public:
 	// Description:
@@ -84,7 +84,7 @@ private:
 	fvkPlotSeries *active_series;
 };
 
-class FVK_EXPORT fvkImagePlot
+class FVK_CAMERA_EXPORT fvkImagePlot
 {
 public:
 	// Description:

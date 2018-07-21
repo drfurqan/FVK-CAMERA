@@ -23,7 +23,7 @@ purpose:	useful functions for video devices.
 * If not, please contact Dr. Furqan Ullah immediately:
 **********************************************************************************/
 
-#include "fvkExport.h"
+#include "fvkCameraExport.h"
 
 #include <string>
 #include <vector>
@@ -31,7 +31,7 @@ purpose:	useful functions for video devices.
 namespace R3D
 {
 
-class FVK_EXPORT fvkCameraInfo
+class FVK_CAMERA_EXPORT fvkCameraInfo
 {
 
 public:

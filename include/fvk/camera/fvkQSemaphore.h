@@ -22,7 +22,7 @@ purpose:	basic semaphore like QSemaphore functionalities.
 * If not, please contact Dr. Furqan Ullah immediately:
 **********************************************************************************/
 
-#include "fvkExport.h"
+#include "fvkCameraExport.h"
 
 #include <condition_variable>
 #include <mutex>
@@ -30,7 +30,7 @@ purpose:	basic semaphore like QSemaphore functionalities.
 namespace R3D
 {
 
-class FVK_EXPORT fvkQSemaphore
+class FVK_CAMERA_EXPORT fvkQSemaphore
 {
 public:
 	// Description:

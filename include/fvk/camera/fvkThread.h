@@ -57,7 +57,7 @@ std::thread th(std::ref(task), any_function);
 * If not, please contact Dr. Furqan Ullah immediately:
 **********************************************************************************/
 
-#include "fvkExport.h"
+#include "fvkCameraExport.h"
 #include "fvkAverageFps.h"
 
 #include <atomic>
@@ -68,7 +68,7 @@ std::thread th(std::ref(task), any_function);
 namespace R3D
 {
 
-class FVK_EXPORT fvkThread
+class FVK_CAMERA_EXPORT fvkThread
 {
 
 public:

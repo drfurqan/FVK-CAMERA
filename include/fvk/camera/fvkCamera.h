@@ -32,7 +32,7 @@ Both threads are synchronized with semaphore methodology.
 namespace R3D
 {
 
-class FVK_EXPORT fvkCameraAbstract
+class FVK_CAMERA_EXPORT fvkCameraAbstract
 {
 public:
 	// Description:
@@ -45,7 +45,7 @@ public:
 	virtual void present(cv::Mat& _frame) = 0;
 };
 
-class FVK_EXPORT fvkCamera : public fvkCameraAbstract
+class FVK_CAMERA_EXPORT fvkCamera : public fvkCameraAbstract
 {
 
 public:

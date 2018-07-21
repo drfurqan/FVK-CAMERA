@@ -41,7 +41,7 @@ namespace R3D
 {
 
 template <typename _T>
-class FVK_EXPORT fvkSemaphoreBuffer
+class FVK_CAMERA_EXPORT fvkSemaphoreBuffer
 {
 public:
 	fvkSemaphoreBuffer() : m_sema_put(1), m_sema_get(0)

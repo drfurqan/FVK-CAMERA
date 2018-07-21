@@ -24,7 +24,7 @@ using std::chrono.
 * If not, please contact Dr. Furqan Ullah immediately:
 **********************************************************************************/
 
-#include "fvkExport.h"
+#include "fvkCameraExport.h"
 
 #include <chrono>
 #include <string>
@@ -32,7 +32,7 @@ using std::chrono.
 namespace R3D
 {
 
-class FVK_EXPORT fvkClockTime
+class FVK_CAMERA_EXPORT fvkClockTime
 {
 public:
 	// Usage Example:

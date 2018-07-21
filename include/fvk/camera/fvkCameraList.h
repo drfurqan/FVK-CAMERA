@@ -23,7 +23,7 @@ find features.
 * If not, please contact Dr. Furqan Ullah immediately:
 **********************************************************************************/
 
-#include "fvkExport.h"
+#include "fvkCameraExport.h"
 
 #include <opencv2/opencv.hpp>
 
@@ -34,7 +34,7 @@ namespace R3D
 {
 
 template <typename CAMERA>
-class FVK_EXPORT fvkCameraList
+class FVK_CAMERA_EXPORT fvkCameraList
 {
 
 public:

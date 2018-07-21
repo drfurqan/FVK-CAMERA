@@ -22,7 +22,7 @@ purpose:	class for a basic semaphore like functionalities.
 * If not, please contact Dr. Furqan Ullah immediately:
 **********************************************************************************/
 
-#include "fvkExport.h"
+#include "fvkCameraExport.h"
 
 #include <condition_variable>
 #include <mutex>
@@ -30,7 +30,7 @@ purpose:	class for a basic semaphore like functionalities.
 namespace R3D
 {
 
-class FVK_EXPORT fvkSemaphore
+class FVK_CAMERA_EXPORT fvkSemaphore
 {
 public:
 	// Description:

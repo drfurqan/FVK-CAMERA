@@ -23,14 +23,14 @@ purpose:	class to create handle opencv video camera.
 * If not, please contact Dr. Furqan Ullah immediately:
 **********************************************************************************/
 
-#include "fvkExport.h"
+#include "fvkCameraExport.h"
 
 #include "fvkCameraThread.h"
 
 namespace R3D
 {
 
-class FVK_EXPORT fvkCameraThreadOpenCV : public fvkCameraThread
+class FVK_CAMERA_EXPORT fvkCameraThreadOpenCV : public fvkCameraThread
 {
 
 public:

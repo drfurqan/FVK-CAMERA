@@ -29,7 +29,7 @@ purpose:	class to compute the average frames per second.
 namespace R3D
 {
 
-class FVK_EXPORT fvkThreadStats
+class FVK_CAMERA_EXPORT fvkThreadStats
 {
 public:
 	fvkThreadStats() : 
@@ -41,7 +41,7 @@ public:
 	int nframes;	// total number of processed frames.
 };
 
-class FVK_EXPORT fvkAverageFps
+class FVK_CAMERA_EXPORT fvkAverageFps
 {
 
 public:

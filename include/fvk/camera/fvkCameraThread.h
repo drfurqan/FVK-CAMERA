@@ -31,7 +31,7 @@ extended in order to make any camera device compatible to this library.
 namespace R3D
 {
 
-class FVK_EXPORT fvkCameraThread : public fvkThread, public fvkCameraThreadAbstract
+class FVK_CAMERA_EXPORT fvkCameraThread : public fvkThread, public fvkCameraThreadAbstract
 {
 public:
 	// Description:

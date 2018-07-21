@@ -34,7 +34,7 @@ namespace R3D
 
 class fvkCameraAbstract;
 
-class FVK_EXPORT fvkProcessingThread : public fvkThread
+class FVK_CAMERA_EXPORT fvkProcessingThread : public fvkThread
 {
 public:
 	// Description:

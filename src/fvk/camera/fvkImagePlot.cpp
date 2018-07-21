@@ -29,7 +29,7 @@ using namespace R3D;
 /************************************************************************/
 /* A curve                                                              */
 /************************************************************************/
-class FVK_EXPORT fvkPlotSeries
+class FVK_CAMERA_EXPORT fvkPlotSeries
 {
 public:
 	fvkPlotSeries();
@@ -51,7 +51,7 @@ public:
 /************************************************************************/
 /* A figure comprises of several curves                                 */
 /************************************************************************/
-class FVK_EXPORT fvkPlotFigure
+class FVK_CAMERA_EXPORT fvkPlotFigure
 {
 
 public:

@@ -23,14 +23,14 @@ purpose:	Thread safe class to create a video file using OpenCV video writer.
 * If not, please contact Dr. Furqan Ullah immediately:
 **********************************************************************************/
 
-#include "fvkExport.h"
+#include "fvkCameraExport.h"
 
 #include "opencv2/opencv.hpp"
 
 namespace R3D
 {
 
-class FVK_EXPORT fvkVideoWriter
+class FVK_CAMERA_EXPORT fvkVideoWriter
 {
 
 public:
