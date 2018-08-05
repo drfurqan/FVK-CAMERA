@@ -61,7 +61,7 @@ int main()
 	};
 
 	// set the above create function in the camera.
-	cam.setFrameViewerSlot(f);
+	cam.setVideoOutput(f);
 
 	// fvkCamera class also gives some basic image processing filters.
 	// Bilateral filter denoising the grabbed image with the kernel size 9.

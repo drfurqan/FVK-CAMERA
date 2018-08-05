@@ -63,7 +63,7 @@ ${CMAKE_SOURCE_DIR}/include/fvk/camera/fvkCameraThread.h
 ${CMAKE_SOURCE_DIR}/include/fvk/camera/fvkCameraThreadAbstract.h
 ${CMAKE_SOURCE_DIR}/include/fvk/camera/fvkCameraThreadOpenCV.h
 ${CMAKE_SOURCE_DIR}/include/fvk/camera/fvkClockTime.h
-${CMAKE_SOURCE_DIR}/include/fvk/camera/fvkExport.h
+${CMAKE_SOURCE_DIR}/include/fvk/camera/fvkCameraExport.h
 ${CMAKE_SOURCE_DIR}/include/fvk/camera/fvkFaceDetector.h
 ${CMAKE_SOURCE_DIR}/include/fvk/camera/fvkImagePlot.h
 ${CMAKE_SOURCE_DIR}/include/fvk/camera/fvkQSemaphore.h

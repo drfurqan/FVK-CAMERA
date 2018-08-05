@@ -60,9 +60,8 @@ int main()
 	// create a window using OpenCV.
 	cv::namedWindow("FVK Camera");
 
-	// using std::bing to bind the given show() function with the camera thread.
-	const auto f = std::bind(show, std::placeholders::_1, std::placeholders::_2);
-	cam.setFrameViewerSlot(f);
+	// using show() function with the camera thread.
+	cam.setVideoOutput(std::move(show));
 
 	// OpenCV event loop that will prevent to exit the main loop.
 	cv::waitKey(0);
