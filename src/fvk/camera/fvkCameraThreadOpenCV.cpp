@@ -47,7 +47,7 @@ fvkCameraThreadOpenCV::~fvkCameraThreadOpenCV()
 
 auto fvkCameraThreadOpenCV::open(const int _device_index) -> bool
 {
-	const auto b = m_cam.open(_device_index);
+	const auto b = m_cam.open(_device_index, m_videocapture_api);
 	if (!b) return false;
 
 	if (m_frame_size.width != -1)
@@ -74,12 +74,12 @@ auto fvkCameraThreadOpenCV::open(const int _device_index) -> bool
 
 	return true;
 }
-auto fvkCameraThreadOpenCV::open(const std::string& _file_name, const int _api) -> bool
+auto fvkCameraThreadOpenCV::open(const std::string& _file_name) -> bool
 {
 	if (_file_name.empty())
 		return false;
 
-	if (m_cam.open(_file_name, _api))
+	if (m_cam.open(_file_name, m_videocapture_api))
 	{
 		if (m_frame_size.width != -1)
 			m_cam.set(cv::CAP_PROP_FRAME_WIDTH, m_frame_size.width);
@@ -92,7 +92,6 @@ auto fvkCameraThreadOpenCV::open(const std::string& _file_name, const int _api) 
 		m_frame_size.height = static_cast<int>(m_cam.get(cv::CAP_PROP_FRAME_HEIGHT));
 
 		m_filepath = _file_name;
-		m_videocapture_api = _api;
 		setDelay(static_cast<int>(1000.0 / m_cam.get(cv::CAP_PROP_FPS)));	// delay between frames.
 
 		return true;
@@ -102,7 +101,7 @@ auto fvkCameraThreadOpenCV::open(const std::string& _file_name, const int _api) 
 }
 auto fvkCameraThreadOpenCV::open() -> bool
 {
-	if (open(m_filepath, m_videocapture_api))
+	if (open(m_filepath))
 		return true;
 
 	return open(m_device_index);

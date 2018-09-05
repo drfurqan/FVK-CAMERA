@@ -57,22 +57,6 @@ public:
 	virtual ~fvkCameraThreadOpenCV();
 
 	// Description:
-	// Function to connect the camera device.
-	// _device_index is the index of the opened video capturing device (i.e. a camera index).
-	// If there is a single camera connected, just pass 0.
-	// In case of multiple cameras, try to pass 1 or 2 or 3, so on...
-	// It returns true on success.
-	auto open(const int _device_index) -> bool override;
-	// Description:
-	// Function to connect the video file.
-	// _file_name is the name of the opened video file (eg. video.avi) or image sequence 
-	// (eg. img_%02d.jpg, which will read samples like img_00.jpg, img_01.jpg, img_02.jpg, ...)
-	// If the video file is specified before the calling open() function, then the specified video
-	// will be played, rather than camera device.
-	// _api is the preferred API for a capture object. for more info see (cv::VideoCaptureAPIs).
-	// It returns true on success.
-	virtual auto open(const std::string& _file_name, const int _api = cv::VideoCaptureAPIs::CAP_ANY) -> bool;
-	// Description:
 	// Function to connect the camera.
 	// If the video file is specified before the calling this function, then this method will try to 
 	// open the video file, otherwise it will open the camera device.
@@ -97,6 +81,10 @@ public:
 
 	// Description:
 	// Function to set the Video Capture preferred API for a capture object. for more info see (cv::VideoCaptureAPIs).
+	// For example:
+	// To use DirectShow, specify cv::CAP_DSHOW.
+	// To use CAP_FFMPEG, specify cv::CAP_FFMPEG.
+	// To use Microsoft Media Foundation, specify cv::CAP_MSMF. On Windows, this is the default API.
 	void setAPI(const int _api) { m_videocapture_api = _api; }
 	// Description:
 	// Function to get the Video Capture preferred API for a capture object. for more info see (cv::VideoCaptureAPIs).
@@ -254,6 +242,23 @@ public:
 	auto getTriggerDelay() const -> double;
 
 protected:
+	// Description:
+	// Function to connect the camera device.
+	// _device_index is the index of the opened video capturing device (i.e. a camera index).
+	// If there is a single camera connected, just pass 0.
+	// In case of multiple cameras, try to pass 1 or 2 or 3, so on...
+	// It returns true on success.
+	auto open(const int _device_index) -> bool override;
+	// Description:
+	// Function to connect the video file.
+	// _file_name is the name of the opened video file (eg. video.avi) or image sequence 
+	// (eg. img_%02d.jpg, which will read samples like img_00.jpg, img_01.jpg, img_02.jpg, ...)
+	// If the video file is specified before the calling open() function, then the specified video
+	// will be played, rather than camera device.
+	// _api is the preferred API for a capture object. for more info see (cv::VideoCaptureAPIs).
+	// It returns true on success.
+	virtual auto open(const std::string& _file_name) -> bool;
+
 	// Description:
 	// Overridden function to grab frames from the camera device or the video file.
 	// If the video file path is specified, then this function will try to grab frames from the video file,

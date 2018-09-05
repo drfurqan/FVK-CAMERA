@@ -199,6 +199,17 @@ public:
 	auto repeat() const -> bool;
 
 	// Description:
+	// Function to set the Video Capture preferred API for a capture object. for more info see (cv::VideoCaptureAPIs).
+	// For example:
+	// To use DirectShow, specify cv::CAP_DSHOW.
+	// To use CAP_FFMPEG, specify cv::CAP_FFMPEG.
+	// To use Microsoft Media Foundation, specify cv::CAP_MSMF. On Windows, this is the default API.
+	void setAPI(const int _api) const;
+	// Description:
+	// Function to get the Video Capture preferred API for a capture object. for more info see (cv::VideoCaptureAPIs).
+	auto getAPI() const -> int;
+
+	// Description:
 	// Calling this function opens a camera configuration dialog, if supported by the camera driver.
 	virtual void openConfigurationDialog();
 

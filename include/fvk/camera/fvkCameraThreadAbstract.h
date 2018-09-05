@@ -36,18 +36,11 @@ class FVK_CAMERA_EXPORT fvkCameraThreadAbstract
 public:
 	// Description:
 	// Default constructor to initialize the data members.
-	fvkCameraThreadAbstract();
+	fvkCameraThreadAbstract(const int _device_index, const cv::Size& _frame_size);
 	// Description:
 	// Default destructor that does nothing in this abstract class.
 	virtual ~fvkCameraThreadAbstract();
 
-	// Description:
-	// Function to connect the camera device.
-	//  _device_index is the index of the opened video capturing device (i.e. a camera index).
-	//  If there is a single camera connected, just pass 0.
-	//  In case of multiple cameras, try to pass 1 or 2 or 3, so on...
-	// It returns true on success.
-	virtual auto open(const int _device_index) -> bool = 0;
 	// Description:
 	// Function to connect the camera device.
 	// It returns true on success.
@@ -94,6 +87,14 @@ public:
 	auto getFrameSize() const { return m_frame_size; };
 
 protected:
+	// Description:
+	// Function to connect the camera device.
+	//  _device_index is the index of the opened video capturing device (i.e. a camera index).
+	//  If there is a single camera connected, just pass 0.
+	//  In case of multiple cameras, try to pass 1 or 2 or 3, so on...
+	// It returns true on success.
+	virtual auto open(const int _device_index) -> bool = 0;
+
 	// Description:
 	// Pure virtual function to be overridden to grab/capture the frame. 
 	virtual auto grab(cv::Mat& _frame) -> bool = 0;

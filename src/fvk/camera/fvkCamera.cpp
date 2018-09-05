@@ -308,7 +308,17 @@ auto fvkCamera::repeat() const -> bool
 	if (ocv) return ocv->repeat();
 	return false;
 }
-
+void fvkCamera::setAPI(const int _api) const
+{
+	const auto ocv = dynamic_cast<fvkCameraThreadOpenCV*>(p_ct);
+	if (ocv) ocv->setAPI(_api);
+}
+auto fvkCamera::getAPI() const -> int
+{
+	const auto ocv = dynamic_cast<fvkCameraThreadOpenCV*>(p_ct);
+	if (ocv) return ocv->getAPI();
+	return 0;
+}
 void fvkCamera::openConfigurationDialog()
 {
 	const auto ocv = dynamic_cast<fvkCameraThreadOpenCV*>(p_ct);

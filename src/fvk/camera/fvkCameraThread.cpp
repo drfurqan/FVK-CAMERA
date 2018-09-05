@@ -26,14 +26,12 @@ using namespace R3D;
 
 fvkCameraThread::fvkCameraThread(const int _device_index, const cv::Size& _frame_size, fvkSemaphoreBuffer<cv::Mat>* _buffer) :
 	fvkThread(),
-	fvkCameraThreadAbstract(),
+	fvkCameraThreadAbstract(_device_index, _frame_size),
 	p_buffer(_buffer),
 	m_video_output_func(nullptr),
 	m_sync_proc_thread(false),
 	m_rect(cv::Rect(0, 0, 10, 10))
 {
-	setDeviceIndex(_device_index);
-	setFrameSize(_frame_size);
 	setDelay(1000 / 33);	// delay between frames (30 fps).
 }
 
