@@ -57,7 +57,7 @@ public:
 	virtual ~fvkCameraThreadOpenCV();
 
 	// Description:
-	// Function to connect the camera.
+	// Function to connect the camera device or video file.
 	// If the video file is specified before the calling this function, then this method will try to 
 	// open the video file, otherwise it will open the camera device.
 	// It returns true on success.

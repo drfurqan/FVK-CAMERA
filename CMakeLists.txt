@@ -34,6 +34,7 @@ endif(OPTION_BUILD_EXAMPLES)
 set(CPPFILES
 ${CMAKE_SOURCE_DIR}/src/fvk/camera/fvkAverageFps.cpp
 ${CMAKE_SOURCE_DIR}/src/fvk/camera/fvkCamera.cpp
+${CMAKE_SOURCE_DIR}/src/fvk/camera/fvkCameraInfo.cpp
 ${CMAKE_SOURCE_DIR}/src/fvk/camera/fvkImageProcessing.cpp
 ${CMAKE_SOURCE_DIR}/src/fvk/camera/fvkProcessingThread.cpp
 ${CMAKE_SOURCE_DIR}/src/fvk/camera/fvkCameraThread.cpp
@@ -56,6 +57,7 @@ ${CMAKE_SOURCE_DIR}/src/fvk/camera/fvkVideoWriter.cpp
 set(HEADERFILES
 ${CMAKE_SOURCE_DIR}/include/fvk/camera/fvkAverageFps.h
 ${CMAKE_SOURCE_DIR}/include/fvk/camera/fvkCamera.h
+${CMAKE_SOURCE_DIR}/include/fvk/camera/fvkCameraInfo.h
 ${CMAKE_SOURCE_DIR}/include/fvk/camera/fvkCameraList.h
 ${CMAKE_SOURCE_DIR}/include/fvk/camera/fvkImageProcessing.h
 ${CMAKE_SOURCE_DIR}/include/fvk/camera/fvkProcessingThread.h
@@ -92,7 +94,7 @@ set (STATIC_FILES ${SHARED_FILES})
 if (WIN32)
 	add_library (${PROJECT_NAME} STATIC ${STATIC_FILES} ${HEADERFILES})
 else()
-	add_library (${PROJECT_NAME} SHARED ${STATIC_FILES} ${HEADERFILES})
+	add_library (${PROJECT_NAME} STATIC ${STATIC_FILES} ${HEADERFILES}) # no SHARED
 endif()
 
 # ------------------------------------------------------------------------------

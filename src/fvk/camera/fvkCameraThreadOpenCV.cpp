@@ -101,8 +101,10 @@ auto fvkCameraThreadOpenCV::open(const std::string& _file_name) -> bool
 }
 auto fvkCameraThreadOpenCV::open() -> bool
 {
-	if (open(m_filepath))
-		return true;
+	// if user specify the video file location then try to open the video file
+	// otherwise try to open the camera by camera device index.
+	if (!m_filepath.empty())
+		return open(m_filepath);
 
 	return open(m_device_index);
 }

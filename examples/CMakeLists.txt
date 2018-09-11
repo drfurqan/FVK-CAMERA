@@ -10,6 +10,7 @@ include_directories(${INCLUDE_DIR})
 set(LIBRARIES 
 ${PROJECT_NAME} 
 ${OpenCV_LIBS}
+-pthread
 )
 
 add_executable (camera_program_1 camera_program_1.cpp)

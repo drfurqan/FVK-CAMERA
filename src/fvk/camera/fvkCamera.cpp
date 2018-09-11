@@ -182,13 +182,21 @@ auto fvkCamera::start() -> bool
 	if (p_stdct)
 		delete p_stdct;
 	p_stdct = new std::thread([&]() { p_ct->start(); });
+#if defined(_WIN32)
 	m_ct_handle = p_stdct->native_handle();	// must save native handle before calling join() or detach().
+#else
+    m_ct_handle = nullptr;
+#endif // _WIN32
 	p_stdct->detach();
 
 	if (p_stdpt)
 		delete p_stdpt;
 	p_stdpt = new std::thread([&]() { p_pt->start(); });
-	m_ct_handle = p_stdpt->native_handle();	// must save native handle before calling join() or detach().
+#if defined(_WIN32)
+	m_pt_handle = p_stdpt->native_handle();	// must save native handle before calling join() or detach().
+#else
+    m_pt_handle = nullptr;
+#endif // _WIN32
 	p_stdpt->detach();
 
 	return true;

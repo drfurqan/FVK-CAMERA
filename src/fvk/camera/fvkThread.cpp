@@ -51,6 +51,7 @@ std::thread th(std::ref(task), any_function);
 
 #include <fvk/camera/fvkThread.h>
 #include <iostream>
+#include <thread>
 
 using namespace R3D;
 
