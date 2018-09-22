@@ -91,7 +91,7 @@ void fvkImageProcessing::reset()
 
 static cv::Size __resizeKeepAspectRatio(int _old_w, int _old_h, int _new_w, int _new_h)
 {
-	int _final_w = 0, _final_h = 0;
+	int _final_w, _final_h;
 	auto w2 = _new_h * (_old_w / static_cast<double>(_old_h));
 	auto h1 = _new_w * (_old_h / static_cast<double>(_old_w));
 	if (h1 <= _new_h)
@@ -597,7 +597,7 @@ void fvkImageProcessing::imageProcessing(cv::Mat& _frame)
 		{
 			const auto cen = cv::Point2d(static_cast<double>(_frame.cols) / 2.0, static_cast<double>(_frame.rows) / 2.0);
 			auto rot_mat = cv::getRotationMatrix2D(cen, m_rotangle, 1.0);
-			const auto bbox = cv::RotatedRect(cen, _frame.size(), m_rotangle).boundingRect();
+			const auto bbox = cv::RotatedRect(cen, _frame.size(), float(m_rotangle)).boundingRect();
 			rot_mat.at<double>(0, 2) += bbox.width / 2.0 - cen.x;
 			rot_mat.at<double>(1, 2) += bbox.height / 2.0 - cen.y;
 			cv::warpAffine(_frame, m, rot_mat, _frame.size(), cv::InterpolationFlags::INTER_LINEAR);

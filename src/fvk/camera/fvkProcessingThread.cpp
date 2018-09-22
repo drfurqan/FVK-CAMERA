@@ -62,19 +62,19 @@ void fvkProcessingThread::run()
 		return;
 
 	// get a frame from the camera buffer.
-	const auto f = p_buffer->get();
+	auto f = p_buffer->get();
 
 	m_rectmutex.lock();
 	const auto r = m_rect;
 	m_rectmutex.unlock();
 
-	if (r.width > f.cols || r.height > f.rows)
+	if ((r.x < 0) || (r.y < 0) || ((r.x + r.width) > f.cols) || ((r.y + r.height) > f.rows) || (r.width < 2) || (r.height < 2))
 		return;
 
-	auto frame = cv::Mat(f, r);
-
 	// do some basic image processing
-	m_ip.imageProcessing(frame);
+	m_ip.imageProcessing(f);
+
+	auto frame = cv::Mat(f, r);
 
 	// send frame to the observer to process it on another class.
 	if (p_frameobserver)
@@ -111,11 +111,9 @@ auto fvkProcessingThread::getFrame() -> cv::Mat
 	if (f.empty())
 		return cv::Mat();
 
-	m_rectmutex.lock();
-	const auto r = m_rect;
-	m_rectmutex.unlock();
+	const auto r = getRoi();
 
-	if (r.width > f.cols || r.height > f.rows)
+	if ((r.x < 0) || (r.y < 0) || ((r.x + r.width) > f.cols) || ((r.y + r.height) > f.rows) || (r.width < 2) || (r.height < 2))
 		return cv::Mat();
 
 	return cv::Mat(f.clone(), r);
