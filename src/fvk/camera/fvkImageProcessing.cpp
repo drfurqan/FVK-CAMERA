@@ -37,6 +37,7 @@ m_saturation(0),
 m_vibrance(0),
 m_hue(0),
 m_gamma(0),
+m_exposure(0),
 m_sepia(0),
 m_clip(0),
 m_convertcolor(-1),
@@ -73,6 +74,7 @@ void fvkImageProcessing::reset()
 	m_vibrance = 0;
 	m_hue = 0;
 	m_gamma = 0;
+	m_exposure = 0;
 	m_sepia = 0;
 	m_clip = 0;
 	m_convertcolor = -1;
@@ -408,11 +410,50 @@ void fvkImageProcessing::setHueFilter(cv::Mat& _img, int _value)
 
 void fvkImageProcessing::setGammaFilter(cv::Mat& _img, int _value)
 {
+	if (_value == 0)
+		return;
+
 	if (_img.empty() || _value == 0) return;
 
-	auto value = 1.f - static_cast<float>(_value) / 100.f;
+	const auto value = 1.f - static_cast<double>(_value) / 100.f;
 
-	if (_img.channels() == 3)
+	cv::Mat lut_matrix(1, 256, CV_8UC1);
+	auto ptr = lut_matrix.ptr();
+	for (auto i = 0; i < 256; i++)
+		ptr[i] = static_cast<int>(pow(static_cast<double>(i) / 255.0, value) * 255.0);
+
+	cv::Mat m(_img.size(), _img.type());
+	cv::LUT(_img, lut_matrix, m);
+	_img = m;
+}
+
+void fvkImageProcessing::setExposureFilter(cv::Mat& _img, int _value)
+{
+	if (_value == 0)
+		return;
+
+	if (_img.empty() || _value == 0)
+		return;
+
+	const auto value = 1.f - static_cast<float>(_value) / 50.f;
+	const auto exposureFactor = std::pow(2.0f, -value);
+
+	if (_img.channels() == 1)
+	{
+		cv::Mat m(_img.size(), _img.type());
+		for (auto y = 0; y < _img.rows; y++)
+		{
+			for (auto x = 0; x < _img.cols; x++)
+			{
+				auto p = _img.at<uchar>(x, y) / 255.f;
+				p = (((p > 1.0f ? exposureFactor : p < 0.0f ? 0.0f : exposureFactor * p) - 0.5f) * 1.0) + 0.5f;
+				p = p > 1.0f ? 255.0f : p < 0.0f ? 0.0f : 255.0f * p;
+				m.at<uchar>(cv::Point(y, x)) = p;
+			}
+		}
+		_img = m;
+	}
+	else if (_img.channels() == 3)
 	{
 		cv::Mat m(_img.size(), _img.type());
 		for (auto y = 0; y < _img.rows; y++)
@@ -421,11 +462,45 @@ void fvkImageProcessing::setGammaFilter(cv::Mat& _img, int _value)
 			{
 				cv::Vec3f pixel = _img.at<cv::Vec3b>(cv::Point(x, y));
 
-				pixel.val[0] = std::pow(pixel.val[0] / 255.f, value) * 255.f;
-				pixel.val[1] = std::pow(pixel.val[1] / 255.f, value) * 255.f;
-				pixel.val[2] = std::pow(pixel.val[2] / 255.f, value) * 255.f;
+				pixel.val[0] = pixel.val[0] / 255.f;
+				pixel.val[1] = pixel.val[1] / 255.f;
+				pixel.val[2] = pixel.val[2] / 255.f;
+
+				pixel.val[0] = (((pixel.val[0] > 1.0f ? exposureFactor : pixel.val[0] < 0.0f ? 0.0f : exposureFactor * pixel.val[0]) - 0.5f) * 1.0) + 0.5f;
+				pixel.val[1] = (((pixel.val[1] > 1.0f ? exposureFactor : pixel.val[1] < 0.0f ? 0.0f : exposureFactor * pixel.val[1]) - 0.5f) * 1.0) + 0.5f;
+				pixel.val[2] = (((pixel.val[2] > 1.0f ? exposureFactor : pixel.val[2] < 0.0f ? 0.0f : exposureFactor * pixel.val[2]) - 0.5f) * 1.0) + 0.5f;
+
+				pixel.val[0] = pixel.val[0] > 1.0f ? 255.0f : pixel.val[0] < 0.0f ? 0.0f : 255.0f * pixel.val[0];
+				pixel.val[1] = pixel.val[1] > 1.0f ? 255.0f : pixel.val[1] < 0.0f ? 0.0f : 255.0f * pixel.val[1];
+				pixel.val[2] = pixel.val[2] > 1.0f ? 255.0f : pixel.val[2] < 0.0f ? 0.0f : 255.0f * pixel.val[2];
 
 				m.at<cv::Vec3b>(cv::Point(x, y)) = pixel;
+			}
+		}
+		_img = m;
+	}
+	else if (_img.channels() == 4)
+	{
+		cv::Mat m(_img.size(), _img.type());
+		for (auto y = 0; y < _img.rows; y++)
+		{
+			for (auto x = 0; x < _img.cols; x++)
+			{
+				cv::Vec4f pixel = _img.at<cv::Vec4b>(cv::Point(x, y));
+
+				pixel.val[0] = pixel.val[0] / 255.f;
+				pixel.val[1] = pixel.val[1] / 255.f;
+				pixel.val[2] = pixel.val[2] / 255.f;
+
+				pixel.val[0] = (((pixel.val[0] > 1.0f ? exposureFactor : pixel.val[0] < 0.0f ? 0.0f : exposureFactor * pixel.val[0]) - 0.5f) * 1.0) + 0.5f;
+				pixel.val[1] = (((pixel.val[1] > 1.0f ? exposureFactor : pixel.val[1] < 0.0f ? 0.0f : exposureFactor * pixel.val[1]) - 0.5f) * 1.0) + 0.5f;
+				pixel.val[2] = (((pixel.val[2] > 1.0f ? exposureFactor : pixel.val[2] < 0.0f ? 0.0f : exposureFactor * pixel.val[2]) - 0.5f) * 1.0) + 0.5f;
+
+				pixel.val[0] = pixel.val[0] > 1.0f ? 255.0f : pixel.val[0] < 0.0f ? 0.0f : 255.0f * pixel.val[0];
+				pixel.val[1] = pixel.val[1] > 1.0f ? 255.0f : pixel.val[1] < 0.0f ? 0.0f : 255.0f * pixel.val[1];
+				pixel.val[2] = pixel.val[2] > 1.0f ? 255.0f : pixel.val[2] < 0.0f ? 0.0f : 255.0f * pixel.val[2];
+
+				m.at<cv::Vec4b>(cv::Point(x, y)) = pixel;
 			}
 		}
 		_img = m;
@@ -556,6 +631,14 @@ void fvkImageProcessing::imageProcessing(cv::Mat& _frame)
 {
 	m_mutex.lock();
 
+	if (m_zoomperc > 0 && m_zoomperc != 100)
+	{
+		auto s = __resizeKeepAspectRatio(_frame.cols, _frame.rows, static_cast<int>(static_cast<float>(_frame.cols * (m_zoomperc / 100.f))), static_cast<int>(static_cast<float>(_frame.rows * (m_zoomperc / 100.f))));
+		auto m = cv::Mat(cv::Mat::zeros(s, _frame.type()));
+		cv::resize(_frame, m, s, 0, 0, cv::InterpolationFlags::INTER_LINEAR);
+		_frame = m;
+	}
+
 	if (m_flip != FlipDirection::None)
 	{
 		cv::Mat m;
@@ -565,14 +648,6 @@ void fvkImageProcessing::imageProcessing(cv::Mat& _frame)
 			cv::flip(_frame, m, 1);
 		else if (m_flip == FlipDirection::Both)
 			cv::flip(_frame, m, -1);
-		_frame = m;
-	}
-
-	if (m_zoomperc > 0 && m_zoomperc != 100)
-	{
-		auto s = __resizeKeepAspectRatio(_frame.cols, _frame.rows, static_cast<int>(static_cast<float>(_frame.cols * (m_zoomperc / 100.f))), static_cast<int>(static_cast<float>(_frame.rows * (m_zoomperc / 100.f))));
-		auto m = cv::Mat(cv::Mat::zeros(s, _frame.type()));
-		cv::resize(_frame, m, s, 0, 0, cv::InterpolationFlags::INTER_LINEAR);
 		_frame = m;
 	}
 
@@ -646,6 +721,9 @@ void fvkImageProcessing::imageProcessing(cv::Mat& _frame)
 
 	if (m_hue != 0)
 		setHueFilter(_frame, m_hue);
+
+	if (m_exposure != 0)
+		setExposureFilter(_frame, m_exposure);
 
 	if (m_gamma != 0)
 		setGammaFilter(_frame, m_gamma);
@@ -902,6 +980,16 @@ auto fvkImageProcessing::getGamma() -> int
 {
 	std::lock_guard<std::mutex> locker(m_mutex);
 	return m_gamma;
+}
+void fvkImageProcessing::setExposure(int _value)
+{
+	std::lock_guard<std::mutex> locker(m_mutex);
+	m_exposure = _value;
+}
+auto fvkImageProcessing::getExposure() -> int
+{
+	std::lock_guard<std::mutex> locker(m_mutex);
+	return m_exposure;
 }
 
 void fvkImageProcessing::setSepia(int _value)

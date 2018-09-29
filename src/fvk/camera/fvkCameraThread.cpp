@@ -48,10 +48,10 @@ void fvkCameraThread::run()
 		const auto r = m_rect;
 		m_rectmutex.unlock();
 
-		if (r.width > f.cols || r.height > f.rows)
+		if ((r.x < 0) || (r.y < 0) || ((r.x + r.width) > f.cols) || ((r.y + r.height) > f.rows) || (r.width < 2) || (r.height < 2))
 			return;
 
-		auto frame = cv::Mat(f, r);
+		auto frame = cv::Mat(f, r).clone();
 
 		p_buffer->put(frame, m_sync_proc_thread);
 
@@ -61,9 +61,9 @@ void fvkCameraThread::run()
 	}
 	else
 	{
-		#ifdef _DEBUG
+#ifdef _DEBUG
 		std::cout << "Camera # " << m_device_index << " could not grab the frame.\n";
-		#endif // _DEBUG
+#endif // _DEBUG
 	}
 }
 
@@ -78,14 +78,16 @@ auto fvkCameraThread::getFrame() -> cv::Mat
 	if (f.empty())
 		return cv::Mat();
 
-	m_rectmutex.lock();
-	const auto r = m_rect;
-	m_rectmutex.unlock();
-
-	if (r.width > f.cols || r.height > f.rows)
+	const auto r = getRoi();
+	if ((r.x < 0) || (r.y < 0) || ((r.x + r.width) > f.cols) || ((r.y + r.height) > f.rows) || (r.width < 2) || (r.height < 2))
 		return cv::Mat();
 
-	return cv::Mat(f.clone(), r);
+	return cv::Mat(f, r).clone();
+}
+void fvkCameraThread::resetRoi()
+{
+	std::lock_guard<std::mutex> locker(m_rectmutex);
+	m_rect = cv::Rect(0, 0, m_frame_size.width, m_frame_size.height);
 }
 void fvkCameraThread::setRoi(const cv::Rect& _roi)
 {

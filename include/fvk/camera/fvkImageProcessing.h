@@ -195,6 +195,15 @@ public:
 	// Function to get the gamma value.
 	// Default value is 0.
 	auto getGamma() -> int;
+	// Description:
+	// Function to adjust the exposure of the image.
+	// _value should be between -100 and 100.
+	// Default value is 0.
+	void setExposure(int _value);
+	// Description:
+	// Function to get the exposure value.
+	// Default value is 0.
+	auto getExposure() -> int;
 
 	// Description:
 	// Function to adjust the sepia filter to the image.
@@ -390,8 +399,12 @@ public:
 	static void setHueFilter(cv::Mat& _img, int _value);
 	// Description:
 	// Function to adjust the gamma of the image.
-	// _value should be between -100 and 100.
+	// gamma value range should be [-100 ~ 100].
 	static void setGammaFilter(cv::Mat& _img, int _value);
+	// Description:
+	// Function to adjust the exposure of the image.
+	// exposure value range should be [-100 ~ 100].
+	static void setExposureFilter(cv::Mat& _img, int _value);
 	// Description:
 	// Function to adjust the sepia filter to the image.
 	// _value should be between 0 and 100.
@@ -424,6 +437,7 @@ private:
 	int m_vibrance;
 	int m_hue;
 	int m_gamma;
+	int m_exposure;
 	int m_sepia;
 	int m_clip;
 	int m_ndots;

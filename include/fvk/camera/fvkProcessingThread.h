@@ -99,13 +99,6 @@ public:
 	auto getSemaphoreBuffer() const { return p_buffer; }
 
 	// Description:
-	// Function to set the region-of-interest of the grabbed frame.
-	void setRoi(const cv::Rect& _roi);
-	// Description:
-	// Function to get the region-of-interest of the grabbed frame.
-	auto getRoi() -> cv::Rect;
-
-	// Description:
 	// Function to get a reference to video writer.
 	auto& writer() { return m_vr; }
 
@@ -140,8 +133,6 @@ protected:
 	int m_device_index;
 	std::string m_filepath;
 	std::atomic<bool> m_save;
-	std::mutex m_rectmutex;
-	cv::Rect m_rect;
 };
 
 }

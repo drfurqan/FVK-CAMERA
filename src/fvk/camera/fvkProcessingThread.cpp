@@ -30,7 +30,6 @@ fvkProcessingThread::fvkProcessingThread(const int _device_index, fvkCameraAbstr
 	p_frameobserver(_frameobserver),
 	p_buffer(_buffer),
 	m_filepath("D:\\saved_snapshot.jpg"),
-	m_rect(cv::Rect(0, 0, 10, 10)),
 	m_save(false),
 	m_video_output_func(nullptr)
 {
@@ -62,19 +61,10 @@ void fvkProcessingThread::run()
 		return;
 
 	// get a frame from the camera buffer.
-	auto f = p_buffer->get();
-
-	m_rectmutex.lock();
-	const auto r = m_rect;
-	m_rectmutex.unlock();
-
-	if ((r.x < 0) || (r.y < 0) || ((r.x + r.width) > f.cols) || ((r.y + r.height) > f.rows) || (r.width < 2) || (r.height < 2))
-		return;
+	auto frame = p_buffer->get();
 
 	// do some basic image processing
-	m_ip.imageProcessing(f);
-
-	auto frame = cv::Mat(f, r);
+	m_ip.imageProcessing(frame);
 
 	// send frame to the observer to process it on another class.
 	if (p_frameobserver)
@@ -111,22 +101,7 @@ auto fvkProcessingThread::getFrame() -> cv::Mat
 	if (f.empty())
 		return cv::Mat();
 
-	const auto r = getRoi();
-
-	if ((r.x < 0) || (r.y < 0) || ((r.x + r.width) > f.cols) || ((r.y + r.height) > f.rows) || (r.width < 2) || (r.height < 2))
-		return cv::Mat();
-
-	return cv::Mat(f.clone(), r);
-}
-void fvkProcessingThread::setRoi(const cv::Rect& _roi)
-{
-	std::lock_guard<std::mutex> lock(m_rectmutex);
-	m_rect = _roi;
-}
-auto fvkProcessingThread::getRoi() -> cv::Rect
-{
-	std::lock_guard<std::mutex> lock(m_rectmutex);
-	return m_rect;
+	return f.clone();
 }
 
 void fvkProcessingThread::saveFrameOnClick()

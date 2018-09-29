@@ -159,8 +159,7 @@ auto fvkCamera::connect() -> bool
 	// reset the region of interest.
 	if (b)
 	{
-		p_ct->setRoi(cv::Rect(0, 0, p_ct->getFrameWidth(), p_ct->getFrameHeight()));
-		if(p_pt) p_pt->setRoi(cv::Rect(0, 0, p_ct->getFrameWidth(), p_ct->getFrameHeight()));
+		p_ct->resetRoi();
 	}
 
 	return b;

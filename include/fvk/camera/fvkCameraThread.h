@@ -66,6 +66,9 @@ public:
 	auto getSemaphoreBuffer() const { return p_buffer; }
 
 	// Description:
+	// Function to reset the region-of-interest as same as the grabbed frame size.
+	void resetRoi();
+	// Description:
 	// Function to set the region-of-interest of the grabbed frame.
 	void setRoi(const cv::Rect& _roi);
 	// Description:
