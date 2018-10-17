@@ -47,8 +47,8 @@ fvkCameraThreadOpenCV::~fvkCameraThreadOpenCV()
 
 auto fvkCameraThreadOpenCV::open(const int _device_index) -> bool
 {
-	const auto b = m_cam.open(_device_index, m_videocapture_api);
-	if (!b) return false;
+	if (!m_cam.open(_device_index, m_videocapture_api)) 
+		return false;
 
 	if (m_frame_size.width != -1)
 		m_cam.set(cv::CAP_PROP_FRAME_WIDTH, m_frame_size.width);
@@ -79,32 +79,33 @@ auto fvkCameraThreadOpenCV::open(const std::string& _file_name) -> bool
 	if (_file_name.empty())
 		return false;
 
-	if (m_cam.open(_file_name, m_videocapture_api))
-	{
-		if (m_frame_size.width != -1)
-			m_cam.set(cv::CAP_PROP_FRAME_WIDTH, m_frame_size.width);
-		if (m_frame_size.height != -1)
-			m_cam.set(cv::CAP_PROP_FRAME_HEIGHT, m_frame_size.height);
+	if (!m_cam.open(_file_name, m_videocapture_api))
+		return false;
 
-		// not every frame resolution is supported by the video devices, so just update the
-		// frame size with the new supported frame resolution.
-		m_frame_size.width = static_cast<int>(m_cam.get(cv::CAP_PROP_FRAME_WIDTH));
-		m_frame_size.height = static_cast<int>(m_cam.get(cv::CAP_PROP_FRAME_HEIGHT));
+	if (m_frame_size.width != -1)
+		m_cam.set(cv::CAP_PROP_FRAME_WIDTH, m_frame_size.width);
+	if (m_frame_size.height != -1)
+		m_cam.set(cv::CAP_PROP_FRAME_HEIGHT, m_frame_size.height);
 
-		m_filepath = _file_name;
-		setDelay(static_cast<int>(1000.0 / m_cam.get(cv::CAP_PROP_FPS)));	// delay between frames.
+	// not every frame resolution is supported by the video devices, so just update the
+	// frame size with the new supported frame resolution.
+	m_frame_size.width = static_cast<int>(m_cam.get(cv::CAP_PROP_FRAME_WIDTH));
+	m_frame_size.height = static_cast<int>(m_cam.get(cv::CAP_PROP_FRAME_HEIGHT));
 
-		return true;
-	}
+	setDelay(static_cast<int>(1000.0 / m_cam.get(cv::CAP_PROP_FPS)));	// delay between frames.
 
-	return false;
+	m_filepath = _file_name;
+
+	return true;
 }
 auto fvkCameraThreadOpenCV::open() -> bool
 {
 	// if user specify the video file location then try to open the video file
 	// otherwise try to open the camera by camera device index.
 	if (!m_filepath.empty())
+	{
 		return open(m_filepath);
+	}
 
 	return open(m_device_index);
 }
