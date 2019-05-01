@@ -257,7 +257,7 @@ void fvkFaceDetector::detectFacesTemplateMatching(const cv::Mat& _frame)
 
 	// Template matching with last known face 
 	//cv::matchTemplate(frame(m_faceRoi), m_faceTemplate, m_matchingResult, CV_TM_CCOEFF);
-	cv::matchTemplate(_frame(m_face_roi), m_face_template, m_matching_result, CV_TM_SQDIFF_NORMED);
+	cv::matchTemplate(_frame(m_face_roi), m_face_template, m_matching_result, cv::TM_SQDIFF_NORMED);
 	cv::normalize(m_matching_result, m_matching_result, 0, 1, cv::NORM_MINMAX, -1, cv::Mat());
 	double min, max;
 	cv::Point min_loc, max_loc;

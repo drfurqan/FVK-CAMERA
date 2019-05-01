@@ -20,6 +20,7 @@ purpose:	Class to draw RGB plot of an image using OpenCV.
 
 #include <fvk/camera/fvkImagePlot.h>
 
+
 #if WIN32 
 #define snprintf sprintf_s 
 #endif 
@@ -38,14 +39,14 @@ public:
 	void clear();
 
 	void set(int _count, float* _p);
-	void set(CvScalar _color, bool _auto_color = true);
+	void set(cv::Scalar _color, bool _auto_color = true);
 	void set(int _r, int _g, int _b, bool _auto_color = true);
 
 	unsigned int m_count;   // number of points
 	std::string m_label;    // name of the curve
 	float *p_data;			// curve data
 	bool m_auto_color;		// 
-	CvScalar m_color;		// color of the curve
+	cv::Scalar m_color;		// color of the curve
 };
 
 /************************************************************************/
@@ -60,7 +61,7 @@ public:
 
 	fvkPlotSeries* add(const fvkPlotSeries& _s);
 
-	void drawLabels(IplImage* _outimg, int _posx, int _posy);
+	void drawLabels(cv::Mat& _outimg, int _posx, int _posy);
 	void setFigureSize(int _w, int _h);
 	void setBorderSize(int _size);
 	void setInvertColors(bool _invert);
@@ -70,23 +71,23 @@ public:
 	void calculatePlot();
 	std::string getFigureName();
 
-	IplImage* getPlottedImage() const { return p_plottedimg; }
+	cv::Mat& getPlottedImage() { return p_plottedimg; }
 
 private:
-	void drawAxis(IplImage* _outimg);
-	void drawPlots(IplImage* _outimg);
+	void drawAxis(cv::Mat& _outimg);
+	void drawPlots(cv::Mat& _outimg);
 	void initialize();
-	CvScalar getAutoColor();
+	cv::Scalar getAutoColor();
 
-	IplImage* p_plottedimg;
+	cv::Mat p_plottedimg;
 	std::string figure_name;
-	CvSize figure_size;
+	cv::Size figure_size;
 
 	int border_size;
 
-	CvScalar backgroud_color;
-	CvScalar axis_color;
-	CvScalar text_color;
+	cv::Scalar backgroud_color;
+	cv::Scalar axis_color;
+	cv::Scalar text_color;
 
 	std::vector<fvkPlotSeries> plots;
 
@@ -154,7 +155,7 @@ void fvkPlotSeries::set(int _r, int _g, int _b, bool _auto_color)
 	m_color = CV_RGB(_r, _g, _b);
 	set(m_color, _auto_color);
 }
-void fvkPlotSeries::set(CvScalar _color, bool _auto_color)
+void fvkPlotSeries::set(cv::Scalar _color, bool _auto_color)
 {
 	this->m_color = _color;
 	this->m_auto_color = _auto_color;
@@ -171,10 +172,9 @@ fvkPlotFigure::fvkPlotFigure(const std::string& _name)
 	backgroud_color = CV_RGB(255, 255, 255);
 	axis_color = CV_RGB(0, 0, 0);
 	text_color = CV_RGB(0, 0, 0);
-	figure_size = cvSize(100, 100);
+	figure_size = cv::Size(100, 100);
 	border_size = 30;
 	plots.reserve(10);
-	this->p_plottedimg = nullptr;
 	this->isInvert = false;
 	this->isAxis = true;
 	this->isLabls = true;
@@ -193,7 +193,7 @@ void fvkPlotFigure::setInvertColors(bool invert)
 }
 void fvkPlotFigure::setFigureSize(int w, int h)
 {
-	figure_size = cvSize(w, h);
+	figure_size = cv::Size(w, h);
 }
 void fvkPlotFigure::setBorderSize(int size)
 {
@@ -282,10 +282,10 @@ void fvkPlotFigure::initialize()
 	y_scale = static_cast<float>(figure_size.height - border_size * 2) / y_range;
 }
 
-CvScalar fvkPlotFigure::getAutoColor()
+cv::Scalar fvkPlotFigure::getAutoColor()
 {
 	// 	change color for each curve.
-	CvScalar col;
+	cv::Scalar col;
 
 	switch (color_index)
 	{
@@ -324,7 +324,7 @@ CvScalar fvkPlotFigure::getAutoColor()
 	return col;
 }
 
-void fvkPlotFigure::drawAxis(IplImage *outimg)
+void fvkPlotFigure::drawAxis(cv::Mat& outimg)
 {
 	int bs = border_size;
 	int h = figure_size.height;
@@ -342,12 +342,12 @@ void fvkPlotFigure::drawAxis(IplImage *outimg)
 
 	int x_axis_pos = h - bs - cvRound((y_ref - y_min) * y_scale);
 
-	cvLine(outimg, cvPoint(bs, x_axis_pos), cvPoint(w - bs, x_axis_pos), axis_color);
-	cvLine(outimg, cvPoint(bs, h - bs), cvPoint(bs, h - bs - gh), axis_color);
+	cv::line(outimg, cv::Point(bs, x_axis_pos), cv::Point(w - bs, x_axis_pos), axis_color, cv::LINE_AA);
+	cv::line(outimg, cv::Point(bs, h - bs), cv::Point(bs, h - bs - gh), axis_color, cv::LINE_AA);
 
 	// Write the scale of the y axis
-	CvFont font;
-	cvInitFont(&font, CV_FONT_HERSHEY_PLAIN, 0.55, 0.7, 0, 1, CV_AA);
+	//cv::Font font;
+	//cv::initFont(&font, cv::FONT_HERSHEY_PLAIN, 0.55, 0.7, 0, 1, cv::AA);
 
 	int chw = 6, chh = 10;
 	char text[16];
@@ -356,29 +356,29 @@ void fvkPlotFigure::drawAxis(IplImage *outimg)
 	if ((y_max - y_ref) > 0.05 * (y_max - y_min))
 	{
 		snprintf(text, sizeof(text) - 1, "%.1f", y_max);
-		cvPutText(outimg, text, cvPoint(bs / 5, bs - chh / 2), &font, text_color);
+		cv::putText(outimg, text, cv::Point(bs / 5, bs - chh / 2), cv::FONT_HERSHEY_PLAIN, 0.55, text_color, 1, cv::LINE_AA);
 	}
 	// y min
 	if ((y_ref - y_min) > 0.05 * (y_max - y_min))
 	{
 		snprintf(text, sizeof(text) - 1, "%.1f", y_min);
-		cvPutText(outimg, text, cvPoint(bs / 5, h - bs + chh), &font, text_color);
+		cv::putText(outimg, text, cv::Point(bs / 5, h - bs + chh), cv::FONT_HERSHEY_PLAIN, 0.55, text_color, 1, cv::LINE_AA);
 	}
 
 	// x axis
 	snprintf(text, sizeof(text) - 1, "%.1f", y_ref);
-	cvPutText(outimg, text, cvPoint(bs / 5, x_axis_pos + chh / 2), &font, text_color);
+	cv::putText(outimg, text, cv::Point(bs / 5, x_axis_pos + chh / 2), cv::FONT_HERSHEY_PLAIN, 0.55, text_color, 1, cv::LINE_AA);
 
 	// Write the scale of the x axis
 	snprintf(text, sizeof(text) - 1, "%.0f", x_max);
-	cvPutText(outimg, text, cvPoint(w - bs - static_cast<int>(std::strlen(text)) * chw, x_axis_pos + chh), &font, text_color);
+	cv::putText(outimg, text, cv::Point(w - bs - static_cast<int>(std::strlen(text)) * chw, x_axis_pos + chh), cv::FONT_HERSHEY_PLAIN, 0.55, text_color, 1, cv::LINE_AA);
 
 	// x min
 	snprintf(text, sizeof(text) - 1, "%.0f", x_min);
-	cvPutText(outimg, text, cvPoint(bs, x_axis_pos + chh), &font, text_color);
+	cv::putText(outimg, text, cv::Point(bs, x_axis_pos + chh), cv::FONT_HERSHEY_PLAIN, 0.55, text_color, 1, cv::LINE_AA);
 }
 
-void fvkPlotFigure::drawPlots(IplImage *outimg)
+void fvkPlotFigure::drawPlots(cv::Mat& outimg)
 {
 	int bs = border_size;
 	int h = figure_size.height;
@@ -393,28 +393,24 @@ void fvkPlotFigure::drawPlots(IplImage *outimg)
 		if (iter->m_auto_color == true)
 			iter->set(getAutoColor());
 
-		CvPoint prev_point;
+		cv::Point prev_point;
 		for (unsigned int i = 0; i < iter->m_count; i++)
 		{
 			int y = cvRound((p[i] - y_min) * y_scale);
 			int x = cvRound((i - x_min) * x_scale);
-			CvPoint next_point = cvPoint(bs + x, h - (bs + y));
-			cvCircle(outimg, next_point, 1, iter->m_color, 1);
+			cv::Point next_point = cv::Point(bs + x, h - (bs + y));
+			cv::circle(outimg, next_point, 1, iter->m_color, 1, cv::LINE_AA);
 
 			// draw a line between two points
 			if (i >= 1)
-				cvLine(outimg, prev_point, next_point, iter->m_color, 1, CV_AA);
+				cv::line(outimg, prev_point, next_point, iter->m_color, 1, cv::LINE_AA);
 			prev_point = next_point;
 		}
 	}
 }
 
-void fvkPlotFigure::drawLabels(IplImage *outimg, int posx, int posy)
+void fvkPlotFigure::drawLabels(cv::Mat& outimg, int posx, int posy)
 {
-
-	CvFont font;
-	cvInitFont(&font, CV_FONT_HERSHEY_PLAIN, 0.55, 1.0, 0, 1, CV_AA);
-
 	// character size
 	int chw = 6, chh = 8;
 
@@ -424,8 +420,8 @@ void fvkPlotFigure::drawLabels(IplImage *outimg, int posx, int posy)
 		// draw label if one is available
 		if (lbl.length() > 0)
 		{
-			cvLine(outimg, cvPoint(posx, posy - chh / 2), cvPoint(posx + 15, posy - chh / 2), iter->m_color, 2, CV_AA);
-			cvPutText(outimg, lbl.c_str(), cvPoint(posx + 20, posy), &font, iter->m_color);
+			cv::line(outimg, cv::Point(posx, posy - chh / 2), cv::Point(posx + 15, posy - chh / 2), iter->m_color, 2, cv::LINE_AA);
+			cv::putText(outimg, lbl.c_str(), cv::Point(posx + 20, posy), cv::FONT_HERSHEY_PLAIN, 0.55, iter->m_color, 1, cv::LINE_AA);
 			posy += int(chh * 1.5);
 		}
 	}
@@ -436,13 +432,11 @@ void fvkPlotFigure::drawLabels(IplImage *outimg, int posx, int posy)
 void fvkPlotFigure::calculatePlot()
 {
 	initialize();
-	if (this->p_plottedimg) cvReleaseImage(&this->p_plottedimg);
-	this->p_plottedimg = nullptr;
-	this->p_plottedimg = cvCreateImage(figure_size, IPL_DEPTH_8U, 3);
-	cvSet(this->p_plottedimg, backgroud_color, 0);
-	if (this->isAxis) drawAxis(this->p_plottedimg);
-	if (this->isLabls) drawLabels(this->p_plottedimg, figure_size.width - 40, 25);
-	drawPlots(this->p_plottedimg);
+	p_plottedimg = cv::Mat(figure_size, CV_8UC3);
+	p_plottedimg.setTo(backgroud_color);
+	if (isAxis) drawAxis(p_plottedimg);
+	if (isLabls) drawLabels(p_plottedimg, figure_size.width - 40, 25);
+	drawPlots(p_plottedimg);
 }
 
 /************************************************************************/
@@ -559,36 +553,36 @@ void fvkPlotManager::setLabel(const std::string& _l) const
 }
 
 /*******************************************************************************/
-IplImage* fvkPlotManager::getPlottedImage(const std::string& _name)
+cv::Mat fvkPlotManager::getPlottedImage(const std::string& _name)
 {
-	fvkPlotFigure *fig = this->findFigure(_name);
+	fvkPlotFigure *fig = findFigure(_name);
 	if (fig) return fig->getPlottedImage();
-	return nullptr;
+	return cv::Mat();
 }
 void fvkPlotManager::setPlotSize(const std::string& _name, int w, int h)
 {
-	fvkPlotFigure *fig = this->findFigure(_name);
+	fvkPlotFigure *fig = findFigure(_name);
 	if (fig) fig->setFigureSize(w, h);
 }
 void fvkPlotManager::setBorderSize(const std::string& _name, int size)
 {
-	fvkPlotFigure *fig = this->findFigure(_name);
+	fvkPlotFigure *fig = findFigure(_name);
 	if (fig) fig->setBorderSize(size);
 }
 void fvkPlotManager::invertPlotColor(const std::string& _name, bool invert)
 {
-	fvkPlotFigure *fig = this->findFigure(_name);
+	fvkPlotFigure *fig = findFigure(_name);
 	if (fig) fig->setInvertColors(invert);
 }
 
 void fvkPlotManager::setAxisEnabled(const std::string& _name, bool isOn)
 {
-	fvkPlotFigure *fig = this->findFigure(_name);
+	fvkPlotFigure *fig = findFigure(_name);
 	if (fig) fig->setAxisEnabled(isOn);
 }
 void fvkPlotManager::setLabelsEnabled(const std::string& _name, bool isOn)
 {
-	fvkPlotFigure *fig = this->findFigure(_name);
+	fvkPlotFigure *fig = findFigure(_name);
 	if (fig) fig->setLabelsEnabled(isOn);
 }
 
@@ -610,81 +604,50 @@ m_curve_color(cv::Scalar(150, 150, 150))
 
 }
 
-#define __ImageRowPtr(imagePtr, dataType, lineIndex) \
-	(dataType *)(imagePtr->imageData + (lineIndex) * imagePtr->widthStep)
-
-IplImage* __getImage8U(const IplImage* _img, double scale)
+cv::Mat fvkImagePlot::getPlottedImage(cv::Mat& Inimg, int plotsize_w, int plotsize_h, int row_number, int border_size, bool isRedCurve, bool isGreenCurve, bool isBlueCurve, bool isRGBCurve,
+	bool isInverted, bool isAxis, bool isLabel, int R, int G, int B, std::string Plotname, std::string PlotLabel)
 {
-	if (!_img) return nullptr;
-	IplImage* I = nullptr;
-	if (_img->depth != IPL_DEPTH_8U)
-	{
-		I = cvCreateImage(cvSize(_img->width, _img->height), IPL_DEPTH_8U, _img->nChannels);
-		if (!I) return nullptr;
-		cvConvertScale(_img, I, scale);
-	}
+	if (Inimg.empty() || Inimg.channels()) 
+		return cv::Mat();
+
+	cv::Mat img;
+	if (Inimg.depth() != CV_8U)
+		Inimg.convertTo(img, CV_8U, 255);
 	else
-	{
-		I = cvCloneImage(_img);
-	}
-	return I;
-}
+		img = Inimg.clone();
 
-auto fvkImagePlot::getPlottedImage(const IplImage* Inimg, int plotsize_w, int plotsize_h, int row_number, int border_size, bool isRedCurve, bool isGreenCurve, bool isBlueCurve, bool isRGBCurve,
-	bool isInverted, bool isAxis, bool isLabel, int R, int G, int B, std::string Plotname, std::string PlotLabel) -> IplImage*
-{
-	if (Inimg == nullptr) return nullptr;
-	if (!CV_IS_IMAGE(Inimg)) return nullptr;
-	if (Inimg->nChannels == 2) return nullptr;
-
-	auto img = __getImage8U(Inimg, 255.0);
-	if (img == nullptr) return nullptr;
-
-	if (img->nChannels == 1)
-	{
-		auto t = cvCreateImage(cvSize(img->width, img->height), IPL_DEPTH_8U, 3);
-		cvCvtColor(img, t, CV_GRAY2BGR);
-		cvReleaseImage(&img); img = nullptr;
-		img = cvCreateImage(cvSize(t->width, t->height), IPL_DEPTH_8U, 3);
-		cvCopy(t, img);
-		cvReleaseImage(&t);
-	}
-	else if (img->nChannels == 4)
-	{
-		auto t = cvCreateImage(cvSize(img->width, img->height), IPL_DEPTH_8U, 3);
-		cvCvtColor(img, t, CV_BGRA2BGR);
-		cvReleaseImage(&img); img = nullptr;
-		img = cvCreateImage(cvSize(t->width, t->height), IPL_DEPTH_8U, 3);
-		cvCopy(t, img);
-		cvReleaseImage(&t);
-	}
+	if (img.channels() == 1)
+		cv::cvtColor(img, img, cv::ColorConversionCodes::COLOR_GRAY2BGR);
+	else if (img.channels() == 4)
+		cv::cvtColor(img, img, cv::ColorConversionCodes::COLOR_BGRA2BGR);
 
 	if (plotsize_w < 0) plotsize_w = 640;
 	if (plotsize_h < 0) plotsize_h = 480;
-	if (row_number < 0) row_number = static_cast<int>(img->height / 2);
+	if (row_number < 0) row_number = static_cast<int>(img.rows / 2);
 
 	fvkPlotManager pm;
 
 	if (isRGBCurve)
 	{
-		auto pb = __ImageRowPtr(img, unsigned char, row_number);
-		pm.plot(Plotname, pb + 2, img->width, 3, 200, 0, 0);
+		uchar* pb = img.data + row_number * img.step;
+		pm.plot(Plotname, pb + 2, img.cols, 3, 200, 0, 0);
 		if (isLabel) pm.setLabel("B");
-		pm.plot(Plotname, pb + 1, img->width, 3, 0, 200, 0);
+		pm.plot(Plotname, pb + 1, img.cols, 3, 0, 200, 0);
 		if (isLabel) pm.setLabel("G");
-		pm.plot(Plotname, pb + 0, img->width, 3, 0, 0, 200);
+		pm.plot(Plotname, pb + 0, img.cols, 3, 0, 0, 200);
 		if (isLabel) pm.setLabel("R");
 	}
 	else
 	{
-		auto t = cvCreateImage(cvSize(img->width, img->height), IPL_DEPTH_8U, 1);
-		if (isRedCurve) cvSplit(img, 0, 0, t, 0);
-		else if (isGreenCurve) cvSplit(img, 0, t, 0, 0);
-		else if (isBlueCurve) cvSplit(img, t, 0, 0, 0);
-		if (t->imageData == nullptr) { if (img) cvReleaseImage(&img); return nullptr; }
-		auto pb = __ImageRowPtr(t, unsigned char, row_number);
-		pm.plot(Plotname, pb, t->width, 1, R, G, B);
-		if (t) cvReleaseImage(&t);
+		std::vector<cv::Mat> bgr(img.channels());
+		cv::split(img, bgr);
+
+		cv::Mat t;
+		if (isRedCurve) t = bgr[2];
+		else if (isGreenCurve) t = bgr[1];
+		else if (isBlueCurve) t = bgr[0];
+		uchar* pb = t.data + row_number * t.step;
+		pm.plot(Plotname, pb, t.cols, 1, R, G, B);
 	}
 
 	pm.setPlotSize(Plotname, plotsize_w, plotsize_h);
@@ -697,70 +660,34 @@ auto fvkImagePlot::getPlottedImage(const IplImage* Inimg, int plotsize_w, int pl
 	else if (isGreenCurve) pm.setLabel("G");
 	else if (isBlueCurve) pm.setLabel("B");
 
-	if (isLabel && !isRGBCurve && !isRedCurve && !isGreenCurve && !isBlueCurve) pm.setLabel(PlotLabel);
+	if (isLabel && !isRGBCurve && !isRedCurve && !isGreenCurve && !isBlueCurve) 
+		pm.setLabel(PlotLabel);
 
 	pm.calculatePlot();
 
-	auto I = pm.getPlottedImage(Plotname);
-	if (I != nullptr)
+	cv::Mat I = pm.getPlottedImage(Plotname);
+	if (!I.empty())
 	{
-		if (img->width != I->width || img->height != I->height)
+		if (img.size() != I.size())
 		{
-			cvReleaseImage(&img); img = nullptr;
-			img = cvCreateImage(cvSize(plotsize_w, plotsize_h), IPL_DEPTH_8U, 3);
-			cvResize(I, img, CV_INTER_LINEAR);
+			img = cv::Mat(I.size(), I.depth());
+			cv::resize(I, img, I.size(), cv::INTER_LINEAR);
 		}
 		else
 		{
-			cvCopy(I, img);
+			img = I.clone();
 		}
-		cvReleaseImage(&I);
 		pm.clear(Plotname);
 		return img;
 	}
 
-	if (img) cvReleaseImage(&img);
 	pm.clear(Plotname);
-	return nullptr;
+	return cv::Mat();
 }
 
 void fvkImagePlot::plot(cv::Mat& _img)
 {
-	// get cv::Mat image from IplImage pointer.
-	auto t = cvCreateImage(cvSize(_img.cols, _img.rows), IPL_DEPTH_8U, _img.channels());
-	if (!t) return;
-	IplImage copy = _img;
-	IplImage* newCopy = &copy;
-	cvCopy(newCopy, t);
-
-	auto m = getPlottedImage(
-		t,
-		m_plotsize.width,
-		m_plotsize.height,
-		m_row_num,
-		m_border_size,
-		m_isRedCurve,
-		m_isGreenCurve,
-		m_isBlueCurve,
-		!m_isRedCurve && !m_isGreenCurve && !m_isBlueCurve,
-		m_isInverted,
-		m_isAxis,
-		m_isLabel,
-		static_cast<int>(m_curve_color[0]),
-		static_cast<int>(m_curve_color[1]),
-		static_cast<int>(m_curve_color[2]),
-		"RGB",
-		"RGB Plot");
-	if (m)
-	{
-		_img = cv::cvarrToMat(m, true);
-		cvReleaseImage(&m);
-	}
-	cvReleaseImage(&t);
-}
-void fvkImagePlot::plot(IplImage* _img)
-{
-	auto m = getPlottedImage(
+	cv::Mat m = getPlottedImage(
 		_img,
 		m_plotsize.width,
 		m_plotsize.height,
@@ -778,9 +705,6 @@ void fvkImagePlot::plot(IplImage* _img)
 		static_cast<int>(m_curve_color[2]),
 		"RGB",
 		"RGB Plot");
-	if (m)
-	{
-		cvCopy(m, _img);
-		cvReleaseImage(&m);
-	}
+	if (!m.empty())
+		_img = m;
 }

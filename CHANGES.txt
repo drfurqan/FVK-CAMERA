@@ -19,8 +19,8 @@ New features and changes in version 1.1.4:            (Release Date: 2018.05.17)
    be configuered with any camera.
 8. Added a generic fvkCameraList class to configure multiple cameras.
 9. Improved multithreaded code.
-10.Many other changes and improvements.
 10.Added ROI feature in both camera and processing threads.
+11.Many other changes and improvements.
 
 New features and changes in version 1.1.3:            (Release Date: 2017.08.29)
 --------------------------------------------------------------------------------

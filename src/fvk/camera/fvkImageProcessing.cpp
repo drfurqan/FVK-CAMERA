@@ -111,7 +111,8 @@ static cv::Size __resizeKeepAspectRatio(int _old_w, int _old_h, int _new_w, int 
 
 void fvkImageProcessing::setDenoisingFilter(cv::Mat& _img, int _value, fvkImageProcessing::DenoisingMethod _method)
 {
-	if (_img.empty() || _value < 2) return;
+	if (_img.empty() || _value < 2)
+		return;
 
 	if (_value % 2 != 0)
 	{
@@ -137,7 +138,8 @@ void fvkImageProcessing::setDenoisingFilter(cv::Mat& _img, int _value, fvkImageP
 
 void fvkImageProcessing::setWeightedFilter(cv::Mat& _img, int _value, double _alpha, double _beta)
 {
-	if (_img.empty() || _value == 0) return;
+	if (_img.empty() || _value == 0)
+		return;
 
 	cv::Mat m(_img.size(), _img.type());
 	cv::GaussianBlur(_img, m, cv::Size(0, 0), static_cast<double>(_value));
@@ -154,8 +156,11 @@ void fvkImageProcessing::setWeightedFilter(cv::Mat& _img, int _value, double _al
 
 void fvkImageProcessing::setNonPhotorealisticFilter(cv::Mat& _img, int _value, float _sigma, fvkImageProcessing::Filters _filter)
 {
-	if (_img.empty() || _value == 0) return;
-	if (_img.channels() != 3) return;
+	if (_img.empty() || _value == 0)
+		return;
+
+	if (_img.channels() != 3)
+		return;
 
 	cv::Mat m;
 	if(_filter == fvkImageProcessing::Filters::Details)
@@ -172,7 +177,8 @@ void fvkImageProcessing::setNonPhotorealisticFilter(cv::Mat& _img, int _value, f
 
 void fvkImageProcessing::setBrightnessFilter(cv::Mat& _img, int _value)
 {
-	if (_img.empty() || _value == 0) return;
+	if (_img.empty() || _value == 0)
+		return;
 
 	auto value = cvFloor(255.f * (static_cast<float>(_value) / 100.f));
 	auto m = cv::Mat(cv::Mat::zeros(_img.size(), _img.type()));
@@ -220,7 +226,8 @@ void fvkImageProcessing::setContrastFilter(cv::Mat& _img, int _value)
 
 void fvkImageProcessing::setColorContrastFilter(cv::Mat& _img, int _value)
 {
-	if (_img.empty() || _value == 0) return;
+	if (_img.empty() || _value == 0)
+		return;
 
 	auto value = std::pow(static_cast<float>(_value + 100) / 100.f, 2.f);
 
@@ -312,7 +319,8 @@ void fvkImageProcessing::setColorContrastFilter(cv::Mat& _img, int _value)
 
 void fvkImageProcessing::setSaturationFilter(cv::Mat& _img, int _value)
 {
-	if (_img.empty() || _value == 0) return;
+	if (_img.empty() || _value == 0)
+		return;
 
 	auto value = _value * -0.01f;
 
@@ -325,7 +333,7 @@ void fvkImageProcessing::setSaturationFilter(cv::Mat& _img, int _value)
 			{
 				cv::Vec3f pixel = _img.at<cv::Vec3b>(cv::Point(x, y));
 
-				float maxi = std::max(std::max(pixel.val[0], pixel.val[1]), pixel.val[2]);
+				auto maxi = std::max(std::max(pixel.val[0], pixel.val[1]), pixel.val[2]);
 				if (pixel.val[0] != maxi)
 					pixel.val[0] += (maxi - pixel.val[0]) * value;
 
@@ -344,7 +352,8 @@ void fvkImageProcessing::setSaturationFilter(cv::Mat& _img, int _value)
 
 void fvkImageProcessing::setVibranceFilter(cv::Mat& _img, int _value)
 {
-	if (_img.empty() || _value == 0) return;
+	if (_img.empty() || _value == 0)
+		return;
 
 	auto value = _value * -1.0f;
 
@@ -381,7 +390,8 @@ void fvkImageProcessing::setVibranceFilter(cv::Mat& _img, int _value)
 
 void fvkImageProcessing::setHueFilter(cv::Mat& _img, int _value)
 {
-	if (_img.empty() || _value == 0) return;
+	if (_img.empty() || _value == 0)
+		return;
 
 	if (_img.channels() == 3)
 	{
@@ -410,17 +420,15 @@ void fvkImageProcessing::setHueFilter(cv::Mat& _img, int _value)
 
 void fvkImageProcessing::setGammaFilter(cv::Mat& _img, int _value)
 {
-	if (_value == 0)
+	if (_img.empty() || _value == 0)
 		return;
-
-	if (_img.empty() || _value == 0) return;
 
 	const auto value = 1.f - static_cast<double>(_value) / 100.f;
 
 	cv::Mat lut_matrix(1, 256, CV_8UC1);
 	auto ptr = lut_matrix.ptr();
 	for (auto i = 0; i < 256; i++)
-		ptr[i] = static_cast<int>(pow(static_cast<double>(i) / 255.0, value) * 255.0);
+		ptr[i] = static_cast<int>(std::pow(static_cast<double>(i) / 255.0, value) * 255.0);
 
 	cv::Mat m(_img.size(), _img.type());
 	cv::LUT(_img, lut_matrix, m);
@@ -429,9 +437,6 @@ void fvkImageProcessing::setGammaFilter(cv::Mat& _img, int _value)
 
 void fvkImageProcessing::setExposureFilter(cv::Mat& _img, int _value)
 {
-	if (_value == 0)
-		return;
-
 	if (_img.empty() || _value == 0)
 		return;
 
@@ -509,7 +514,8 @@ void fvkImageProcessing::setExposureFilter(cv::Mat& _img, int _value)
 
 void fvkImageProcessing::setSepiaFilter(cv::Mat& _img, int _value)
 {
-	if (_img.empty() || _value == 0) return;
+	if (_img.empty() || _value == 0)
+		return;
 
 	if (_img.channels() == 3)
 	{
@@ -535,7 +541,8 @@ void fvkImageProcessing::setSepiaFilter(cv::Mat& _img, int _value)
 
 void fvkImageProcessing::setClipFilter(cv::Mat& _img, int _value)
 {
-	if (_img.empty() || _value == 0) return;
+	if (_img.empty() || _value == 0) 
+		return;
 
 	auto value = std::abs(static_cast<float>(_value)) * 2.55f;
 
@@ -571,12 +578,13 @@ void fvkImageProcessing::setClipFilter(cv::Mat& _img, int _value)
 }
 void fvkImageProcessing::setEqualizeFilter(cv::Mat& _img, double _cliplimit, cv::Size _tile_grid_size)
 {
-	if (_img.empty() || _cliplimit == 0) return;
+	if (_img.empty() || _cliplimit == 0) 
+		return;
 
 	if (_img.channels() == 1)
 	{
 		cv::Mat m;
-		cv::Ptr<cv::CLAHE> p = cv::createCLAHE(_cliplimit, _tile_grid_size); // adaptive histogram equalization
+		auto p = cv::createCLAHE(_cliplimit, _tile_grid_size); // adaptive histogram equalization
 		p->apply(_img, m);
 		_img = m;
 	}
@@ -584,12 +592,12 @@ void fvkImageProcessing::setEqualizeFilter(cv::Mat& _img, double _cliplimit, cv:
 	{
 		cv::Mat m;
 		std::vector<cv::Mat> channels(3);
-		cv::cvtColor(_img, m, CV_BGR2YCrCb);	//change to YCrCb format
+		cv::cvtColor(_img, m, cv::ColorConversionCodes::COLOR_BGR2YCrCb);	//change to YCrCb format
 		cv::split(m, channels);					// split the image into channels
-		cv::Ptr<cv::CLAHE> p = cv::createCLAHE(_cliplimit, _tile_grid_size);
+		auto p = cv::createCLAHE(_cliplimit, _tile_grid_size);
 		p->apply(channels[0], channels[0]);
 		cv::merge(channels, m);					// merge 3 channels including the modified one
-		cv::cvtColor(m, m, CV_YCrCb2BGR);		// change to BGR format
+		cv::cvtColor(m, m, cv::ColorConversionCodes::COLOR_YCrCb2BGR);		// change to BGR format
 		_img = m;
 	}
 	else if (_img.channels() == 4)
@@ -604,12 +612,12 @@ void fvkImageProcessing::setEqualizeFilter(cv::Mat& _img, double _cliplimit, cv:
 		channels3[2] = channels[2];
 		cv::merge(channels3, m);
 
-		cv::cvtColor(m, m, CV_BGR2YCrCb);
+		cv::cvtColor(m, m, cv::ColorConversionCodes::COLOR_BGR2YCrCb);
 		cv::split(m, channels3);
-		cv::Ptr<cv::CLAHE> p = cv::createCLAHE(_cliplimit, _tile_grid_size);
+		auto p = cv::createCLAHE(_cliplimit, _tile_grid_size);
 		p->apply(channels3[0], channels3[0]);
 		cv::merge(channels3, m);
-		cv::cvtColor(m, m, CV_YCrCb2BGR);
+		cv::cvtColor(m, m, cv::ColorConversionCodes::COLOR_YCrCb2BGR);
 		
 		cv::Mat dst(_img.size(), _img.type());
 		for (auto y = 0; y < m.rows; y++)
@@ -672,7 +680,7 @@ void fvkImageProcessing::imageProcessing(cv::Mat& _frame)
 		{
 			const auto cen = cv::Point2d(static_cast<double>(_frame.cols) / 2.0, static_cast<double>(_frame.rows) / 2.0);
 			auto rot_mat = cv::getRotationMatrix2D(cen, m_rotangle, 1.0);
-			const auto bbox = cv::RotatedRect(cen, _frame.size(), float(m_rotangle)).boundingRect();
+			const auto bbox = cv::RotatedRect(cen, _frame.size(), static_cast<float>(m_rotangle)).boundingRect();
 			rot_mat.at<double>(0, 2) += bbox.width / 2.0 - cen.x;
 			rot_mat.at<double>(1, 2) += bbox.height / 2.0 - cen.y;
 			cv::warpAffine(_frame, m, rot_mat, _frame.size(), cv::InterpolationFlags::INTER_LINEAR);
@@ -770,7 +778,7 @@ void fvkImageProcessing::imageProcessing(cv::Mat& _frame)
 				auto rect = cv::Rect(j, i, bsize, bsize) & cv::Rect(0, 0, _frame.cols, _frame.rows);
 				auto sub_dst = cv::Mat(dst, rect);
 				sub_dst.setTo(cv::mean(_frame(rect)));
-				cv::circle(cir, cv::Point(j + bsize / 2, i + bsize / 2), bsize / 2 - 1, CV_RGB(255, 255, 255), -1, CV_AA);
+				cv::circle(cir, cv::Point(j + bsize / 2, i + bsize / 2), bsize / 2 - 1, CV_RGB(255, 255, 255), -1, cv::LINE_AA);
 			}
 		}
 
@@ -818,9 +826,9 @@ void fvkImageProcessing::imageProcessing(cv::Mat& _frame)
 	{
 		cv::Mat m;
 		if (_frame.channels() == 3)
-			cv::cvtColor(_frame, m, CV_BGR2GRAY);
+			cv::cvtColor(_frame, m, cv::ColorConversionCodes::COLOR_BGR2GRAY);
 		else if (_frame.channels() == 4)
-			cv::cvtColor(_frame, m, CV_BGRA2GRAY);
+			cv::cvtColor(_frame, m, cv::ColorConversionCodes::COLOR_BGRA2GRAY);
 		cv::GaussianBlur(m, m, cv::Size(5, 5), 0, 0);
 		cv::threshold(m, m, 255 - m_threshold, 255, cv::THRESH_BINARY);
 		_frame = m;

@@ -423,13 +423,13 @@ auto fvkCameraThreadOpenCV::getTriggerDelay() const -> double
 }
 auto fvkCameraThreadOpenCV::getMsec() const -> double
 {
-	return m_cam.get(CV_CAP_PROP_POS_MSEC);
+	return m_cam.get(cv::CAP_PROP_POS_MSEC);
 }
 auto fvkCameraThreadOpenCV::getPosFrames() const -> double
 {
-	return m_cam.get(CV_CAP_PROP_POS_FRAMES);
+	return m_cam.get(cv::CAP_PROP_POS_FRAMES);
 }
 auto fvkCameraThreadOpenCV::getAviRatio() const -> double
 {
-	return m_cam.get(CV_CAP_PROP_POS_AVI_RATIO);
+	return m_cam.get(cv::CAP_PROP_POS_AVI_RATIO);
 }

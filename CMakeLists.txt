@@ -85,7 +85,7 @@ set (SHARED_FILES ${CPPFILES})
 
 set (STATIC_FILES ${SHARED_FILES})
 
-# add_definitions(-DFVK_EXPORT)
+# add_definitions(-DFVK_CAMERA_EXPORT)
 
 # ------------------------------------------------------------------------------
 # Add source and header files and define the statis or shared version
