@@ -170,7 +170,7 @@ public:
 	// Function to get the plotted image of the input image. 
 	// Returned image should be released after usage.
 	static cv::Mat getPlottedImage(
-		cv::Mat& Inimg,								// (Mandatory) Input image (supported channels are 1,3,4).
+		const cv::Mat& Inimg,								// (Mandatory) Input image (supported channels are 1,3,4).
 		int _plotsize_w = -1,						// (Optional) Specify the width of the plot. If not specified, then the plot size will be the size of ImageBox.
 		int _plotsize_h = -1,						// (Optional) Specify the height of the plot. If not specified, then the plot size will be the size of ImageBox.
 		int _row_number = -1,						// (Optional) Specify the row number. If not specified, then centered row of an image will be plotted.

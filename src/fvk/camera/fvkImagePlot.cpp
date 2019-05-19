@@ -604,7 +604,7 @@ m_curve_color(cv::Scalar(150, 150, 150))
 
 }
 
-cv::Mat fvkImagePlot::getPlottedImage(cv::Mat& Inimg, int plotsize_w, int plotsize_h, int row_number, int border_size, bool isRedCurve, bool isGreenCurve, bool isBlueCurve, bool isRGBCurve,
+cv::Mat fvkImagePlot::getPlottedImage(const cv::Mat& Inimg, int plotsize_w, int plotsize_h, int row_number, int border_size, bool isRedCurve, bool isGreenCurve, bool isBlueCurve, bool isRGBCurve,
 	bool isInverted, bool isAxis, bool isLabel, int R, int G, int B, std::string Plotname, std::string PlotLabel)
 {
 	if (Inimg.empty() || Inimg.channels()) 

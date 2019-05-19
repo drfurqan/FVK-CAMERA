@@ -14,7 +14,7 @@ project (fvk_camera)
 
 set(VERSION_MAJOR 1)
 set(VERSION_MINOR_0 1)
-set(VERSION_MINOR_1 4)
+set(VERSION_MINOR_1 5)
 set(VERSION_PLAIN ${VERSION_MAJOR}.${VERSION_MINOR_0}.${VERSION_MINOR_1})
 
 # ------------------------------------------------------------------------------
@@ -35,14 +35,14 @@ set(CPPFILES
 ${CMAKE_SOURCE_DIR}/src/fvk/camera/fvkAverageFps.cpp
 ${CMAKE_SOURCE_DIR}/src/fvk/camera/fvkCamera.cpp
 ${CMAKE_SOURCE_DIR}/src/fvk/camera/fvkCameraInfo.cpp
-${CMAKE_SOURCE_DIR}/src/fvk/camera/fvkImageProcessing.cpp
-${CMAKE_SOURCE_DIR}/src/fvk/camera/fvkProcessingThread.cpp
 ${CMAKE_SOURCE_DIR}/src/fvk/camera/fvkCameraThread.cpp
 ${CMAKE_SOURCE_DIR}/src/fvk/camera/fvkCameraThreadAbstract.cpp
 ${CMAKE_SOURCE_DIR}/src/fvk/camera/fvkCameraThreadOpenCV.cpp
 ${CMAKE_SOURCE_DIR}/src/fvk/camera/fvkClockTime.cpp
 ${CMAKE_SOURCE_DIR}/src/fvk/camera/fvkFaceDetector.cpp
 ${CMAKE_SOURCE_DIR}/src/fvk/camera/fvkImagePlot.cpp
+${CMAKE_SOURCE_DIR}/src/fvk/camera/fvkImageProcessing.cpp
+${CMAKE_SOURCE_DIR}/src/fvk/camera/fvkProcessingThread.cpp
 ${CMAKE_SOURCE_DIR}/src/fvk/camera/fvkQSemaphore.cpp
 ${CMAKE_SOURCE_DIR}/src/fvk/camera/fvkSemaphore.cpp
 ${CMAKE_SOURCE_DIR}/src/fvk/camera/fvkSemaphoreBuffer.cpp
@@ -57,10 +57,9 @@ ${CMAKE_SOURCE_DIR}/src/fvk/camera/fvkVideoWriter.cpp
 set(HEADERFILES
 ${CMAKE_SOURCE_DIR}/include/fvk/camera/fvkAverageFps.h
 ${CMAKE_SOURCE_DIR}/include/fvk/camera/fvkCamera.h
+${CMAKE_SOURCE_DIR}/include/fvk/camera/fvkCameraExport.h
 ${CMAKE_SOURCE_DIR}/include/fvk/camera/fvkCameraInfo.h
 ${CMAKE_SOURCE_DIR}/include/fvk/camera/fvkCameraList.h
-${CMAKE_SOURCE_DIR}/include/fvk/camera/fvkImageProcessing.h
-${CMAKE_SOURCE_DIR}/include/fvk/camera/fvkProcessingThread.h
 ${CMAKE_SOURCE_DIR}/include/fvk/camera/fvkCameraThread.h
 ${CMAKE_SOURCE_DIR}/include/fvk/camera/fvkCameraThreadAbstract.h
 ${CMAKE_SOURCE_DIR}/include/fvk/camera/fvkCameraThreadOpenCV.h
@@ -68,6 +67,8 @@ ${CMAKE_SOURCE_DIR}/include/fvk/camera/fvkClockTime.h
 ${CMAKE_SOURCE_DIR}/include/fvk/camera/fvkCameraExport.h
 ${CMAKE_SOURCE_DIR}/include/fvk/camera/fvkFaceDetector.h
 ${CMAKE_SOURCE_DIR}/include/fvk/camera/fvkImagePlot.h
+${CMAKE_SOURCE_DIR}/include/fvk/camera/fvkImageProcessing.h
+${CMAKE_SOURCE_DIR}/include/fvk/camera/fvkProcessingThread.h
 ${CMAKE_SOURCE_DIR}/include/fvk/camera/fvkQSemaphore.h
 ${CMAKE_SOURCE_DIR}/include/fvk/camera/fvkSemaphore.h
 ${CMAKE_SOURCE_DIR}/include/fvk/camera/fvkSemaphoreBuffer.h
