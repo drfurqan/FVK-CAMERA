@@ -440,8 +440,8 @@ void fvkImageProcessing::setExposureFilter(cv::Mat& _img, int _value)
 	if (_img.empty() || _value == 0)
 		return;
 
-	const auto value = 1.f - static_cast<float>(_value) / 50.f;
-	const auto exposureFactor = std::pow(2.0f, -value);
+	const auto value = static_cast<float>(_value) / 100.f;
+	const auto exposureFactor = std::pow(2.0f, value);
 
 	if (_img.channels() == 1)
 	{
@@ -829,6 +829,8 @@ void fvkImageProcessing::imageProcessing(cv::Mat& _frame)
 			cv::cvtColor(_frame, m, cv::ColorConversionCodes::COLOR_BGR2GRAY);
 		else if (_frame.channels() == 4)
 			cv::cvtColor(_frame, m, cv::ColorConversionCodes::COLOR_BGRA2GRAY);
+		else
+			m = _frame.clone();
 		cv::GaussianBlur(m, m, cv::Size(5, 5), 0, 0);
 		cv::threshold(m, m, 255 - m_threshold, 255, cv::THRESH_BINARY);
 		_frame = m;
