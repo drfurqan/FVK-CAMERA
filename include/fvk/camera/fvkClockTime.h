@@ -43,11 +43,11 @@ public:
 	// Default constructor.
 	// Set _start_time to true if clock needs to be started with the constructor.
 	// _label is the label of this class object.
-	fvkClockTime(bool _start_time = true, const std::string& _label = std::string("Process "));
+	fvkClockTime(bool start_time = true, const std::string& label = std::string("Process "));
 
 	// Description:
 	// Function to set a label to this class object.
-	void setLabel(const std::string& _label) { m_label = _label; }
+	void setLabel(const std::string& label) { m_label = label; }
 	// Description:
 	// Function to get the label of this class object.
 	auto getLabel() const { return m_label; }
@@ -60,7 +60,7 @@ public:
 	// Description:
 	// Function to stop the clock and print the execution time (if print = true). 
 	// It returns the elapsed time (in milliseconds) between start() and stop().
-	auto stop(bool _print = false) -> int;
+	auto stop(bool print = false) -> int;
 	// Description:
 	// Function that returns the elapsed time (in milliseconds) between start() and stop().
 	auto elapsed() const { return m_elapstime; }
@@ -73,7 +73,7 @@ public:
 	static auto getCurrentTime() -> int;
 	// Description:
 	// Function to get the local date and time.
-	static auto getLocalTime(const char* _format = "%Y-%m-%d %X") -> std::string;
+	static auto getLocalTime(const char* format = "%Y-%m-%d %X") -> std::string;
 
 private:
 	std::chrono::time_point<std::chrono::system_clock> m_startime;

@@ -49,18 +49,18 @@ void fvkFaceDetector::reset()
 	m_found_face = false;
 }
 
-auto fvkFaceDetector::setFaceCascade(const std::string& _cascade_file_path) -> bool
+auto fvkFaceDetector::setFaceCascade(const std::string& cascade_file_path) -> bool
 {
-	if (_cascade_file_path.empty()) 
+	if (cascade_file_path.empty()) 
 		return false;
 
 	if (m_face_cascade == nullptr)
 	{
-		m_face_cascade = new cv::CascadeClassifier(_cascade_file_path);
+		m_face_cascade = new cv::CascadeClassifier(cascade_file_path);
 	}
 	else
 	{
-		if (!m_face_cascade->load(_cascade_file_path))
+		if (!m_face_cascade->load(cascade_file_path))
 		{
 			std::cerr << "ERROR: couldn't create cascade classifier. Make sure the file exists." << std::endl;
 			return false;
@@ -78,9 +78,9 @@ auto fvkFaceDetector::setFaceCascade(const std::string& _cascade_file_path) -> b
 	return true;
 }
 
-void fvkFaceDetector::setResizedWidth(const int _width)
+void fvkFaceDetector::setResizedWidth(const int width)
 {
-	m_resized_width = std::max(_width, 1);
+	m_resized_width = std::max(width, 1);
 }
 
 auto fvkFaceDetector::getResizedWidth() const -> int
@@ -165,25 +165,25 @@ auto fvkFaceDetector::biggestFace(std::vector<cv::Rect>& faces) -> cv::Rect
 /*
 * Face template is small patch in the middle of detected face.
 */
-auto fvkFaceDetector::getFaceTemplate(const cv::Mat& _frame, cv::Rect _face) -> cv::Mat
+auto fvkFaceDetector::getFaceTemplate(const cv::Mat& frame, cv::Rect face) -> cv::Mat
 {
-	_face.x += _face.width / 4;
-	_face.y += _face.height / 4;
-	_face.width /= 2;
-	_face.height /= 2;
+	face.x += face.width / 4;
+	face.y += face.height / 4;
+	face.width /= 2;
+	face.height /= 2;
 
-	auto face_template = _frame(_face).clone();
+	auto face_template = frame(face).clone();
 	return face_template;
 }
 
-void fvkFaceDetector::detectFaceAllSizes(const cv::Mat& _frame)
+void fvkFaceDetector::detectFaceAllSizes(const cv::Mat& frame)
 {
 	// Minimum face size is 1/5th of screen height
 	// Maximum face size is 2/3rds of screen height
 	m_face_cascade->detectMultiScale(
-		_frame, m_all_faces, 1.1, 3, 0,
-		cv::Size(_frame.rows / 5, _frame.rows / 5),
-		cv::Size(_frame.rows * 2 / 3, _frame.rows * 2 / 3));
+		frame, m_all_faces, 1.1, 3, 0,
+		cv::Size(frame.rows / 5, frame.rows / 5),
+		cv::Size(frame.rows * 2 / 3, frame.rows * 2 / 3));
 
 	if (m_all_faces.empty()) return;
 
@@ -193,20 +193,20 @@ void fvkFaceDetector::detectFaceAllSizes(const cv::Mat& _frame)
 	m_tracked_face = biggestFace(m_all_faces);
 
 	// Copy face template
-	m_face_template = getFaceTemplate(_frame, m_tracked_face);
+	m_face_template = getFaceTemplate(frame, m_tracked_face);
 
 	// Calculate roi
-	m_face_roi = doubleRectSize(m_tracked_face, cv::Rect(0, 0, _frame.cols, _frame.rows));
+	m_face_roi = doubleRectSize(m_tracked_face, cv::Rect(0, 0, frame.cols, frame.rows));
 
 	// Update face position
 	m_face_position = centerOfRect(m_tracked_face);
 }
 
-void fvkFaceDetector::detectFaceAroundRoi(const cv::Mat& _frame)
+void fvkFaceDetector::detectFaceAroundRoi(const cv::Mat& frame)
 {
 	// Detect faces sized +/-20% off biggest face in previous search
 	m_face_cascade->detectMultiScale(
-		_frame(m_face_roi), m_all_faces, 1.1, 3, 0,
+		frame(m_face_roi), m_all_faces, 1.1, 3, 0,
 		cv::Size(m_tracked_face.width * 8 / 10, m_tracked_face.height * 8 / 10),
 		cv::Size(m_tracked_face.width * 12 / 10, m_tracked_face.width * 12 / 10));
 
@@ -231,16 +231,16 @@ void fvkFaceDetector::detectFaceAroundRoi(const cv::Mat& _frame)
 	m_tracked_face.y += m_face_roi.y;
 
 	// Get face template
-	m_face_template = getFaceTemplate(_frame, m_tracked_face);
+	m_face_template = getFaceTemplate(frame, m_tracked_face);
 
 	// Calculate roi
-	m_face_roi = doubleRectSize(m_tracked_face, cv::Rect(0, 0, _frame.cols, _frame.rows));
+	m_face_roi = doubleRectSize(m_tracked_face, cv::Rect(0, 0, frame.cols, frame.rows));
 
 	// Update face position
 	m_face_position = centerOfRect(m_tracked_face);
 }
 
-void fvkFaceDetector::detectFacesTemplateMatching(const cv::Mat& _frame)
+void fvkFaceDetector::detectFacesTemplateMatching(const cv::Mat& frame)
 {
 	// Calculate duration of template matching
 	m_template_matching_current_time = cv::getTickCount();
@@ -257,7 +257,7 @@ void fvkFaceDetector::detectFacesTemplateMatching(const cv::Mat& _frame)
 
 	// Template matching with last known face 
 	//cv::matchTemplate(frame(m_faceRoi), m_faceTemplate, m_matchingResult, CV_TM_CCOEFF);
-	cv::matchTemplate(_frame(m_face_roi), m_face_template, m_matching_result, cv::TM_SQDIFF_NORMED);
+	cv::matchTemplate(frame(m_face_roi), m_face_template, m_matching_result, cv::TM_SQDIFF_NORMED);
 	cv::normalize(m_matching_result, m_matching_result, 0, 1, cv::NORM_MINMAX, -1, cv::Mat());
 	double min, max;
 	cv::Point min_loc, max_loc;
@@ -270,28 +270,28 @@ void fvkFaceDetector::detectFacesTemplateMatching(const cv::Mat& _frame)
 	// Get detected face
 	//m_trackedFace = cv::Rect(maxLoc.x, maxLoc.y, m_trackedFace.width, m_trackedFace.height);
 	m_tracked_face = cv::Rect(min_loc.x, min_loc.y, m_face_template.cols, m_face_template.rows);
-	m_tracked_face = doubleRectSize(m_tracked_face, cv::Rect(0, 0, _frame.cols, _frame.rows));
+	m_tracked_face = doubleRectSize(m_tracked_face, cv::Rect(0, 0, frame.cols, frame.rows));
 
 	// Get new face template
-	m_face_template = getFaceTemplate(_frame, m_tracked_face);
+	m_face_template = getFaceTemplate(frame, m_tracked_face);
 
 	// Calculate face roi
-	m_face_roi = doubleRectSize(m_tracked_face, cv::Rect(0, 0, _frame.cols, _frame.rows));
+	m_face_roi = doubleRectSize(m_tracked_face, cv::Rect(0, 0, frame.cols, frame.rows));
 
 	// Update face position
 	m_face_position = centerOfRect(m_tracked_face);
 }
 
-auto fvkFaceDetector::detect(cv::Mat& _frame) -> cv::Point
+auto fvkFaceDetector::detect(cv::Mat& frame) -> cv::Point
 {
 	// Downscale frame to m_resizedWidth width - keep aspect ratio
-	m_scale = static_cast<double>(std::min(m_resized_width, _frame.cols) / static_cast<double>(_frame.cols));
-	const auto resized_frame_size = cv::Size(static_cast<int>(m_scale*_frame.cols), static_cast<int>(m_scale*_frame.rows));
-	if (resized_frame_size.width > (_frame.cols/2) || resized_frame_size.height > (_frame.rows/2))
+	m_scale = static_cast<double>(std::min(m_resized_width, frame.cols) / static_cast<double>(frame.cols));
+	const auto resized_frame_size = cv::Size(static_cast<int>(m_scale*frame.cols), static_cast<int>(m_scale*frame.rows));
+	if (resized_frame_size.width > (frame.cols/2) || resized_frame_size.height > (frame.rows/2))
 		return m_face_position;
 
 	cv::Mat resized_frame;
-	cv::resize(_frame, resized_frame, resized_frame_size);
+	cv::resize(frame, resized_frame, resized_frame_size);
 
 	if (!m_found_face)
 	{
@@ -307,9 +307,9 @@ auto fvkFaceDetector::detect(cv::Mat& _frame) -> cv::Point
 	return m_face_position;
 }
 
-auto fvkFaceDetector::operator >> (cv::Mat& _frame) -> cv::Point
+auto fvkFaceDetector::operator >> (cv::Mat& frame) -> cv::Point
 {
-	return detect(_frame);
+	return detect(frame);
 }
 
 /************************************************************************/
@@ -322,22 +322,22 @@ m_nframes(0)
 {
 }
 
-auto fvkSimpleFaceDetector::loadCascadeClassifier(const std::string& _filename) -> bool
+auto fvkSimpleFaceDetector::loadCascadeClassifier(const std::string& filename) -> bool
 {
-	if (m_fd.setFaceCascade(_filename))
+	if (m_fd.setFaceCascade(filename))
 	{
-		m_filepath = _filename;
+		m_filepath = filename;
 		return true;
 	}
 	m_filepath = "";
 	return false;
 }
 
-void fvkSimpleFaceDetector::detect(cv::Mat& _frame, const int _frame_delay_in_detection)
+void fvkSimpleFaceDetector::detect(cv::Mat& frame, const int frame_delay_in_detection)
 {
-	if (m_nframes > _frame_delay_in_detection)
+	if (m_nframes > frame_delay_in_detection)
 	{
-		m_fd.detect(_frame);
+		m_fd.detect(frame);
 		m_nframes = 0;
 	}
 	m_nframes++;

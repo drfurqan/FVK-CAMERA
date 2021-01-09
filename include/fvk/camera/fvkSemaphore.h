@@ -35,7 +35,7 @@ class FVK_CAMERA_EXPORT fvkSemaphore
 public:
 	// Description:
 	// Default constructor that takes count and constructs the object.
-	explicit fvkSemaphore(const int _count = 0);
+	explicit fvkSemaphore(const int count = 0);
 	
 	// Description:
 	// Non-implemented.
@@ -57,10 +57,10 @@ public:
 
 	// Description:
 	// Function that blocks the thread for the given milliseconds.
-	auto wait_for(const unsigned long _milliseconds) -> bool;
+	auto wait_for(const unsigned long milliseconds) -> bool;
 	// Description:
 	// Function that blocks the thread from now to until the given milliseconds.
-	auto wait_until(const unsigned long _milliseconds) -> bool;
+	auto wait_until(const unsigned long milliseconds) -> bool;
 
 	// Description:
 	// Function that returns the condition variable native handle.

@@ -82,7 +82,7 @@ public:
 
 	// Description:
 	// A thread function (functor) to be executed by the thread.
-	void operator()(std::function<void()> _func = nullptr);
+	void operator()(std::function<void()> func = nullptr);
 
 	// Description:
 	// Virtual function that is expected to be overridden in the derived class.
@@ -92,14 +92,14 @@ public:
 
 	// Description:
 	// Function to start this thread.
-	// If a function (_func) is specified, then the specified function will be
+	// If a function (func) is specified, then the specified function will be
 	// called by the thread, otherwise the overridden function run() will be
 	// called.
 	// This function will be called by the thread function (functor).
-	void start(std::function<void()> _func = nullptr);
+	void start(std::function<void()> func = nullptr);
 	// Description:
 	// Function to pause (true) or resume (false) this thread.
-	void pause(const bool _b);
+	void pause(const bool b);
 	// Description:
 	//Function that returns true if this thread is on pause state.
 	auto pause() -> bool;
@@ -115,7 +115,7 @@ public:
 	// Function to set the time delay in milliseconds which makes 
 	// delay this thread for the specified time.
 	// Default delay is 30 milliseconds.
-	void setDelay(const int _delay_msec);
+	void setDelay(const int delay_msec);
 	// Description:
 	// Function to get the time delay in milliseconds.
 	auto getDelay() -> int;
@@ -125,18 +125,18 @@ public:
 	auto getAvgFps() -> int;
 
 	// Description:
-	// Function that returns the total number of processed or passed frames.
-	void setFrameNumber(const int _frame);
+	// Function that sets the total number of processed or passed frames.
+	void setFrameNumber(const int frame);
 	// Description:
 	// Function that returns the total number of processed or passed frames.
 	auto getFrameNumber() -> int;
 
 	// Description:
 	// Function that sleeps a thread for specified time (a thread in which this function is called).
-	static void sleep(const unsigned long _milliseconds);
+	static void sleep(const unsigned long milliseconds);
 	// Description:
 	// Function that sleeps a thread till specified time point (a thread in which this function is called).
-	static void sleep_until(const unsigned long _milliseconds);
+	static void sleep_until(const unsigned long milliseconds);
 
 protected:
 	fvkAverageFps m_avgfps;

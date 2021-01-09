@@ -28,17 +28,15 @@ purpose:	Class for elapsed time using std::chrono.
 
 using namespace R3D;
 
-fvkClockTime::fvkClockTime(bool _start_time, const std::string& _label) : 
-m_label(_label)
+fvkClockTime::fvkClockTime(bool start_time, const std::string& label) : 
+	m_label(label)
 {
-	if (_start_time) 
+	if (start_time) 
 		start();
 }
 void fvkClockTime::print()
 { 
-#ifdef _DEBUG
 	std::cout << m_label << " took " << m_elapstime << " milliseconds." << std::endl;
-#endif // _DEBUG
 }
 auto fvkClockTime::getCurrentTime() -> int
 { 
@@ -55,23 +53,21 @@ auto fvkClockTime::restart() -> int
 	start();
 	return t;
 }
-auto fvkClockTime::stop(bool _print) -> int
+auto fvkClockTime::stop(bool print) -> int
 {
 	auto t = std::chrono::system_clock::now() - m_startime;
 	m_elapstime = static_cast<int>(std::chrono::duration_cast<std::chrono::milliseconds>(t).count());
-#ifdef _DEBUG
-	if (_print)
+	if (print)
 		std::cout << m_label << " took " << m_elapstime << " milliseconds." << std::endl;
-#endif // _DEBUG
 	return m_elapstime;
 }
 
-auto fvkClockTime::getLocalTime(const char* _format) -> std::string
+auto fvkClockTime::getLocalTime(const char* format) -> std::string
 {
 	auto now = std::chrono::system_clock::now();
 	auto in_time_t = std::chrono::system_clock::to_time_t(now);
 
 	std::stringstream ss;
-	ss << std::put_time(std::localtime(&in_time_t), _format);
+	ss << std::put_time(std::localtime(&in_time_t), format);
 	return ss.str();
 }

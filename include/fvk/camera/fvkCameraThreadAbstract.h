@@ -36,7 +36,7 @@ class FVK_CAMERA_EXPORT fvkCameraThreadAbstract
 public:
 	// Description:
 	// Default constructor to initialize the data members.
-	fvkCameraThreadAbstract(const int _device_index, const cv::Size& _frame_size);
+	fvkCameraThreadAbstract(const int device_index, const cv::Size& frame_size);
 	// Description:
 	// Default destructor that does nothing in this abstract class.
 	virtual ~fvkCameraThreadAbstract();
@@ -58,30 +58,30 @@ public:
 
 	// Description:
 	// Function to set the camera device index.
-	//  _device is the id of the opened video capturing device (i.e. a camera index).
+	//  device is the id of the opened video capturing device (i.e. a camera index).
 	//  If there is a single camera connected, just pass 0.
 	//  In case of multiple cameras, try to pass 1 or 2 or 3, so on...
-	void setDeviceIndex(const int _index) { m_device_index = _index; }
+	void setDeviceIndex(const int index) { m_device_index = index; }
 	// Description:
 	// Function to get the camera device index.
 	auto getDeviceIndex() const { return m_device_index; }
 
 	// Description:
 	// Function to set the width of the captured frame.
-	void setFrameWidth(const int _w) { m_frame_size.width = _w; }
+	void setFrameWidth(const int w) { m_frame_size.width = w; }
 	// Description:
 	// Function to get the width of the captured frame.
 	auto getFrameWidth() const { return m_frame_size.width; };
 	// Description:
 	// Function to set the height of the captured frame.
-	void setFrameHeight(const int _h) { m_frame_size.height = _h; }
+	void setFrameHeight(const int h) { m_frame_size.height = h; }
 	// Description:
 	// Function to get the height of the captured frame.
 	auto getFrameHeight() const { return m_frame_size.height; };
 	// Description:
 	// Function to set the camera resolution (columns and rows).
 	// Resolution should be specified before calling the open() function.
-	void setFrameSize(const cv::Size& _size) { m_frame_size = _size; }
+	void setFrameSize(const cv::Size& size) { m_frame_size = size; }
 	// Description:
 	// Function to get the current camera resolution.
 	auto getFrameSize() const { return m_frame_size; };
@@ -89,15 +89,15 @@ public:
 protected:
 	// Description:
 	// Function to connect the camera device.
-	//  _device_index is the index of the opened video capturing device (i.e. a camera index).
+	//  device_index is the index of the opened video capturing device (i.e. a camera index).
 	//  If there is a single camera connected, just pass 0.
 	//  In case of multiple cameras, try to pass 1 or 2 or 3, so on...
 	// It returns true on success.
-	virtual auto open(const int _device_index) -> bool = 0;
+	virtual auto open(const int device_index) -> bool = 0;
 
 	// Description:
 	// Pure virtual function to be overridden to grab/capture the frame. 
-	virtual auto grab(cv::Mat& _frame) -> bool = 0;
+	virtual auto grab(cv::Mat& frame) -> bool = 0;
 
 	int m_device_index;
 	cv::Size m_frame_size;

@@ -65,16 +65,16 @@ public:
 	// Description:
 	// Function to add a unique camera to the list. 
 	// If there is a camera with the same index already in the list, that will be not be added to the list.
-	auto addUnique(CAMERA* _cam)
+	auto addUnique(CAMERA* cam)
 	{
 		auto it = std::find_if(m_list.begin(), m_list.end(),
 			[&](const CAMERA* _c)
 		{
-			return _c->getDeviceIndex() == _cam->getDeviceIndex();
+			return _c->getDeviceIndex() == cam->getDeviceIndex();
 		});
 		if (it == m_list.end())
 		{
-			m_list.push_back(_cam);
+			m_list.push_back(cam);
 			return true;
 		}
 
@@ -89,9 +89,9 @@ public:
 	// _frame_size is the desired width and height of camera frame.
 	// Specifying Size(-1, -1) will do the auto-selection for the captured frame size,
 	// normally it enables the 640x480 resolution on most of web cams.
-	auto add(const int _device_index = 0, const cv::Size& _frame_size = cv::Size(-1, -1), const int _api = static_cast<int>(cv::VideoCaptureAPIs::CAP_ANY))
+	auto add(const int device_index = 0, const cv::Size& frame_size = cv::Size(-1, -1), const int api = static_cast<int>(cv::VideoCaptureAPIs::CAP_ANY))
 	{
-		auto p = new CAMERA(_device_index, _frame_size, _api);
+		auto p = new CAMERA(device_index, frame_size, api);
 		if (!addUnique(p))
 		{
 			delete p;
@@ -106,9 +106,9 @@ public:
 	// (eg. img_%02d.jpg, which will read samples like img_00.jpg, img_01.jpg, img_02.jpg, ...)
 	// _frame_size is the desired camera frame width and height.
 	// Specifying Size(-1, -1) will do the auto-selection for the frame's width and height.
-	auto add(const std::string& _video_file, const cv::Size& _frame_size = cv::Size(-1, -1), const int _api = static_cast<int>(cv::VideoCaptureAPIs::CAP_ANY))
+	auto add(const std::string& video_file, const cv::Size& frame_size = cv::Size(-1, -1), const int api = static_cast<int>(cv::VideoCaptureAPIs::CAP_ANY))
 	{
-		auto p = new CAMERA(_video_file, _frame_size, _api);
+		auto p = new CAMERA(video_file, frame_size, api);
 		if (!addUnique(p))
 		{
 			delete p;
@@ -121,9 +121,9 @@ public:
 	// Constructor that creates a camera object by specifying the camera thread.
 	// This constructor is created for the derived classes of fvkCameraThread.
 	template <typename CameraThread>
-	auto add(CameraThread* _ct)
+	auto add(CameraThread* ct)
 	{
-		auto p = new CAMERA(_ct);
+		auto p = new CAMERA(ct);
 		if (!addUnique(p))
 		{
 			delete p;
@@ -136,9 +136,9 @@ public:
 	// Constructor to create a camera object by specifying the camera and processing threads.
 	// This constructor is created for the derived classes of both fvkCameraThread and fvkCameraProcessingThread.
 	template <typename CameraThread, typename ProcessingThread>
-	auto add(CameraThread* _ct, ProcessingThread* _pt)
+	auto add(CameraThread* ct, ProcessingThread* pt)
 	{
-		auto p = new CAMERA(_ct, _pt);
+		auto p = new CAMERA(ct, pt);
 		if (!addUnique(p))
 		{
 			delete p;
@@ -152,28 +152,28 @@ public:
 	// It returns NULL if a camera with the same device id is already in the list.
 	// Function to add a camera object by specifying the camera and processing threads.
 	// This function is created for the derived classes of both fvkCameraThread and fvkCameraProcessingThread.
-	auto add(CAMERA* _p)
+	auto add(CAMERA* p)
 	{
-		return addUnique(_p);
+		return addUnique(p);
 	}
 
 	// Description:
 	// Function to get a pointer to camera by index of the camera list.
-	auto get(const  std::size_t _index) const
+	auto get(const  std::size_t index) const
 	{
-		if (_index < 0 || _index >= m_list.size())
+		if (index < 0 || index >= m_list.size())
 			return static_cast<CAMERA*>(nullptr);
 
-		return m_list[_index];
+		return m_list[index];
 	}
 	// Description:
 	// Function to get a pointer to camera device by it's id.
-	auto getBy(const int _device_index) const
+	auto getByIndex(const int device_index) const
 	{
 		auto it = std::find_if(m_list.begin(), m_list.end(),
-			[&_device_index](const CAMERA* _c)
+			[&device_index](const CAMERA* c)
 		{
-			return _c->getDeviceIndex() == _device_index;
+			return c->getDeviceIndex() == device_index;
 		});
 		if (it != m_list.end())
 			return (*it);
@@ -184,22 +184,22 @@ public:
 	// Description:
 	// Function to remove a camera from the list.
 	// It returns true on success.
-	auto remove(CAMERA* _p)
+	auto remove(CAMERA* p)
 	{
-		if (!_p) 
+		if (!p) 
 			return false;
 
-		m_list.erase(std::remove(m_list.begin(), m_list.end(), _p), m_list.end());
-		delete _p;
-		_p = nullptr;
+		m_list.erase(std::remove(m_list.begin(), m_list.end(), p), m_list.end());
+		delete p;
+		p = nullptr;
 		return true;
 	}
 	// Description:
 	// Function to remove a camera from the list.
 	// It returns true on success.
-	auto remove(const int _device_index)
+	auto remove(const int device_index)
 	{
-		return remove(getBy(_device_index));
+		return remove(getByIndex(device_index));
 	}
 
 	// Description:

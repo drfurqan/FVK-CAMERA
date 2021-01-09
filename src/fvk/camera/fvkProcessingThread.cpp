@@ -25,10 +25,10 @@ camera frame. This thread is synchronized with the camera thread using a semapho
 
 using namespace R3D;
 
-fvkProcessingThread::fvkProcessingThread(const int _device_index, fvkCameraAbstract* _frameobserver, fvkSemaphoreBuffer<cv::Mat>* _buffer) :
-	m_device_index(_device_index),
-	p_frameobserver(_frameobserver),
-	p_buffer(_buffer),
+fvkProcessingThread::fvkProcessingThread(const int device_index, fvkCameraAbstract* frameobserver, fvkSemaphoreBuffer<cv::Mat>* buffer) :
+	m_device_index(device_index),
+	p_frameobserver(frameobserver),
+	p_buffer(buffer),
 	m_filepath("D:\\saved_snapshot.jpg"),
 	m_save(false),
 	m_video_output_func(nullptr)
@@ -41,8 +41,8 @@ fvkProcessingThread::fvkProcessingThread(const int _device_index, fvkCameraAbstr
 	setDelay(0);
 }
 
-fvkProcessingThread::fvkProcessingThread(const int _device_index, fvkSemaphoreBuffer<cv::Mat>* _buffer) : 
-	fvkProcessingThread(_device_index, nullptr, _buffer)
+fvkProcessingThread::fvkProcessingThread(const int device_index, fvkSemaphoreBuffer<cv::Mat>* buffer) : 
+	fvkProcessingThread(device_index, nullptr, buffer)
 {
 }
 
@@ -85,9 +85,9 @@ void fvkProcessingThread::run()
 		m_vr.addFrame(frame);
 }
 
-void fvkProcessingThread::setVideoOutput(const std::function<void(cv::Mat&, const fvkThreadStats&)> _f)
+void fvkProcessingThread::setVideoOutput(const std::function<void(cv::Mat&, const fvkThreadStats&)> f)
 {
-	m_video_output_func = std::move(_f);
+	m_video_output_func = std::move(f);
 }
 
 void fvkProcessingThread::present(cv::Mat& _frame)
@@ -108,7 +108,7 @@ void fvkProcessingThread::saveFrameOnClick()
 {
 	m_save = true;
 }
-auto fvkProcessingThread::saveFrameToDisk(const cv::Mat& _frame) -> bool
+auto fvkProcessingThread::saveFrameToDisk(const cv::Mat& frame) -> bool
 {
 	if (m_save)
 	{
@@ -116,7 +116,7 @@ auto fvkProcessingThread::saveFrameToDisk(const cv::Mat& _frame) -> bool
 		std::vector<int> params;
 		params.push_back(cv::IMWRITE_JPEG_QUALITY);
 		params.push_back(98);   // that's percent, so 100 == no compression, 1 == fully compressed.
-		return cv::imwrite(m_filepath, _frame, params);
+		return cv::imwrite(m_filepath, frame, params);
 	}
 	return false;
 }

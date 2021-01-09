@@ -34,13 +34,13 @@ class FVK_CAMERA_EXPORT fvkPlotSeries
 {
 public:
 	fvkPlotSeries();
-	fvkPlotSeries(const fvkPlotSeries& _s);
+	fvkPlotSeries(const fvkPlotSeries& s);
 	~fvkPlotSeries();
 	void clear();
 
-	void set(int _count, float* _p);
-	void set(cv::Scalar _color, bool _auto_color = true);
-	void set(int _r, int _g, int _b, bool _auto_color = true);
+	void set(unsigned int count, float* p);
+	void set(cv::Scalar color, bool auto_color = true);
+	void set(int r, int g, int b, bool auto_color = true);
 
 	unsigned int m_count;   // number of points
 	std::string m_label;    // name of the curve
@@ -56,17 +56,17 @@ class FVK_CAMERA_EXPORT fvkPlotFigure
 {
 
 public:
-	fvkPlotFigure(const std::string& _name);
+	fvkPlotFigure(const std::string& name);
 	void clear();
 
-	fvkPlotSeries* add(const fvkPlotSeries& _s);
+	fvkPlotSeries* add(const fvkPlotSeries& s);
 
-	void drawLabels(cv::Mat& _outimg, int _posx, int _posy);
-	void setFigureSize(int _w, int _h);
-	void setBorderSize(int _size);
-	void setInvertColors(bool _invert);
-	void setAxisEnabled(bool _b);
-	void setLabelsEnabled(bool _b);
+	void drawLabels(cv::Mat& outimg, int posx, int posy);
+	void setFigureSize(int w, int h);
+	void setBorderSize(int size);
+	void setInvertColors(bool invert);
+	void setAxisEnabled(bool b);
+	void setLabelsEnabled(bool b);
 
 	void calculatePlot();
 	std::string getFigureName();
@@ -74,8 +74,8 @@ public:
 	cv::Mat& getPlottedImage() { return p_plottedimg; }
 
 private:
-	void drawAxis(cv::Mat& _outimg);
-	void drawPlots(cv::Mat& _outimg);
+	void drawAxis(cv::Mat& outimg);
+	void drawPlots(cv::Mat& outimg);
 	void initialize();
 	cv::Scalar getAutoColor();
 
@@ -117,14 +117,14 @@ fvkPlotSeries::fvkPlotSeries() : p_data(nullptr), m_label("")
 {
 	clear();
 }
-fvkPlotSeries::fvkPlotSeries(const fvkPlotSeries& _s) :
-m_count(_s.m_count),
-m_label(_s.m_label),
-m_auto_color(_s.m_auto_color),
-m_color(_s.m_color)
+fvkPlotSeries::fvkPlotSeries(const fvkPlotSeries& s) :
+	m_count(s.m_count),
+	m_label(s.m_label),
+	m_auto_color(s.m_auto_color),
+	m_color(s.m_color)
 {
 	p_data = new float[m_count];
-	std::memcpy(p_data, _s.p_data, m_count * sizeof(float));
+	std::memcpy(p_data, s.p_data, m_count * sizeof(float));
 }
 fvkPlotSeries::~fvkPlotSeries()
 {
@@ -141,32 +141,32 @@ void fvkPlotSeries::clear()
 	m_auto_color = true;
 	m_label = "";
 }
-void fvkPlotSeries::set(int _count, float* _p)
+void fvkPlotSeries::set(unsigned int count, float* p)
 {
 	clear();
-	m_count = _count;
-	p_data = _p;
+	m_count = count;
+	p_data = p;
 }
-void fvkPlotSeries::set(int _r, int _g, int _b, bool _auto_color)
+void fvkPlotSeries::set(int r, int g, int b, bool auto_color)
 {
-	_r = _r > 0 ? _r : 0;
-	_g = _g > 0 ? _g : 0;
-	_b = _b > 0 ? _b : 0;
-	m_color = CV_RGB(_r, _g, _b);
-	set(m_color, _auto_color);
+	r = r > 0 ? r : 0;
+	g = g > 0 ? g : 0;
+	b = b > 0 ? b : 0;
+	m_color = CV_RGB(r, g, b);
+	set(m_color, auto_color);
 }
-void fvkPlotSeries::set(cv::Scalar _color, bool _auto_color)
+void fvkPlotSeries::set(cv::Scalar color, bool auto_color)
 {
-	this->m_color = _color;
-	this->m_auto_color = _auto_color;
+	m_color = color;
+	m_auto_color = auto_color;
 }
 
 /************************************************************************/
 /* Set Figure                                                           */
 /************************************************************************/
-fvkPlotFigure::fvkPlotFigure(const std::string& _name)
+fvkPlotFigure::fvkPlotFigure(const std::string& name)
 {
-	figure_name = _name;
+	figure_name = name;
 	custom_range_y = false;
 	custom_range_x = false;
 	backgroud_color = CV_RGB(255, 255, 255);
@@ -175,21 +175,21 @@ fvkPlotFigure::fvkPlotFigure(const std::string& _name)
 	figure_size = cv::Size(100, 100);
 	border_size = 30;
 	plots.reserve(10);
-	this->isInvert = false;
-	this->isAxis = true;
-	this->isLabls = true;
+	isInvert = false;
+	isAxis = true;
+	isLabls = true;
 }
-void fvkPlotFigure::setAxisEnabled(bool _b)
+void fvkPlotFigure::setAxisEnabled(bool b)
 {
-	this->isAxis = _b;
+	isAxis = b;
 }
-void fvkPlotFigure::setLabelsEnabled(bool _b)
+void fvkPlotFigure::setLabelsEnabled(bool b)
 {
-	this->isLabls = _b;
+	isLabls = b;
 }
 void fvkPlotFigure::setInvertColors(bool invert)
 {
-	this->isInvert = invert;
+	isInvert = invert;
 }
 void fvkPlotFigure::setFigureSize(int w, int h)
 {
@@ -205,9 +205,9 @@ std::string fvkPlotFigure::getFigureName(void)
 	return figure_name;
 }
 
-fvkPlotSeries* fvkPlotFigure::add(const fvkPlotSeries& _s)
+fvkPlotSeries* fvkPlotFigure::add(const fvkPlotSeries& s)
 {
-	plots.push_back(_s);
+	plots.push_back(s);
 	return &(plots.back());
 }
 
@@ -247,10 +247,10 @@ void fvkPlotFigure::initialize()
 	x_min = 0;
 
 	// find maximum/minimum of axes
-	for (std::vector<fvkPlotSeries>::iterator iter = plots.begin(); iter != plots.end(); ++iter)
+	for (auto iter = plots.begin(); iter != plots.end(); ++iter)
 	{
-		float count = static_cast<float>(iter->m_count);
-		float *p = iter->p_data;
+		auto count = static_cast<float>(iter->m_count);
+		auto p = iter->p_data;
 		for (unsigned int i = 0; i < iter->m_count; i++)
 		{
 			float v = p[i];
@@ -266,8 +266,8 @@ void fvkPlotFigure::initialize()
 
 	// calculate zoom scale
 	// set to 2 if y range is too small
-	float y_range = y_max - y_min;
-	float eps = 1e-9f;
+	auto y_range = y_max - y_min;
+	auto eps = 1e-9f;
 	if (y_range <= eps)
 	{
 		y_range = 1;
@@ -326,17 +326,17 @@ cv::Scalar fvkPlotFigure::getAutoColor()
 
 void fvkPlotFigure::drawAxis(cv::Mat& outimg)
 {
-	int bs = border_size;
-	int h = figure_size.height;
-	int w = figure_size.width;
+	auto bs = border_size;
+	auto h = figure_size.height;
+	auto w = figure_size.width;
 
 	// size of graph
-	int gh = h - bs * 2;
-	int gw = w - bs * 2;
+	auto gh = h - bs * 2;
+	auto gw = w - bs * 2;
 
 	// draw the horizontal and vertical axis
 	// let x, y axies cross at zero if possible.
-	float y_ref = y_min;
+	auto y_ref = y_min;
 	if ((y_max > 0) && (y_min <= 0))
 		y_ref = 0;
 
@@ -349,7 +349,7 @@ void fvkPlotFigure::drawAxis(cv::Mat& outimg)
 	//cv::Font font;
 	//cv::initFont(&font, cv::FONT_HERSHEY_PLAIN, 0.55, 0.7, 0, 1, cv::AA);
 
-	int chw = 6, chh = 10;
+	auto chw = 6, chh = 10;
 	char text[16];
 
 	// y max
@@ -380,14 +380,14 @@ void fvkPlotFigure::drawAxis(cv::Mat& outimg)
 
 void fvkPlotFigure::drawPlots(cv::Mat& outimg)
 {
-	int bs = border_size;
-	int h = figure_size.height;
-	int w = figure_size.width;
+	auto bs = border_size;
+	auto h = figure_size.height;
+	auto w = figure_size.width;
 
 	// draw the curves
-	for (std::vector<fvkPlotSeries>::iterator iter = plots.begin(); iter != plots.end(); ++iter)
+	for (auto iter = plots.begin(); iter != plots.end(); ++iter)
 	{
-		float *p = iter->p_data;
+		auto p = iter->p_data;
 
 		// automatically change curve color
 		if (iter->m_auto_color == true)
@@ -414,9 +414,9 @@ void fvkPlotFigure::drawLabels(cv::Mat& outimg, int posx, int posy)
 	// character size
 	int chw = 6, chh = 8;
 
-	for (std::vector<fvkPlotSeries>::iterator iter = plots.begin(); iter != plots.end(); ++iter)
+	for (auto iter = plots.begin(); iter != plots.end(); ++iter)
 	{
-		std::string lbl = iter->m_label;
+		auto lbl = iter->m_label;
 		// draw label if one is available
 		if (lbl.length() > 0)
 		{
@@ -457,11 +457,11 @@ fvkPlotManager::~fvkPlotManager()
 	}
 }
 // search a named window, return null if not found.
-fvkPlotFigure* fvkPlotManager::findFigure(const std::string& _name)
+fvkPlotFigure* fvkPlotManager::findFigure(const std::string& name)
 {
 	for (auto &i : figure_list)
 	{
-		if (i->getFigureName() == _name)
+		if (i->getFigureName() == name)
 			return i;
 	}
 	return nullptr;
@@ -478,9 +478,9 @@ void fvkPlotManager::plotData(const std::string& fig_name, const float *p, int c
 		step = 1;
 
 	// copy data and create a series format.
-	float *data_copy = new float[count];
+	auto data_copy = new float[count];
 
-	for (int i = 0; i < count; i++)
+	for (auto i = 0; i < count; i++)
 		*(data_copy + i) = *(p + step * i);
 
 	fvkPlotSeries s;
@@ -507,14 +507,14 @@ void fvkPlotManager::plotData(const std::string& fig_name, const float *p, int c
 // the curve will be plot on that figure; if not, a new figure will be created.
 // static method
 template <typename _T>
-void fvkPlotManager::plot(const std::string& fig_name, const _T* _data, int count, int step, int R, int G, int B)
+void fvkPlotManager::plot(const std::string& fig_name, const _T* data, int count, int step, int R, int G, int B)
 {
 	if (step <= 0) 
 		step = 1;
 
-	float* data_copy = new float[count * step];
-	float* dst = data_copy;
-	const _T* src = _data;
+	auto data_copy = new float[count * step];
+	auto dst = data_copy;
+	const _T* src = data;
 	for (int i = 0; i < count * step; i++)
 	{
 		*dst = static_cast<float>(*src);
@@ -538,51 +538,51 @@ template void fvkPlotManager::plot(const std::string& figure_name, const double*
 
 
 // delete all plots on a specified figure
-void fvkPlotManager::clear(const std::string& _name)
+void fvkPlotManager::clear(const std::string& name)
 {
-	fvkPlotFigure *fig = this->findFigure(_name);
+	auto fig = findFigure(name);
 	if (fig) fig->clear();
 }
-void fvkPlotManager::setLabel(const std::string& _l) const
+void fvkPlotManager::setLabel(const std::string& l) const
 {
 	if (active_series != nullptr && active_figure != nullptr)
 	{
-		active_series->m_label = _l;
+		active_series->m_label = l;
 		active_figure->calculatePlot();
 	}
 }
 
 /*******************************************************************************/
-cv::Mat fvkPlotManager::getPlottedImage(const std::string& _name)
+cv::Mat fvkPlotManager::getPlottedImage(const std::string& name)
 {
-	fvkPlotFigure *fig = findFigure(_name);
+	auto fig = findFigure(name);
 	if (fig) return fig->getPlottedImage();
 	return cv::Mat();
 }
-void fvkPlotManager::setPlotSize(const std::string& _name, int w, int h)
+void fvkPlotManager::setPlotSize(const std::string& name, int w, int h)
 {
-	fvkPlotFigure *fig = findFigure(_name);
+	auto fig = findFigure(name);
 	if (fig) fig->setFigureSize(w, h);
 }
-void fvkPlotManager::setBorderSize(const std::string& _name, int size)
+void fvkPlotManager::setBorderSize(const std::string& name, int size)
 {
-	fvkPlotFigure *fig = findFigure(_name);
+	auto fig = findFigure(name);
 	if (fig) fig->setBorderSize(size);
 }
-void fvkPlotManager::invertPlotColor(const std::string& _name, bool invert)
+void fvkPlotManager::invertPlotColor(const std::string& name, bool invert)
 {
-	fvkPlotFigure *fig = findFigure(_name);
+	auto fig = findFigure(name);
 	if (fig) fig->setInvertColors(invert);
 }
 
-void fvkPlotManager::setAxisEnabled(const std::string& _name, bool isOn)
+void fvkPlotManager::setAxisEnabled(const std::string& name, bool isOn)
 {
-	fvkPlotFigure *fig = findFigure(_name);
+	auto fig = findFigure(name);
 	if (fig) fig->setAxisEnabled(isOn);
 }
-void fvkPlotManager::setLabelsEnabled(const std::string& _name, bool isOn)
+void fvkPlotManager::setLabelsEnabled(const std::string& name, bool isOn)
 {
-	fvkPlotFigure *fig = findFigure(_name);
+	auto fig = findFigure(name);
 	if (fig) fig->setLabelsEnabled(isOn);
 }
 
@@ -590,31 +590,31 @@ void fvkPlotManager::setLabelsEnabled(const std::string& _name, bool isOn)
 /*                                                                      */
 /************************************************************************/
 fvkImagePlot::fvkImagePlot() :
-m_plotsize(cv::Size(640, 480)),
-m_row_num(-1),
-m_border_size(30),
-m_isRedCurve(false),
-m_isGreenCurve(false),
-m_isBlueCurve(false),
-m_isInverted(false),
-m_isAxis(true),
-m_isLabel(true),
-m_curve_color(cv::Scalar(150, 150, 150))
+	m_plotsize(cv::Size(640, 480)),
+	m_row_num(-1),
+	m_border_size(30),
+	m_isRedCurve(false),
+	m_isGreenCurve(false),
+	m_isBlueCurve(false),
+	m_isInverted(false),
+	m_isAxis(true),
+	m_isLabel(true),
+	m_curve_color(cv::Scalar(150, 150, 150))
 {
 
 }
 
-cv::Mat fvkImagePlot::getPlottedImage(const cv::Mat& Inimg, int plotsize_w, int plotsize_h, int row_number, int border_size, bool isRedCurve, bool isGreenCurve, bool isBlueCurve, bool isRGBCurve,
-	bool isInverted, bool isAxis, bool isLabel, int R, int G, int B, std::string Plotname, std::string PlotLabel)
+cv::Mat fvkImagePlot::getPlottedImage(cv::Mat& inImg, int plotsize_w, int plotsize_h, int row_number, int border_size, bool isRedCurve, bool isGreenCurve, bool isBlueCurve, bool isRGBCurve,
+	bool isInverted, bool isAxis, bool isLabel, int red, int green, int blue, std::string plotname, std::string plotLabel)
 {
-	if (Inimg.empty() || Inimg.channels()) 
+	if (inImg.empty()) 
 		return cv::Mat();
 
 	cv::Mat img;
-	if (Inimg.depth() != CV_8U)
-		Inimg.convertTo(img, CV_8U, 255);
+	if (inImg.depth() != CV_8U)
+		inImg.convertTo(img, CV_8U, 255);
 	else
-		img = Inimg.clone();
+		img = inImg.clone();
 
 	if (img.channels() == 1)
 		cv::cvtColor(img, img, cv::ColorConversionCodes::COLOR_GRAY2BGR);
@@ -630,11 +630,11 @@ cv::Mat fvkImagePlot::getPlottedImage(const cv::Mat& Inimg, int plotsize_w, int 
 	if (isRGBCurve)
 	{
 		uchar* pb = img.data + row_number * img.step;
-		pm.plot(Plotname, pb + 2, img.cols, 3, 200, 0, 0);
+		pm.plot(plotname, pb + 2, img.cols, 3, 200, 0, 0);
 		if (isLabel) pm.setLabel("B");
-		pm.plot(Plotname, pb + 1, img.cols, 3, 0, 200, 0);
+		pm.plot(plotname, pb + 1, img.cols, 3, 0, 200, 0);
 		if (isLabel) pm.setLabel("G");
-		pm.plot(Plotname, pb + 0, img.cols, 3, 0, 0, 200);
+		pm.plot(plotname, pb + 0, img.cols, 3, 0, 0, 200);
 		if (isLabel) pm.setLabel("R");
 	}
 	else
@@ -647,25 +647,25 @@ cv::Mat fvkImagePlot::getPlottedImage(const cv::Mat& Inimg, int plotsize_w, int 
 		else if (isGreenCurve) t = bgr[1];
 		else if (isBlueCurve) t = bgr[0];
 		uchar* pb = t.data + row_number * t.step;
-		pm.plot(Plotname, pb, t.cols, 1, R, G, B);
+		pm.plot(plotname, pb, t.cols, 1, red, green, blue);
 	}
 
-	pm.setPlotSize(Plotname, plotsize_w, plotsize_h);
-	pm.setBorderSize(Plotname, border_size);
-	pm.invertPlotColor(Plotname, isInverted);
-	pm.setAxisEnabled(Plotname, isAxis);
-	pm.setLabelsEnabled(Plotname, isLabel);
+	pm.setPlotSize(plotname, plotsize_w, plotsize_h);
+	pm.setBorderSize(plotname, border_size);
+	pm.invertPlotColor(plotname, isInverted);
+	pm.setAxisEnabled(plotname, isAxis);
+	pm.setLabelsEnabled(plotname, isLabel);
 
 	if (isRedCurve) pm.setLabel("R");
 	else if (isGreenCurve) pm.setLabel("G");
 	else if (isBlueCurve) pm.setLabel("B");
 
 	if (isLabel && !isRGBCurve && !isRedCurve && !isGreenCurve && !isBlueCurve) 
-		pm.setLabel(PlotLabel);
+		pm.setLabel(plotLabel);
 
 	pm.calculatePlot();
 
-	cv::Mat I = pm.getPlottedImage(Plotname);
+	cv::Mat I = pm.getPlottedImage(plotname);
 	if (!I.empty())
 	{
 		if (img.size() != I.size())
@@ -677,18 +677,18 @@ cv::Mat fvkImagePlot::getPlottedImage(const cv::Mat& Inimg, int plotsize_w, int 
 		{
 			img = I.clone();
 		}
-		pm.clear(Plotname);
+		pm.clear(plotname);
 		return img;
 	}
 
-	pm.clear(Plotname);
+	pm.clear(plotname);
 	return cv::Mat();
 }
 
-void fvkImagePlot::plot(cv::Mat& _img)
+void fvkImagePlot::plot(cv::Mat& img)
 {
-	cv::Mat m = getPlottedImage(
-		_img,
+	auto m = getPlottedImage(
+		img,
 		m_plotsize.width,
 		m_plotsize.height,
 		m_row_num,
@@ -705,6 +705,7 @@ void fvkImagePlot::plot(cv::Mat& _img)
 		static_cast<int>(m_curve_color[2]),
 		"RGB",
 		"RGB Plot");
+
 	if (!m.empty())
-		_img = m;
+		img = m;
 }

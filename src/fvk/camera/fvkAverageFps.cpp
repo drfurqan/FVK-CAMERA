@@ -23,11 +23,11 @@ purpose:	Class to compute the average frames per second.
 #include <iostream>
 using namespace R3D;
 
-fvkAverageFps::fvkAverageFps(const int _avg_size) :
-m_avgsize(_avg_size),
-m_capture_time(0),
-m_fpssum(0),
-m_fpssamples(0)
+fvkAverageFps::fvkAverageFps(const int avg_size) :
+	m_avgsize(avg_size),
+	m_capture_time(0),
+	m_fpssum(0),
+	m_fpssamples(0)
 {
 }
 void fvkAverageFps::update()

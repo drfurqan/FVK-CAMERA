@@ -34,7 +34,12 @@ class FVK_CAMERA_EXPORT fvkVideoWriter
 {
 
 public:
+	// Description:
+	// Constructor to create a writer object.
 	fvkVideoWriter();
+
+	// Description:
+	// Destructor that releases the writer.
 	virtual ~fvkVideoWriter();
 
 	// Description:
@@ -71,7 +76,7 @@ public:
 	//	 vr.addFrame(I1);
 	//	 vr.done();
 	// }
-	auto open() -> int;
+	virtual auto open() -> int;
 
 	// Description:
 	// Function that returns true if the video writer has been successfully initialized.
@@ -79,19 +84,19 @@ public:
 
 	// Description:
 	// Function to add a new image frame to the video file.
-	void addFrame(const cv::Mat& _frame);
+	virtual void addFrame(const cv::Mat& frame);
 
 	// Description:
 	// Function that stops video recoding and finalize the video file.
 	// Without calling this function, video file won't be played.
-	void stop();
+	virtual void stop();
 
 	// Description:
 	// Function to set the api preference.
 	// The _api parameter allows to specify API backends to use.
 	// Can be used to enforce a specific reader implementation
 	// if multiple are available: e.g., cv::CAP_FFMPEG or cv::CAP_INTEL_MFX.
-	void setApi(int _api) { m_api = _api; }
+	void setApi(int api) { m_api = api; }
 	// Description:
 	// Function to get the api preference.
 	auto getApi() const { return m_api; }
@@ -108,20 +113,20 @@ public:
 
 	// Description:
 	// Function to set the recorded video resolution i.e, width and height.
-	void setSize(const cv::Size& _s) { m_size = _s; }
+	void setSize(const cv::Size& s) { m_size = s; }
 	// Description:
 	// Function to get the recorded video resolution i.e, width and height.
 	auto getSize() const { return m_size; }
 	// Description:
 	// Function to set the desired frames per second.
-	void setFps(double _fps) { m_fps = _fps; }
+	void setFps(double fps) { m_fps = fps; }
 	// Description:
 	// Function to get the specified frames per second.
 	auto getFps() const { return m_fps; }
 	// Description:
 	// If it's true, video will be recored with RGB colors.
 	// Default value is true.
-	void setColored(bool _b) { m_iscolor = _b; }
+	void setColored(bool b) { m_iscolor = b; }
 	// Description:
 	// It returns true, if the video is recorded with RGB colors.
 	auto isColored() const { return m_iscolor; }
@@ -129,7 +134,7 @@ public:
 	// If it's true, then a window will pop up at runtime that contains all the 
 	// codec installed on your system and ask you to select the one to use.
 	// Default value is false.
-	void autoCodecSelection(bool _b) { m_autocodec = _b; }
+	void autoCodecSelection(bool b) { m_autocodec = b; }
 	// Description:
 	// It returns true, auto-codec selection is ON.
 	auto autoCodecSelection() const { return m_autocodec; }
@@ -146,7 +151,7 @@ public:
 	// Note: There are so many codecs in circulation, but whichever codec you choose must be available on your machine.
 	// For more information about codecs, visit http://www.fourcc.org/codecs.php
 	// Default value is H264.
-	void setCodec(const std::string& _codec) { m_codec = _codec; }
+	void setCodec(const std::string& codec) { m_codec = codec; }
 	// Description:
 	// Function to get four character codec with which the video stream will be compressed.
 	auto getCodec() const { return m_codec; }

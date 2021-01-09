@@ -24,10 +24,10 @@ extended in order to make any camera device compatible to this library.
 
 using namespace R3D;
 
-fvkCameraThread::fvkCameraThread(const int _device_index, const cv::Size& _frame_size, fvkSemaphoreBuffer<cv::Mat>* _buffer) :
+fvkCameraThread::fvkCameraThread(const int device_index, const cv::Size& frame_size, fvkSemaphoreBuffer<cv::Mat>* buffer) :
 	fvkThread(),
-	fvkCameraThreadAbstract(_device_index, _frame_size),
-	p_buffer(_buffer),
+	fvkCameraThreadAbstract(device_index, frame_size),
+	p_buffer(buffer),
 	m_video_output_func(nullptr),
 	m_sync_proc_thread(false),
 	m_rect(cv::Rect(0, 0, 10, 10))
@@ -67,9 +67,9 @@ void fvkCameraThread::run()
 	}
 }
 
-void fvkCameraThread::setVideoOutput(const std::function<void(cv::Mat&, const fvkThreadStats&)> _f)
+void fvkCameraThread::setVideoOutput(const std::function<void(cv::Mat&, const fvkThreadStats&)> f)
 {
-	m_video_output_func = std::move(_f);
+	m_video_output_func = std::move(f);
 }
 
 auto fvkCameraThread::getFrame() -> cv::Mat
@@ -89,19 +89,19 @@ void fvkCameraThread::resetRoi()
 	std::lock_guard<std::mutex> locker(m_rectmutex);
 	m_rect = cv::Rect(0, 0, m_frame_size.width, m_frame_size.height);
 }
-void fvkCameraThread::setRoi(const cv::Rect& _roi)
+void fvkCameraThread::setRoi(const cv::Rect& roi)
 {
 	std::lock_guard<std::mutex> locker(m_rectmutex);
-	m_rect = _roi;
+	m_rect = roi;
 }
 auto fvkCameraThread::getRoi() -> cv::Rect
 {
 	std::lock_guard<std::mutex> locker(m_rectmutex);
 	return m_rect;
 }
-void fvkCameraThread::setSyncEnabled(const bool _b)
+void fvkCameraThread::setSyncEnabled(const bool b)
 {
-	m_sync_proc_thread = _b;
+	m_sync_proc_thread = b;
 }
 auto fvkCameraThread::isSyncEnabled() const -> bool
 {

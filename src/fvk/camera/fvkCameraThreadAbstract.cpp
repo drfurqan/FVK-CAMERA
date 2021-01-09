@@ -23,9 +23,9 @@ purpose:	OpenCV camera class interface.
 
 using namespace R3D;
 
-fvkCameraThreadAbstract::fvkCameraThreadAbstract(const int _device_index, const cv::Size& _frame_size) :
-m_device_index(_device_index),
-m_frame_size(_frame_size)
+fvkCameraThreadAbstract::fvkCameraThreadAbstract(const int device_index, const cv::Size& frame_size) :
+m_device_index(device_index),
+m_frame_size(frame_size)
 {
 }
 

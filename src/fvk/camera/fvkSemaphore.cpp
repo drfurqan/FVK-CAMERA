@@ -22,7 +22,7 @@ purpose:	class for a basic semaphore like functionalities.
 
 using namespace R3D;
 
-fvkSemaphore::fvkSemaphore(const int _count) : m_count{ _count }
+fvkSemaphore::fvkSemaphore(const int count) : m_count{ count }
 {
 }
 
@@ -51,19 +51,19 @@ void fvkSemaphore::notify()
 	m_cv.notify_one();
 }
 
-auto fvkSemaphore::wait_for(const unsigned long _milliseconds) -> bool
+auto fvkSemaphore::wait_for(const unsigned long milliseconds) -> bool
 {
 	std::unique_lock<std::mutex> lock{ m_mutex };
-	auto finished = m_cv.wait_for(lock, std::chrono::milliseconds(_milliseconds), [&] { return m_count > 0; });
+	auto finished = m_cv.wait_for(lock, std::chrono::milliseconds(milliseconds), [&] { return m_count > 0; });
 	if (finished)
 		--m_count;
 	return finished;
 }
 
-auto fvkSemaphore::wait_until(const unsigned long _milliseconds) -> bool
+auto fvkSemaphore::wait_until(const unsigned long milliseconds) -> bool
 {
 	std::unique_lock<std::mutex> lock{ m_mutex };
-	auto finished = m_cv.wait_until(lock, std::chrono::system_clock::now() + std::chrono::milliseconds(_milliseconds), [&] { return m_count > 0; });
+	auto finished = m_cv.wait_until(lock, std::chrono::system_clock::now() + std::chrono::milliseconds(milliseconds), [&] { return m_count > 0; });
 	if (finished)
 		--m_count;
 	return finished;

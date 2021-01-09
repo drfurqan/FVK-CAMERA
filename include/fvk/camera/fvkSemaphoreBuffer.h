@@ -47,13 +47,13 @@ public:
 	fvkSemaphoreBuffer() : m_sema_put(1), m_sema_get(0)
 	{
 	}
-	fvkSemaphoreBuffer(const fvkSemaphoreBuffer& _other)
+	fvkSemaphoreBuffer(const fvkSemaphoreBuffer& other)
 	{
-		std::lock_guard<std::mutex> lk(_other.m_mutex);
-		m_data = _other.m_data;
+		std::lock_guard<std::mutex> lk(other.m_mutex);
+		m_data = other.m_data;
 	}
 
-	void put(const _T& _item, const bool _sync_and_block_thread = false)
+	void put(const _T& item, const bool sync_and_block_thread = false)
 	{
 		// In this case, camera thread needs notify from the processing thread to 
 		// run as well as to put item in the data.
@@ -63,11 +63,11 @@ public:
 		// In other words, this will do the perfect synchronization between two threads,
 		// first have to wait until to get notify from the second, and
 		// second as well have to wait until to get notify from the first.
-		if (_sync_and_block_thread)
+		if (sync_and_block_thread)
 		{
 			m_sema_put.wait();			// wait (block the thread) until you get notify from get() method.
 			m_mutex.lock();
-			m_data.push(_item);			// protect the queue data and push item to queue.
+			m_data.push(item);			// protect the queue data and push item to queue.
 			m_mutex.unlock();
 			m_sema_get.notify();		// notify get() method to pop data.
 		}
@@ -80,7 +80,7 @@ public:
 			if (m_sema_put.try_wait())	// do not block thread, just wait to get notify from get() method to return true and run the following code.
 			{
 				m_mutex.lock();
-				m_data.push(_item);		// protect the queue data and push item to queue.
+				m_data.push(item);		// protect the queue data and push item to queue.
 				m_mutex.unlock();
 				m_sema_get.notify();	// notify get() method to pop data.
 			}
@@ -91,11 +91,11 @@ public:
 	{
 		m_sema_get.wait();				// wait until you get notify from put() method.
 		m_mutex.lock();
-		_T _value = m_data.front();		// protect the queue data and pop item.
+		_T value = m_data.front();		// protect the queue data and pop item.
 		m_data.pop();
 		m_mutex.unlock();
 		m_sema_put.notify();			// notify put() method to add item in the queue.
-		return _value;
+		return value;
 	}
 
 	auto empty() const

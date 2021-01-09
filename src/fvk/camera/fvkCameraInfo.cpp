@@ -34,7 +34,7 @@ static char m_device_names[20][255];
 // Description:
 // Functions that finds the available devices and
 // returns the total number of found devices.
-int findDevices(const bool _silent) 
+int findDevices(const bool silent) 
 {
 	auto deviceCounter = 0;
 #ifdef _WIN32
@@ -48,7 +48,7 @@ int findDevices(const bool _silent)
 		hr = pDevEnum->CreateClassEnumerator(CLSID_VideoInputDeviceCategory, &pEnum, 0);
 		if (hr == S_OK) 
 		{
-			if (!_silent) std::cout << "Looking For Capture Devices...\n";
+			if (!silent) std::cout << "Looking For Capture Devices...\n";
 
 			IMoniker *pMoniker = nullptr;
 			while (pEnum->Next(1, &pMoniker, nullptr) == S_OK) 
@@ -81,7 +81,7 @@ int findDevices(const bool _silent)
 					}
 					m_device_names[deviceCounter][count] = 0;
 
-					if (!_silent) std::cout << "Device: Id [" << deviceCounter << "] Name [" << m_device_names[deviceCounter] << "]\n";
+					if (!silent) std::cout << "Device: Id [" << deviceCounter << "] Name [" << m_device_names[deviceCounter] << "]\n";
 				}
 
 				pPropBag->Release();
@@ -100,7 +100,7 @@ int findDevices(const bool _silent)
 			pEnum = nullptr;
 		}
 
-		if (!_silent) std::cout << "Device(s) found\n\n" << deviceCounter << "\n";
+		if (!silent) std::cout << "Device(s) found\n\n" << deviceCounter << "\n";
 	}
 #endif // _WIN32
 
@@ -110,11 +110,11 @@ int findDevices(const bool _silent)
 // Description:
 // Function that returns the name of the given device id.
 // This function needs to be called after findDevices();
-std::string getDeviceName(const int _device_id)
+std::string getDeviceName(const int device_id)
 {
-	if (_device_id >= 20) 
+	if (device_id < 0 || device_id >= 20)
 		return "";
-	return m_device_names[_device_id];
+	return m_device_names[device_id];
 }
 
 std::vector< std::pair<int, std::string> > fvkCameraInfo::availableCameras()

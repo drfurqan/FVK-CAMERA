@@ -35,25 +35,25 @@ class FVK_CAMERA_EXPORT fvkQSemaphore
 public:
 	// Description:
 	// Construct a counting semaphore with an initial value.
-	explicit fvkQSemaphore(const int _n = 0);
+	explicit fvkQSemaphore(const int n = 0);
 	~fvkQSemaphore();
 
 	// Description:
 	// acquire a semaphore count
 	// It's actually a "wait" method.
 	// It blocks the thread, until get notify by calling release() method.
-	void acquire(int _n = 1);
+	void acquire(int n = 1);
 	// Description:
 	// try to acquire a semaphore count.
 	// It's actually a "try_wait" method.
 	// It does not block the thread, but wait until get notify by calling release() method and returns true.
-	auto tryAcquire(int _n = 1) -> bool;
+	auto tryAcquire(int n = 1) -> bool;
 	// Description:
 	// release one semaphore count.
 	// It's actually a "notify" method.
 	// It notifies to acquire() method to unblock the thread, and also
 	// it notifies to tryAcquire() method to unblock as well as return true to proceed.
-	void release(int _n = 1);
+	void release(int n = 1);
 
 	// Description:
 	// Function that return total number of available count.

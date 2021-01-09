@@ -47,7 +47,7 @@ public:
 
 	// Description:
 	// Function to load a classifier from a file.
-	auto setFaceCascade(const std::string& _cascade_file_path) -> bool;
+	auto setFaceCascade(const std::string& cascade_file_path) -> bool;
 	// Description:
 	// Function to get a pointer to face cascade.
 	auto getFaceCascade() const { return m_face_cascade; }
@@ -59,33 +59,33 @@ public:
 	auto getPosition() const -> cv::Point;
 	// Description:
 	// Function to set the width of the detectable face.
-	void setResizedWidth(const int _width);
+	void setResizedWidth(const int width);
 	// Description:
 	// Function to get the width of the detectable face.
 	auto getResizedWidth() const -> int;
 	// Description:
 	// Function to set the maximum duration for the template matching.
-	void setTemplateMatchingMaxDuration(const double _s);
+	void setTemplateMatchingMaxDuration(const double s);
 	// Description:
 	// Function to get the maximum duration for the template matching.
 	auto templateMatchingMaxDuration() const -> double;
 	// Description:
 	// Function that detects all faces in the given frame and get the biggest face.
-	void detectFaceAllSizes(const cv::Mat& _frame);
+	void detectFaceAllSizes(const cv::Mat& frame);
 	// Description:
 	// Function that detects the biggest face in the given frame and track it.
-	auto detect(cv::Mat& _frame) -> cv::Point;
+	auto detect(cv::Mat& frame) -> cv::Point;
 	// Description:
 	// Overloaded operator of the above function.
-	auto operator >> (cv::Mat& _frame) -> cv::Point;
+	auto operator >> (cv::Mat& frame) -> cv::Point;
 
 private:
-	static auto doubleRectSize(const cv::Rect& _input_rect, const cv::Rect& _frame_size) -> cv::Rect;
-	static auto biggestFace(std::vector<cv::Rect>& _faces) -> cv::Rect;
-	static auto centerOfRect(const cv::Rect& _rect) -> cv::Point;
-	static auto getFaceTemplate(const cv::Mat& _frame, cv::Rect _face) -> cv::Mat;
-	void detectFaceAroundRoi(const cv::Mat& _frame);
-	void detectFacesTemplateMatching(const cv::Mat& _frame);
+	static auto doubleRectSize(const cv::Rect& input_rect, const cv::Rect& frame_size) -> cv::Rect;
+	static auto biggestFace(std::vector<cv::Rect>& faces) -> cv::Rect;
+	static auto centerOfRect(const cv::Rect& rect) -> cv::Point;
+	static auto getFaceTemplate(const cv::Mat& frame, cv::Rect face) -> cv::Mat;
+	void detectFaceAroundRoi(const cv::Mat& frame);
+	void detectFacesTemplateMatching(const cv::Mat& frame);
 
 	static const double TICK_FREQUENCY;
 
@@ -119,7 +119,7 @@ public:
 	// Function to load a classifier from a file.
 	// filename Name of the file from which the classifier is loaded.
 	// It returns true on success.
-	auto loadCascadeClassifier(const std::string& _filename) -> bool;
+	auto loadCascadeClassifier(const std::string& filename) -> bool;
 	// Description:
 	// Function to get the file path of the classifier.
 	auto getCascadeClassifierFilePath() const { return m_filepath; }
@@ -131,7 +131,7 @@ public:
 	// Description:
 	// Function that detect all the faces in the given frame.
 	// It selects the biggest face for tracking.
-	virtual void detect(cv::Mat& _frame, const int _frame_delay_in_detection = 5);
+	virtual void detect(cv::Mat& frame, const int frame_delay_in_detection = 5);
 
 protected:
 	std::string m_filepath;

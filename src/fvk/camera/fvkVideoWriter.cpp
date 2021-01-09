@@ -72,11 +72,22 @@ void fvkVideoWriter::stop()
 		m_writer.release();
 }
 
-void fvkVideoWriter::addFrame(const cv::Mat& _frame)
+void fvkVideoWriter::addFrame(const cv::Mat& frame)
 {
-	// _frame must have the same size as has been specified when opening the video writer.
-	if (_frame.empty() || _frame.size() != m_size) 
-		return;
-
-	m_writer.write(_frame);
+	// frame must have the same size as has been specified when opening the video writer.
+	if (frame.size() != m_size) 
+	{
+		cv::Mat resized(m_size, frame.type());
+		
+		if (m_size.width < frame.cols || m_size.height < frame.rows)
+			cv::resize(frame, resized, m_size, 0, 0, cv::InterpolationFlags::INTER_AREA);
+		else
+			cv::resize(frame, resized, m_size, 0, 0, cv::InterpolationFlags::INTER_CUBIC);
+		
+		m_writer.write(resized);
+	}
+	else
+	{
+		m_writer.write(frame);
+	}
 }

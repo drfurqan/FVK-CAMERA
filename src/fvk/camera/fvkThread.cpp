@@ -62,9 +62,9 @@ fvkThread::fvkThread() :
 {
 }
 
-void fvkThread::operator()(const std::function<void()> _func)
+void fvkThread::operator()(const std::function<void()> func)
 {
-	start(_func);
+	start(func);
 }
 
 void fvkThread::run()
@@ -72,7 +72,7 @@ void fvkThread::run()
 	// expected to be overridden...
 }
 
-void fvkThread::start(const std::function<void()> _func)
+void fvkThread::start(const std::function<void()> func)
 {
 	// make stats to zero for the new run.
 	m_avgfps.getStats().nfps = 0;
@@ -97,8 +97,8 @@ void fvkThread::start(const std::function<void()> _func)
 			lk.unlock();
 		}
 
-		if (_func)
-			_func();
+		if (func)
+			func();
 		else
 			run();	// function to be overridden
 
@@ -119,11 +119,11 @@ auto fvkThread::active() const -> bool
 	return !m_isstop;
 }
 
-void fvkThread::pause(const bool _b)
+void fvkThread::pause(const bool b)
 {
 	{
 		std::lock_guard<std::mutex> lk(m_pausemutex);
-		m_ispause = _b;
+		m_ispause = b;
 	}
 	m_pausecond.notify_one();
 }
@@ -138,10 +138,10 @@ auto fvkThread::getAvgFps() -> int
 	std::lock_guard<std::mutex> lk(m_statsmutex);
 	return m_avgfps.getStats().nfps;
 }
-void fvkThread::setFrameNumber(const int _frame)
+void fvkThread::setFrameNumber(const int frame)
 {
 	std::lock_guard<std::mutex> lk(m_statsmutex);
-	m_avgfps.getStats().nframes = _frame;
+	m_avgfps.getStats().nframes = frame;
 }
 auto fvkThread::getFrameNumber() -> int
 {
@@ -149,10 +149,10 @@ auto fvkThread::getFrameNumber() -> int
 	return m_avgfps.getStats().nframes;
 }
 
-void fvkThread::setDelay(const int _delay_msec)
+void fvkThread::setDelay(const int delay_msec)
 {
 	std::lock_guard<std::mutex> lk(m_statsmutex);
-	m_delay = _delay_msec;
+	m_delay = delay_msec;
 }
 auto fvkThread::getDelay() -> int
 {
@@ -160,11 +160,11 @@ auto fvkThread::getDelay() -> int
 	return m_delay;
 }
 
-void fvkThread::sleep(const unsigned long _milliseconds)
+void fvkThread::sleep(const unsigned long milliseconds)
 {
-	std::this_thread::sleep_for(std::chrono::milliseconds(_milliseconds));
+	std::this_thread::sleep_for(std::chrono::milliseconds(milliseconds));
 }
-void fvkThread::sleep_until(const unsigned long _milliseconds)
+void fvkThread::sleep_until(const unsigned long milliseconds)
 {
-	std::this_thread::sleep_until(std::chrono::system_clock::now() + std::chrono::milliseconds(_milliseconds));
+	std::this_thread::sleep_until(std::chrono::system_clock::now() + std::chrono::milliseconds(milliseconds));
 }

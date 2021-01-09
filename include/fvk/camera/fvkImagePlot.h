@@ -39,45 +39,45 @@ public:
 	// Default constructor to initiate the object.
 	fvkPlotManager();
 	// Description:
-	// Destructor that destorys data.
+	// Destructor that destroys data.
 	~fvkPlotManager();
 	// Description:
 	// Function to clear the data.
-	void clear(const std::string& _fig_name);
+	void clear(const std::string& fig_name);
 
 	// Description:
 	// Function to set label.
-	void setLabel(const std::string& _l) const;
+	void setLabel(const std::string& l) const;
 	// Description:
 	// Function to set the plotted image size.
-	void setPlotSize(const std::string& _name, int _w, int _h);
+	void setPlotSize(const std::string& name, int w, int h);
 	// Description:
 	// Function to set the border size.
-	void setBorderSize(const std::string& _name, int _size);
+	void setBorderSize(const std::string& name, int size);
 	// Description:
 	// If it's true the background and the curves color will be inverted.
-	void invertPlotColor(const std::string& _name, bool _invert);
+	void invertPlotColor(const std::string& name, bool invert);
 	// Description:
 	// If it's true X and Y axes are visible.
-	void setAxisEnabled(const std::string& _name, bool _b);
+	void setAxisEnabled(const std::string& name, bool b);
 	// Description:
 	// If it's true labels are visible.
-	void setLabelsEnabled(const std::string& _name, bool _b);
+	void setLabelsEnabled(const std::string& name, bool b);
 	// Description:
 	// Function to plot the input _data.
 	template <typename _T>
-	void plot(const std::string& _fig_name, const _T* _data, int _count, int _step, int _R, int _G, int _B);
+	void plot(const std::string& fig_name, const _T* data, int count, int step, int R, int G, int B);
 	// Description:
 	// Function to calculate the plot.
 	void calculatePlot() const;
 
 	// Description:
 	// Function to get the plotted image.
-	cv::Mat getPlottedImage(const std::string& _name);
+	cv::Mat getPlottedImage(const std::string& name);
 
 private:
-	fvkPlotFigure* findFigure(const std::string& _name);
-	void plotData(const std::string& _fig_name, const float* _p, int _count, int _step, int _R, int _G, int _B);
+	fvkPlotFigure* findFigure(const std::string& name);
+	void plotData(const std::string& fig_name, const float* p, int count, int step, int R, int G, int B);
 
 	fvkPlotFigure *active_figure;
 	std::vector<fvkPlotFigure*> figure_list;
@@ -94,7 +94,7 @@ public:
 	// Description:
 	// Function to get the plotted image.
 	// Input _img is the both source and destination.
-	void plot(cv::Mat& _img);
+	void plot(cv::Mat& img);
 
 	// Description:
 	// Function to set the plotted image size.
@@ -170,21 +170,21 @@ public:
 	// Function to get the plotted image of the input image. 
 	// Returned image should be released after usage.
 	static cv::Mat getPlottedImage(
-		const cv::Mat& Inimg,								// (Mandatory) Input image (supported channels are 1,3,4).
-		int _plotsize_w = -1,						// (Optional) Specify the width of the plot. If not specified, then the plot size will be the size of ImageBox.
-		int _plotsize_h = -1,						// (Optional) Specify the height of the plot. If not specified, then the plot size will be the size of ImageBox.
-		int _row_number = -1,						// (Optional) Specify the row number. If not specified, then centered row of an image will be plotted.
-		int _border_size = 30,						// (Optional) Specify the border size.
-		bool _isRedCurve = false,					// (Optional) Set true, if you want to plot only red color curve.
-		bool _isGreenCurve = false,					// (Optional) Set true, if you want to plot only green color curve.
-		bool _isBlueCurve = false,					// (Optional) Set true, if you want to plot only blue color curve.
-		bool _isRGBCurve = true,					// (Optional) Set true, if you want to plot RGB color curves.
-		bool _isInverted = false,					// (Optional) Set true, if you want to invert the plot background and text color.
-		bool _isAxis = true,						// (Optional) Set true, if you want to plot axis with curves.
-		bool _isLabel = true,						// (Optional) Set true, if you want to plot the labels of curves.
-		int _R = 150, int _G = 150, int _B = 150,	// (Optional) Set curve color (Red, Green, Blue).
-		std::string _Plotname = "RGB",				// (Optional) Name of the plot.
-		std::string _PlotLabel = "RGB Plot");		// (Optional) Name of the curve label.
+		cv::Mat& inImg,										// (Mandatory) Input image (supported channels are 1,3,4).
+		int plotsize_w = -1,								// (Optional) Specify the width of the plot. If not specified, then the plot size will be the size of ImageBox.
+		int plotsize_h = -1,								// (Optional) Specify the height of the plot. If not specified, then the plot size will be the size of ImageBox.
+		int row_number = -1,								// (Optional) Specify the row number. If not specified, then centered row of an image will be plotted.
+		int border_size = 30,								// (Optional) Specify the border size.
+		bool isRedCurve = false,							// (Optional) Set true, if you want to plot only red color curve.
+		bool isGreenCurve = false,							// (Optional) Set true, if you want to plot only green color curve.
+		bool isBlueCurve = false,							// (Optional) Set true, if you want to plot only blue color curve.
+		bool isRGBCurve = true,								// (Optional) Set true, if you want to plot RGB color curves.
+		bool isInverted = false,							// (Optional) Set true, if you want to invert the plot background and text color.
+		bool isAxis = true,									// (Optional) Set true, if you want to plot axis with curves.
+		bool isLabel = true,								// (Optional) Set true, if you want to plot the labels of curves.
+		int red = 150, int green = 150, int blue = 150,		// (Optional) Set curve color (Red, Green, Blue).
+		std::string plotname = "RGB",						// (Optional) Name of the plot.
+		std::string plotLabel = "RGB Plot");				// (Optional) Name of the curve label.
 
 private:
 	cv::Size m_plotsize;

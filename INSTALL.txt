@@ -22,6 +22,6 @@ build.
 
 Required Libraries:
 OpenCV greater than or equal 2.4
-(prebuild libraries that can be found in lib folder was built with OpenCV v4.1.0)
+(prebuild libraries that can be found in lib folder was built with OpenCV v3.4.1)
 
 Before building FVK-CAMERA, you should have built the OpenCV first then specify the OpenCV build folder in CMake, and you are done.

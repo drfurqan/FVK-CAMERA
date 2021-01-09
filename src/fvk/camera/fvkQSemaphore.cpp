@@ -22,7 +22,7 @@ purpose:	basic semaphore like QSemaphore functionalities.
 
 using namespace R3D;
 
-fvkQSemaphore::fvkQSemaphore(const int _n /*= 0*/) : m_count(_n)
+fvkQSemaphore::fvkQSemaphore(const int n /*= 0*/) : m_count(n)
 {
 
 }
@@ -32,26 +32,26 @@ fvkQSemaphore::~fvkQSemaphore()
 
 }
 
-void fvkQSemaphore::release(int _n /*= 1*/)
+void fvkQSemaphore::release(int n /*= 1*/)
 {
 	std::lock_guard<std::mutex> lk(m_mutex);
-	m_count += _n;
+	m_count += n;
 	m_cv.notify_all();
 }
 
-void fvkQSemaphore::acquire(int _n /*= 1*/)
+void fvkQSemaphore::acquire(int n /*= 1*/)
 {
 	std::unique_lock<std::mutex> lk(m_mutex);
-	while (_n > m_count)
+	while (n > m_count)
 		m_cv.wait(lk);
-	m_count -= _n;
+	m_count -= n;
 }
 
-auto fvkQSemaphore::tryAcquire(int _n /*= 1*/) -> bool
+auto fvkQSemaphore::tryAcquire(int n /*= 1*/) -> bool
 {
 	std::lock_guard<std::mutex> lk(m_mutex);
-	if (_n > m_count) return false;
-	m_count -= _n;
+	if (n > m_count) return false;
+	m_count -= n;
 	return true;
 }
 

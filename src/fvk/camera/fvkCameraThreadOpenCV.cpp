@@ -23,18 +23,18 @@ purpose:	class to create handle opencv video camera.
 
 using namespace R3D;
 
-fvkCameraThreadOpenCV::fvkCameraThreadOpenCV(const int _device_index, const cv::Size& _frame_size, const int _api, fvkSemaphoreBuffer<cv::Mat>* _buffer) :
-	fvkCameraThread(_device_index, _frame_size, _buffer),
-	m_videocapture_api(_api),
+fvkCameraThreadOpenCV::fvkCameraThreadOpenCV(const int device_index, const cv::Size& frame_size, const int api, fvkSemaphoreBuffer<cv::Mat>* buffer) :
+	fvkCameraThread(device_index, frame_size, buffer),
+	m_videocapture_api(api),
 	m_filepath(""),
 	m_isrepeat(true)
 {
 }
 
-fvkCameraThreadOpenCV::fvkCameraThreadOpenCV(const std::string& _video_file, const cv::Size& _frame_size, const int _api, fvkSemaphoreBuffer<cv::Mat>* _buffer) :
-	fvkCameraThread(0, _frame_size, _buffer),
-	m_videocapture_api(_api),
-	m_filepath(_video_file),
+fvkCameraThreadOpenCV::fvkCameraThreadOpenCV(const std::string& video_file, const cv::Size& frame_size, const int api, fvkSemaphoreBuffer<cv::Mat>* buffer) :
+	fvkCameraThread(0, frame_size, buffer),
+	m_videocapture_api(api),
+	m_filepath(video_file),
 	m_isrepeat(true)
 {
 }
@@ -45,9 +45,9 @@ fvkCameraThreadOpenCV::~fvkCameraThreadOpenCV()
 	fvkCameraThreadOpenCV::close();
 }
 
-auto fvkCameraThreadOpenCV::open(const int _device_index) -> bool
+auto fvkCameraThreadOpenCV::open(const int device_index) -> bool
 {
-	if (!m_cam.open(_device_index, m_videocapture_api)) 
+	if (!m_cam.open(device_index, m_videocapture_api)) 
 		return false;
 
 	if (m_frame_size.width != -1)
@@ -70,16 +70,16 @@ auto fvkCameraThreadOpenCV::open(const int _device_index) -> bool
 		m_cam.set(cv::CAP_PROP_FRAME_HEIGHT, m_frame_size.height);
 	}
 
-	m_device_index = _device_index;
+	m_device_index = device_index;
 
 	return true;
 }
-auto fvkCameraThreadOpenCV::open(const std::string& _file_name) -> bool
+auto fvkCameraThreadOpenCV::open(const std::string& file_name) -> bool
 {
-	if (_file_name.empty())
+	if (file_name.empty())
 		return false;
 
-	if (!m_cam.open(_file_name, m_videocapture_api))
+	if (!m_cam.open(file_name, m_videocapture_api))
 		return false;
 
 	if (m_frame_size.width != -1)
@@ -94,7 +94,7 @@ auto fvkCameraThreadOpenCV::open(const std::string& _file_name) -> bool
 
 	setDelay(static_cast<int>(1000.0 / m_cam.get(cv::CAP_PROP_FPS)));	// delay between frames.
 
-	m_filepath = _file_name;
+	m_filepath = file_name;
 
 	return true;
 }
@@ -122,7 +122,7 @@ auto fvkCameraThreadOpenCV::close() -> bool
 	return true;
 }
 
-auto fvkCameraThreadOpenCV::grab(cv::Mat& _m_frame) -> bool
+auto fvkCameraThreadOpenCV::grab(cv::Mat& frame) -> bool
 {
 	// grab from the video file.
 	if (!m_filepath.empty())					// if there is a *.avi video file, then grab from it.
@@ -143,12 +143,12 @@ auto fvkCameraThreadOpenCV::grab(cv::Mat& _m_frame) -> bool
 			return false;
 	}
 
-	return m_cam.retrieve(_m_frame);
+	return m_cam.retrieve(frame);
 }
 
-void fvkCameraThreadOpenCV::repeat(const bool _b)
+void fvkCameraThreadOpenCV::repeat(const bool b)
 {
-	m_isrepeat = _b;
+	m_isrepeat = b;
 }
 auto fvkCameraThreadOpenCV::repeat() const -> bool
 {

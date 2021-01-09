@@ -62,7 +62,7 @@ public:
 	// Description:
 	// Function to set denoising/smoothing method.
 	// Default value is DenoisingMethod::Bilateral.
-	void setDenoisingMethod(fvkImageProcessing::DenoisingMethod _value);
+	void setDenoisingMethod(fvkImageProcessing::DenoisingMethod value);
 	// Description:
 	// Function to get denoising/smoothing method.
 	// Default value is DenoisingMethod::Gaussian.
@@ -71,7 +71,7 @@ public:
 	// Function to set denoising/smoothing level/kernel.
 	// Default value is 0.
 	// Specified denoising level must be an odd number, starting from 3.
-	void setDenoisingLevel(int _value);
+	void setDenoisingLevel(int value);
 	// Description:
 	// Function to get denoising/smoothing level/kernel.
 	auto getDenoisingLevel() -> int;
@@ -79,7 +79,7 @@ public:
 	// Description:
 	// Function to set sharpness to the image.
 	// Default value is 0.
-	void setSharpeningLevel(int _value);
+	void setSharpeningLevel(int value);
 	// Description:
 	// Function to get sharpness.
 	// Default value is 0.
@@ -89,7 +89,7 @@ public:
 	// Function to enhance the detail of the image.
 	// _value should be between 0 and 200.
 	// Default value is 0.
-	void setDetailLevel(int _value);
+	void setDetailLevel(int value);
 	// Description:
 	// Function to get the detail value.
 	// Default value is 0.
@@ -99,7 +99,7 @@ public:
 	// Function to adjust the smoothness of the image.
 	// _value should be between 0 and 200.
 	// Default value is 0.
-	void setSmoothness(int _value);
+	void setSmoothness(int value);
 	// Description:
 	// Function to get the smoothness value.
 	// Default value is 0.
@@ -109,7 +109,7 @@ public:
 	// Function to adjust the pencil sketch of the image.
 	// _value should be between 0 and 200.
 	// Default value is 0.
-	void setPencilSketchLevel(int _value);
+	void setPencilSketchLevel(int value);
 	// Description:
 	// Function to get the pencil sketch value.
 	// Default value is 0.
@@ -119,7 +119,7 @@ public:
 	// Function to adjust the stylization of the image.
 	// _value should be between 0 and 200.
 	// Default value is 0.
-	void setStylizationLevel(int _value);
+	void setStylizationLevel(int value);
 	// Description:
 	// Function to get the stylization value.
 	// Default value is 0.
@@ -129,7 +129,7 @@ public:
 	// Function to adjust the brightness of the image.
 	// _value should be between -100 and 100.
 	// Default value is 0.
-	void setBrightness(int _value);
+	void setBrightness(int value);
 	// Description:
 	// Function to get the brightness value.
 	// Default value is 0.
@@ -139,7 +139,7 @@ public:
 	// Function to adjust the overall contrast of the image.
 	// _value should be between -100 and 100.
 	// Default value is 0.
-	void setContrast(int _value);
+	void setContrast(int value);
 	// Description:
 	// Function to get contrast value.
 	// Default value is 0.
@@ -149,7 +149,7 @@ public:
 	// Function to adjust the color contrast of the image.
 	// _value should be between -100 and 100.
 	// Default value is 0.
-	void setColorContrast(int _value);
+	void setColorContrast(int value);
 	// Description:
 	// Function to get the color contrast value.
 	// Default value is 0.
@@ -159,7 +159,7 @@ public:
 	// Function to adjust the color saturation of the image.
 	// _value should be between -100 and 100.
 	// _value less than 0 will desaturate the image while values greater than 0 will saturate it.
-	void setSaturation(int _value);
+	void setSaturation(int value);
 	// Description:
 	// Function to get the color saturation value.
 	// Default value is 0.
@@ -180,7 +180,7 @@ public:
 	// Function to adjust the hue of the image.
 	// _value should be between 0 and 100.
 	// Default value is 0.
-	void setHue(int _value);
+	void setHue(int value);
 	// Description:
 	// Function to get the hue value.
 	// Default value is 0.
@@ -190,7 +190,7 @@ public:
 	// Function to adjust the gamma of the image.
 	// _value should be between -100 and 100.
 	// Default value is 0.
-	void setGamma(int _value);
+	void setGamma(int value);
 	// Description:
 	// Function to get the gamma value.
 	// Default value is 0.
@@ -199,7 +199,7 @@ public:
 	// Function to adjust the exposure of the image.
 	// _value should be between -100 and 100.
 	// Default value is 0.
-	void setExposure(int _value);
+	void setExposure(int value);
 	// Description:
 	// Function to get the exposure value.
 	// Default value is 0.
@@ -209,7 +209,7 @@ public:
 	// Function to adjust the sepia filter to the image.
 	// _value should be between 0 and 100.
 	// Default value is 0.
-	void setSepia(int _value);
+	void setSepia(int value);
 	// Description:
 	// Function to get the sepia filter value.
 	// Default value is 0.
@@ -220,7 +220,7 @@ public:
 	// when it falls outside of the specified range.
 	// _value should be between 0 and 100.
 	// Default value is 0.
-	void setClip(int _value);
+	void setClip(int value);
 	// Description:
 	// Function to get the clip value.
 	// Default value is 0.
@@ -229,7 +229,7 @@ public:
 	// Description:
 	// Function to enable the negative mode.
 	// Default value is false.
-	void setNegativeModeEnabled(bool _value);
+	void setNegativeModeEnabled(bool value);
 	// Description:
 	// Function that returns true if the negative mode is enabled.
 	auto isNegativeModeEnabled() -> bool;
@@ -237,7 +237,7 @@ public:
 	// Description:
 	// Function to enable light emboss.
 	// Default value is false.
-	void setLightEmbossEnabled(bool _value);
+	void setLightEmbossEnabled(bool value);
 	// Description:
 	// Function that returns true if light emboss is enabled.
 	auto isLightEmbossEnabled() -> bool;
@@ -246,7 +246,7 @@ public:
 	// Function to set dot pattern level to draw dots.
 	// Specified level must be greater than 5.
 	// Default value is 0.
-	void setDotPatternLevel(int _value);
+	void setDotPatternLevel(int value);
 	// Description:
 	// Function to get dot pattern level.
 	auto getDotPatternLevel() -> int;
@@ -263,7 +263,7 @@ public:
 	// Description:
 	// Function to set the flip direction.
 	// Default value is FlipDirection::None.
-	void setFlipDirection(FlipDirection _d);
+	void setFlipDirection(FlipDirection d);
 	// Description:
 	// Function to get the flip direction.
 	auto getFlipDirection() -> FlipDirection;
@@ -272,7 +272,7 @@ public:
 	// Function to set zoom in percentage.
 	// Default value is 100%, meaning original size.
 	// Specified level must be greater than 0.
-	void setZoomLevel(int _percentage);
+	void setZoomLevel(int percentage);
 	// Description:
 	// Function to get zoom in percentage.
 	auto getZoomLevel() -> int;
@@ -280,7 +280,7 @@ public:
 	// Description:
 	// Function to set rotation angle in degrees.
 	// Default value is 0.
-	void setRotationAngle(double _angle);
+	void setRotationAngle(double angle);
 	// Description:
 	// Function to get rotation angle in degrees.
 	auto getRotationAngle() -> double;
@@ -297,14 +297,14 @@ public:
 	// CV_BGR2YCrCb
 	// etc.
 	// setConvertColor(CV_BGR2HSV);
-	void setConvertColor(int _value);
+	void setConvertColor(int value);
 	// Description:
 	// Function to get color conversion code.
 	auto getConvertColor() -> int;
 
 	// Description:
 	// Function to turn gray-scale or black-and-white mode ON/OFF.
-	void setGrayScaleEnabled(bool _value);
+	void setGrayScaleEnabled(bool value);
 	// Description:
 	// Function that returns true if the gray-scale or black-and-white mode is ON.
 	auto isGrayScaleEnabled() -> bool;
@@ -313,7 +313,7 @@ public:
 	// Function to specify the binary threshold value.
 	// _value should be between 0 and 255.
 	// Default value is 0.
-	void setThresholdValue(int _value);
+	void setThresholdValue(int value);
 	// Description:
 	// Function to get the binary threshold value.
 	auto getThresholdValue() -> int;
@@ -322,7 +322,7 @@ public:
 	// Function to specify the equalize clip limit value.
 	// _value should be between 0 and 100.
 	// Default value is 0.
-	void setEqualizeClipLimit(double _value);
+	void setEqualizeClipLimit(double value);
 	// Description:
 	// Function to get the equalize clip limit value.
 	auto getEqualizeClipLimit() -> double;
@@ -334,11 +334,11 @@ public:
 	// Function to load a classifier from a file.
 	// filename Name of the file from which the classifier is loaded.
 	// It returns true on success.
-	auto loadCascadeClassifier(const std::string& _filename) -> bool;
+	auto loadCascadeClassifier(const std::string& fileName) -> bool;
 	// Description:
 	// Function to turn ON/OFF face tracking.
 	// Default value is false.
-	void setFaceDetectionEnabled(bool _value);
+	void setFaceDetectionEnabled(bool value);
 	// Description:
 	// Function that returns true if face tracking is enabled.
 	auto isFaceDetectionEnabled() -> bool;
@@ -349,11 +349,11 @@ public:
 	// Description:
 	// Function to clips a color to max values when it falls outside of the specified range.
 	// _value should be between 0 and 100.
-	static void setDenoisingFilter(cv::Mat& _img, int _value, fvkImageProcessing::DenoisingMethod _method);
+	static void setDenoisingFilter(cv::Mat& img, int value, fvkImageProcessing::DenoisingMethod method);
 	// Description:
 	// Function to apply various kinds of image processing filters such as sharpen an image.
 	// _value should be between 0 and 100.
-	static void setWeightedFilter(cv::Mat& _img, int _value, double _alpha = 1.5, double _beta = -0.5);
+	static void setWeightedFilter(cv::Mat& img, int value, double alpha = 1.5, double beta = -0.5);
 	// Description:
 	// Flip directions.
 	enum class Filters
@@ -367,22 +367,22 @@ public:
 	// Function to do non-photorealistic rendering on the given image. 
 	// _value should be between 0 and 200.
 	// _sigma should be between 0 and 1.
-	static void setNonPhotorealisticFilter(cv::Mat& _img, int _value, float _sigma, fvkImageProcessing::Filters _filter);
+	static void setNonPhotorealisticFilter(cv::Mat& img, int value, float sigma, fvkImageProcessing::Filters filter);
 	// Description:
 	// Function to adjust the brightness of the image.
 	// _value should be between -100 and 100.
 	// _value less than 0 will darken the image while values greater than 0 will brighten.
-	static void setBrightnessFilter(cv::Mat& _img, int _value);
+	static void setBrightnessFilter(cv::Mat& img, int value);
 	// Description:
 	// Function to adjust the overall contrast of the image.
 	// _value should be between -100 and 100.
 	// _value less than 0 will darken the image while values greater than 0 will brighten.
-	static void setContrastFilter(cv::Mat& _img, int _value);
+	static void setContrastFilter(cv::Mat& img, int value);
 	// Description:
 	// Function to adjust the color contrast of the image.
 	// _value should be between -100 and 100.
 	// _value less than 0 will decrees the contrast while values greater than 0 will increase it.
-	static void setColorContrastFilter(cv::Mat& _img, int _value);
+	static void setColorContrastFilter(cv::Mat& img, int value);
 	// Description:
 	// Function to adjust the color saturation of the image.
 	// _value should be between -100 and 100.
@@ -392,35 +392,35 @@ public:
 	// Function to adjust the vibrancy of the image.
 	// _value should be between -100 and 100.
 	// _value less than 0 will desaturate the image while values greater than 0 will saturate it.
-	static void setVibranceFilter(cv::Mat& _img, int _value);
+	static void setVibranceFilter(cv::Mat& img, int value);
 	// Description:
 	// Function to adjust the hue of the image.
 	// _value should be between 0 and 100.
-	static void setHueFilter(cv::Mat& _img, int _value);
+	static void setHueFilter(cv::Mat& img, int value);
 	// Description:
 	// Function to adjust the gamma of the image.
 	// gamma value range should be [-100 ~ 100].
-	static void setGammaFilter(cv::Mat& _img, int _value);
+	static void setGammaFilter(cv::Mat& img, int value);
 	// Description:
 	// Function to adjust the exposure of the image.
 	// exposure value range should be [-100 ~ 100].
-	static void setExposureFilter(cv::Mat& _img, int _value);
+	static void setExposureFilter(cv::Mat& img, int value);
 	// Description:
 	// Function to adjust the sepia filter to the image.
 	// _value should be between 0 and 100.
-	static void setSepiaFilter(cv::Mat& _img, int _value);
+	static void setSepiaFilter(cv::Mat& img, int value);
 	// Description:
 	// Function to clips a color to max values when it falls outside of the specified range.
 	// _value should be between 0 and 100.
-	static void setClipFilter(cv::Mat& _img, int _value);
+	static void setClipFilter(cv::Mat& img, int value);
 	// Description:
 	// Function to clips a color to max values when it falls outside of the specified range.
 	// _value should be between 0 and 100.
-	static void setEqualizeFilter(cv::Mat& _img, double _cliplimit, cv::Size _tile_grid_size = cv::Size(8, 8));
+	static void setEqualizeFilter(cv::Mat& img, double cliplimit, cv::Size tile_grid_size = cv::Size(8, 8));
 
 	// Description:
 	// Function to perform image processing algorithms.
-	virtual void imageProcessing(cv::Mat& _frame);
+	virtual void imageProcessing(cv::Mat& frame);
 
 private:
 	int m_denoislevel;
